@@ -23,7 +23,7 @@ public class Tag {
     /**
      * 标签类型
      */
-    private String tagType;
+    private TagType tagType;
 
     /**
      * 颜色
@@ -34,6 +34,22 @@ public class Tag {
      * 图标
      */
     private String icon;
+
+    /**
+     * 标签类型枚举
+     */
+    public enum TagType {
+        /**
+         * 主题标签
+         */
+        THEME,
+
+        /**
+         * 心情标签
+         */
+        MOOD
+    }
+
     /**
      * 有参构造方法
      * @param name 标签名称
@@ -41,7 +57,7 @@ public class Tag {
      * @param color 颜色
      * @param icon 图标
      */
-    public Tag(String name, String tagType, String color, String icon) {
+    public Tag(String name, TagType tagType, String color, String icon) {
         this.name = name;
         this.tagType = tagType;
         this.color = color;

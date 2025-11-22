@@ -35,7 +35,7 @@ public class MediaFile {
     /**
      * 文件类型
      */
-    private String fileType;
+    private FileType fileType;
 
     /**
      * 文件大小
@@ -46,6 +46,27 @@ public class MediaFile {
      * 上传时间
      */
     private LocalDateTime uploadTime;
+
+    /**
+     * 文件类型枚举
+     */
+    public enum FileType {
+        /**
+         * 图片文件
+         */
+        IMAGE,
+
+        /**
+         * 音频文件
+         */
+        AUDIO,
+
+        /**
+         * 视频文件
+         */
+        VIDEO
+    }
+
     /**
      * 有参构造方法
      * @param diaryId 日记ID
@@ -55,7 +76,7 @@ public class MediaFile {
      * @param fileSize 文件大小
      * @param uploadTime 上传时间
      */
-    public MediaFile(Long diaryId, String fileName, String filePath, String fileType, Long fileSize, LocalDateTime uploadTime) {
+    public MediaFile(Long diaryId, String fileName, String filePath, FileType fileType, Long fileSize, LocalDateTime uploadTime) {
         this.diaryId = diaryId;
         this.fileName = fileName;
         this.filePath = filePath;
