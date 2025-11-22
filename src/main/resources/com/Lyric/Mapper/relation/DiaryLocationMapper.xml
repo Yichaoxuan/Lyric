@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.relation.DiaryLocationMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="diaryLocationResultMap" type="com.lyric.lyric.Pojo.relation.DiaryLocationPojo">
+        <id property="id" column="id"/>
+        <result property="diaryId" column="diary_id"/>
+        <result property="locationId" column="location_id"/>
+        <result property="locationSource" column="location_source"/>
+        <result property="confidence" column="confidence"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入日记-地点关联 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.relation.DiaryLocationPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO diary_location(diary_id, location_id, location_source, confidence)
+        VALUES(#{diaryId}, #{locationId}, #{locationSource}, #{confidence})
+    </insert>
+    
+    <!-- 根据ID查询日记-地点关联 -->
+    <select id="selectById" parameterType="long" resultMap="diaryLocationResultMap">
+        SELECT * FROM diary_location WHERE id = #{id}
+    </select>
+    
+    <!-- 根据日记ID查询所有关联的地点 -->
+    <select id="selectByDiaryId" parameterType="long" resultMap="diaryLocationResultMap">
+        SELECT * FROM diary_location WHERE diary_id = #{diaryId}
+    </select>
+    
+    <!-- 查询所有日记-地点关联 -->
+    <select id="selectAll" resultMap="diaryLocationResultMap">
+        SELECT * FROM diary_location
+    </select>
+    
+    <!-- 更新日记-地点关联 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.relation.DiaryLocationPojo">
+        UPDATE diary_location
+        SET diary_id=#{diaryId}, location_id=#{locationId}, location_source=#{locationSource},
+            confidence=#{confidence}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除日记-地点关联 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM diary_location WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据日记ID和地点ID删除关联记录 -->
+    <delete id="deleteByDiaryIdAndLocationId">
+        DELETE FROM diary_location WHERE diary_id = #{diaryId} AND location_id = #{locationId}
+    </delete>
+    
+</mapper>

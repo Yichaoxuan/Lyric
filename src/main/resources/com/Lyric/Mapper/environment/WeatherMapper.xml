@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.environment.WeatherMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="weatherResultMap" type="com.lyric.lyric.Pojo.environment.WeatherPojo">
+        <id property="id" column="id"/>
+        <result property="diaryId" column="diary_id"/>
+        <result property="city" column="city"/>
+        <result property="weatherDate" column="weather_date"/>
+        <result property="weatherCondition" column="weather_condition"/>
+        <result property="temperature" column="temperature"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入天气 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.environment.WeatherPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO weather(diary_id, city, weather_date, weather_condition, temperature)
+        VALUES(#{diaryId}, #{city}, #{weatherDate}, #{weatherCondition}, #{temperature})
+    </insert>
+    
+    <!-- 根据ID查询天气 -->
+    <select id="selectById" parameterType="long" resultMap="weatherResultMap">
+        SELECT * FROM weather WHERE id = #{id}
+    </select>
+    
+    <!-- 根据日记ID查询天气 -->
+    <select id="selectByDiaryId" parameterType="long" resultMap="weatherResultMap">
+        SELECT * FROM weather WHERE diary_id = #{diaryId}
+    </select>
+    
+    <!-- 查询所有天气记录 -->
+    <select id="selectAll" resultMap="weatherResultMap">
+        SELECT * FROM weather
+    </select>
+    
+    <!-- 更新天气 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.environment.WeatherPojo">
+        UPDATE weather
+        SET diary_id=#{diaryId}, city=#{city}, weather_date=#{weatherDate},
+            weather_condition=#{weatherCondition}, temperature=#{temperature}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除天气 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM weather WHERE id = #{id}
+    </delete>
+    
+</mapper>

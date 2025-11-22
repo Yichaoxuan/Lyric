@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.relation.EventLocationMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="eventLocationResultMap" type="com.lyric.lyric.Pojo.relation.EventLocationPojo">
+        <id property="id" column="id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="locationId" column="location_id"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入事件-地点关联 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.relation.EventLocationPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO event_location(event_id, location_id)
+        VALUES(#{eventId}, #{locationId})
+    </insert>
+    
+    <!-- 根据ID查询事件-地点关联 -->
+    <select id="selectById" parameterType="long" resultMap="eventLocationResultMap">
+        SELECT * FROM event_location WHERE id = #{id}
+    </select>
+    
+    <!-- 根据事件ID查询所有关联的地点 -->
+    <select id="selectByEventId" parameterType="long" resultMap="eventLocationResultMap">
+        SELECT * FROM event_location WHERE event_id = #{eventId}
+    </select>
+    
+    <!-- 查询所有事件-地点关联 -->
+    <select id="selectAll" resultMap="eventLocationResultMap">
+        SELECT * FROM event_location
+    </select>
+    
+    <!-- 更新事件-地点关联 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.relation.EventLocationPojo">
+        UPDATE event_location
+        SET event_id=#{eventId}, location_id=#{locationId}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除事件-地点关联 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM event_location WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据事件ID和地点ID删除关联记录 -->
+    <delete id="deleteByEventIdAndLocationId">
+        DELETE FROM event_location WHERE event_id = #{eventId} AND location_id = #{locationId}
+    </delete>
+    
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.relation.DiaryEventMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="diaryEventResultMap" type="com.lyric.lyric.Pojo.relation.DiaryEventPojo">
+        <id property="id" column="id"/>
+        <result property="diaryId" column="diary_id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="confidence" column="confidence"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入日记-事件关联 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.relation.DiaryEventPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO diary_event(diary_id, event_id, confidence)
+        VALUES(#{diaryId}, #{eventId}, #{confidence})
+    </insert>
+    
+    <!-- 根据ID查询日记-事件关联 -->
+    <select id="selectById" parameterType="long" resultMap="diaryEventResultMap">
+        SELECT * FROM diary_event WHERE id = #{id}
+    </select>
+    
+    <!-- 根据日记ID查询所有关联的事件 -->
+    <select id="selectByDiaryId" parameterType="long" resultMap="diaryEventResultMap">
+        SELECT * FROM diary_event WHERE diary_id = #{diaryId}
+    </select>
+    
+    <!-- 查询所有日记-事件关联 -->
+    <select id="selectAll" resultMap="diaryEventResultMap">
+        SELECT * FROM diary_event
+    </select>
+    
+    <!-- 更新日记-事件关联 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.relation.DiaryEventPojo">
+        UPDATE diary_event
+        SET diary_id=#{diaryId}, event_id=#{eventId}, confidence=#{confidence}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除日记-事件关联 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM diary_event WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据日记ID和事件ID删除关联记录 -->
+    <delete id="deleteByDiaryIdAndEventId">
+        DELETE FROM diary_event WHERE diary_id = #{diaryId} AND event_id = #{eventId}
+    </delete>
+    
+</mapper>

@@ -1,0 +1,56 @@
+package com.lyric.lyric.Mapper.entity;
+
+import com.lyric.lyric.Pojo.entity.LocationPojo;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+
+/**
+ * 地点数据访问层接口
+ */
+@Mapper
+public interface LocationMapper {
+    
+    /**
+     * 插入一条地点记录
+     * @param location 地点实体
+     * @return 影响的行数
+     */
+    @Insert("INSERT INTO location(name, alias, longitude, latitude, city, geo_hash, first_appearance, last_appearance, appearance_count, importance) " +
+            "VALUES(#{name}, #{alias}, #{longitude}, #{latitude}, #{city}, #{geoHash}, #{firstAppearance}, #{lastAppearance}, #{appearanceCount}, #{importance})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(LocationPojo location);
+    
+    /**
+     * 根据ID查询地点
+     * @param id 地点ID
+     * @return 地点实体
+     */
+    @Select("SELECT * FROM location WHERE id = #{id}")
+    LocationPojo selectById(Long id);
+    
+    /**
+     * 查询所有地点
+     * @return 地点列表
+     */
+    @Select("SELECT * FROM location")
+    List<LocationPojo> selectAll();
+    
+    /**
+     * 更新地点
+     * @param location 地点实体
+     * @return 影响的行数
+     */
+    @Update("UPDATE location SET name=#{name}, alias=#{alias}, longitude=#{longitude}, latitude=#{latitude}, " +
+            "city=#{city}, geo_hash=#{geoHash}, first_appearance=#{firstAppearance}, last_appearance=#{lastAppearance}, " +
+            "appearance_count=#{appearanceCount}, importance=#{importance} WHERE id=#{id}")
+    int update(LocationPojo location);
+    
+    /**
+     * 根据ID删除地点
+     * @param id 地点ID
+     * @return 影响的行数
+     */
+    @Delete("DELETE FROM location WHERE id = #{id}")
+    int deleteById(Long id);
+}

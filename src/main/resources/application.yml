@@ -1,0 +1,21 @@
+spring:
+  #应用名称
+  application:
+    name: 逝流
+
+  # 配置使用SQLite数据库
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:./Lyric_dev.db
+
+  # 配置文件上传大小限制
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+  # MyBatis 配置
+mybatis:
+  configuration:
+    #自动映射下划线到驼峰命名
+    map-underscore-to-camel-case: true

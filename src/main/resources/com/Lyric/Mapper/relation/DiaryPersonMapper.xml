@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.relation.DiaryPersonMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="diaryPersonResultMap" type="com.lyric.lyric.Pojo.relation.DiaryPersonPojo">
+        <id property="id" column="id"/>
+        <result property="diaryId" column="diary_id"/>
+        <result property="personId" column="person_id"/>
+        <result property="confidence" column="confidence"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入日记-人物关联 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.relation.DiaryPersonPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO diary_person(diary_id, person_id, confidence)
+        VALUES(#{diaryId}, #{personId}, #{confidence})
+    </insert>
+    
+    <!-- 根据ID查询日记-人物关联 -->
+    <select id="selectById" parameterType="long" resultMap="diaryPersonResultMap">
+        SELECT * FROM diary_person WHERE id = #{id}
+    </select>
+    
+    <!-- 根据日记ID查询所有关联的人物 -->
+    <select id="selectByDiaryId" parameterType="long" resultMap="diaryPersonResultMap">
+        SELECT * FROM diary_person WHERE diary_id = #{diaryId}
+    </select>
+    
+    <!-- 查询所有日记-人物关联 -->
+    <select id="selectAll" resultMap="diaryPersonResultMap">
+        SELECT * FROM diary_person
+    </select>
+    
+    <!-- 更新日记-人物关联 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.relation.DiaryPersonPojo">
+        UPDATE diary_person
+        SET diary_id=#{diaryId}, person_id=#{personId}, confidence=#{confidence}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除日记-人物关联 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM diary_person WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据日记ID和人物ID删除关联记录 -->
+    <delete id="deleteByDiaryIdAndPersonId">
+        DELETE FROM diary_person WHERE diary_id = #{diaryId} AND person_id = #{personId}
+    </delete>
+    
+</mapper>

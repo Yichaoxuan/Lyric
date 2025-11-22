@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.tag.TagMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="tagResultMap" type="com.lyric.lyric.Pojo.tag.TagPojo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="tagType" column="tag_type"/>
+        <result property="color" column="color"/>
+        <result property="icon" column="icon"/>
+        <result property="usageCount" column="usage_count"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入标签 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.tag.TagPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tag(name, tag_type, color, icon, usage_count)
+        VALUES(#{name}, #{tagType}, #{color}, #{icon}, #{usageCount})
+    </insert>
+    
+    <!-- 根据ID查询标签 -->
+    <select id="selectById" parameterType="long" resultMap="tagResultMap">
+        SELECT * FROM tag WHERE id = #{id}
+    </select>
+    
+    <!-- 查询所有标签 -->
+    <select id="selectAll" resultMap="tagResultMap">
+        SELECT * FROM tag
+    </select>
+    
+    <!-- 更新标签 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.tag.TagPojo">
+        UPDATE tag
+        SET name=#{name}, tag_type=#{tagType}, color=#{color}, icon=#{icon},
+            usage_count=#{usageCount}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除标签 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM tag WHERE id = #{id}
+    </delete>
+    
+</mapper>

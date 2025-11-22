@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.entity.EventMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="eventResultMap" type="com.lyric.lyric.Pojo.entity.EventPojo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="eventDate" column="event_date"/>
+        <result property="description" column="description"/>
+        <result property="appearanceCount" column="appearance_count"/>
+        <result property="importance" column="importance"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入事件 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.entity.EventPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO event(name, event_date, description, appearance_count, importance)
+        VALUES(#{name}, #{eventDate}, #{description}, #{appearanceCount}, #{importance})
+    </insert>
+    
+    <!-- 根据ID查询事件 -->
+    <select id="selectById" parameterType="long" resultMap="eventResultMap">
+        SELECT * FROM event WHERE id = #{id}
+    </select>
+    
+    <!-- 查询所有事件 -->
+    <select id="selectAll" resultMap="eventResultMap">
+        SELECT * FROM event
+    </select>
+    
+    <!-- 更新事件 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.entity.EventPojo">
+        UPDATE event
+        SET name=#{name}, event_date=#{eventDate}, description=#{description},
+            appearance_count=#{appearanceCount}, importance=#{importance}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除事件 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM event WHERE id = #{id}
+    </delete>
+    
+</mapper>
