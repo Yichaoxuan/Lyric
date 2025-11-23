@@ -27,7 +27,7 @@ public interface EventPersonMapper {
      * @return 事件-人物关联实体
      */
     @Select("SELECT * FROM event_person WHERE id = #{id}")
-    EventPersonPojo selectById(Long id);
+    EventPersonPojo selectById(Integer id);
     
     /**
      * 根据事件ID查询所有关联的人物
@@ -35,7 +35,7 @@ public interface EventPersonMapper {
      * @return 事件-人物关联列表
      */
     @Select("SELECT * FROM event_person WHERE event_id = #{eventId}")
-    List<EventPersonPojo> selectByEventId(Long eventId);
+    List<EventPersonPojo> selectByEventId(Integer eventId);
     
     /**
      * 查询所有事件-人物关联
@@ -58,7 +58,7 @@ public interface EventPersonMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM event_person WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据事件ID和人物ID删除关联记录
@@ -67,5 +67,5 @@ public interface EventPersonMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM event_person WHERE event_id = #{eventId} AND person_id = #{personId}")
-    int deleteByEventIdAndPersonId(@Param("eventId") Long eventId, @Param("personId") Long personId);
+    int deleteByEventIdAndPersonId(@Param("eventId") Integer eventId, @Param("personId") Integer personId);
 }

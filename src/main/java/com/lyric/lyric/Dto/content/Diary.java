@@ -19,6 +19,11 @@ import java.time.LocalDateTime;
 public class Diary {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记标题
      */
     private String title;
@@ -110,6 +115,7 @@ public class Diary {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param title 日记标题
      * @param content 日记内容
      * @param contentType 内容类型
@@ -122,10 +128,11 @@ public class Diary {
      * @param writingDuration 写作时长
      * @param diaryDate 日记日期
      */
-    public Diary(String title, String content, ContentType contentType, ContentFormat contentFormat,
+    public Diary(Integer id, String title, String content, ContentType contentType, ContentFormat contentFormat,
                  Integer isDraft, Double emotionScore, Integer wordCount,
                  LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
                  LocalDate diaryDate) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.contentType = contentType;

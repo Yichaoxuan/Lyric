@@ -22,7 +22,7 @@ public class EventPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 事件名称
@@ -76,13 +76,15 @@ public class EventPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param name 事件名称
      * @param eventDate 事件日期
      * @param description 事件描述
      * @param appearanceCount 出现次数
      * @param importance 重要性等级
      */
-    public EventPojo(String name, LocalDate eventDate, String description, Integer appearanceCount, ImportanceLevel importance) {
+    public EventPojo(Integer id, String name, LocalDate eventDate, String description, Integer appearanceCount, ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.eventDate = eventDate;
         this.description = description;

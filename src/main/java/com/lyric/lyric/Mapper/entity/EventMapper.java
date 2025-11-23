@@ -27,7 +27,7 @@ public interface EventMapper {
      * @return 事件实体
      */
     @Select("SELECT * FROM event WHERE id = #{id}")
-    EventPojo selectById(Long id);
+    EventPojo selectById(Integer id);
     
     /**
      * 查询所有事件
@@ -51,5 +51,5 @@ public interface EventMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM event WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

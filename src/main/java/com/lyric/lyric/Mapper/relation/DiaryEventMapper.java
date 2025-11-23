@@ -27,7 +27,7 @@ public interface DiaryEventMapper {
      * @return 日记-事件关联实体
      */
     @Select("SELECT * FROM diary_event WHERE id = #{id}")
-    DiaryEventPojo selectById(Long id);
+    DiaryEventPojo selectById(Integer id);
     
     /**
      * 根据日记ID查询所有关联的事件
@@ -35,7 +35,7 @@ public interface DiaryEventMapper {
      * @return 日记-事件关联列表
      */
     @Select("SELECT * FROM diary_event WHERE diary_id = #{diaryId}")
-    List<DiaryEventPojo> selectByDiaryId(Long diaryId);
+    List<DiaryEventPojo> selectByDiaryId(Integer diaryId);
     
     /**
      * 查询所有日记-事件关联
@@ -58,7 +58,7 @@ public interface DiaryEventMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_event WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据日记ID和事件ID删除关联记录
@@ -67,5 +67,5 @@ public interface DiaryEventMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_event WHERE diary_id = #{diaryId} AND event_id = #{eventId}")
-    int deleteByDiaryIdAndEventId(@Param("diaryId") Long diaryId, @Param("eventId") Long eventId);
+    int deleteByDiaryIdAndEventId(@Param("diaryId") Integer diaryId, @Param("eventId") Integer eventId);
 }

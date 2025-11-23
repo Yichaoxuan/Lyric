@@ -23,7 +23,7 @@ public class DiaryPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 日记标题
@@ -132,6 +132,7 @@ public class DiaryPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param title 日记标题
      * @param content 日记内容
      * @param contentType 内容类型
@@ -145,10 +146,11 @@ public class DiaryPojo {
      * @param writingDuration 写作时长
      * @param diaryDate 日记日期
      */
-    public DiaryPojo(String title, String content, ContentType contentType, ContentFormat contentFormat,
+    public DiaryPojo(Integer id, String title, String content, ContentType contentType, ContentFormat contentFormat,
                  Integer isDeleted, Integer isDraft, Double emotionScore, Integer wordCount,
                  LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
                  LocalDate diaryDate) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.contentType = contentType;

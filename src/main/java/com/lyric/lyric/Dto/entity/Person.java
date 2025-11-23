@@ -18,6 +18,11 @@ import java.time.LocalDateTime;
 public class Person {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 人物名称
      */
     private String name;
@@ -74,6 +79,7 @@ public class Person {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param name 人物名称
      * @param alias 人物别称
      * @param relation 与用户的关系
@@ -82,9 +88,10 @@ public class Person {
      * @param lastAppearance 最后一次出现时间
      * @param importance 重要性等级
      */
-    public Person(String name, String alias, String relation, String tags,
+    public Person(Integer id, String name, String alias, String relation, String tags,
                   LocalDateTime firstAppearance, LocalDateTime lastAppearance,
                   ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.alias = alias;
         this.relation = relation;

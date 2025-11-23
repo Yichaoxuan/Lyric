@@ -21,17 +21,17 @@ public class DiaryLocationPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 地点ID
      */
-    private Long locationId;
+    private Integer locationId;
 
     /**
      * 定位来源
@@ -65,12 +65,14 @@ public class DiaryLocationPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param locationId 地点ID
      * @param locationSource 定位来源
      * @param confidence 定位置信度
      */
-    public DiaryLocationPojo(Long diaryId, Long locationId, LocationSource locationSource, Double confidence) {
+    public DiaryLocationPojo(Integer id, Integer diaryId, Integer locationId, LocationSource locationSource, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.locationId = locationId;
         this.locationSource = locationSource;

@@ -2,11 +2,13 @@ package com.lyric.lyric.Service.diary;
 
 
 import com.lyric.lyric.Dto.content.Diary;
+import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import com.lyric.lyric.MapStruct.content.DiaryMapStruct;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.Pojo.content.DiaryPojo;
 import com.lyric.lyric.Utils.DateTime.DateTimeUtils;
 import com.lyric.lyric.Utils.ResultUtils.Result;
+import com.lyric.lyric.Utils.ResultUtils.ResultBuilder;
 import com.lyric.lyric.Utils.WordCount.WordCountUtils;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,13 @@ public class DiaryService {
         this.diaryMapStruct = diaryMapStruct;
     }
 
-    public Result insertDiary(Diary diary) {
+    /**
+     * 创建日记
+     *
+     * @param diary 日记DTO对象
+     * @return 创建结果
+     */
+    public Result<Void> insertDiary(Diary diary) {
 
         //创建DiaryPojo对象并赋值
         DiaryPojo diaryPojo = diaryMapStruct.toPojo(diary);
@@ -47,7 +55,38 @@ public class DiaryService {
 
         diaryMapper.insert(diaryPojo);
 
-        return new Result();
+        return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
 
     }
+
+    /**
+     * 删除日记
+     *
+     * @param diaryId 日记ID
+     * @return 删除结果
+     */
+    public Result<Void> deleteDiary(Integer diaryId) {
+        return ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
+    }
+
+    /**
+     * 修改日记
+     *
+     * @param diary 日记DTO对象
+     * @return 修改结果
+     */
+    public Result<Void> modifyDiary(Diary diary) {
+        return ResultBuilder.success(SuccessMsgEnums.MODIFY_SUCCESS);
+    }
+
+    /**
+     * 查询日记
+     *
+     * @param diaryId 日记ID
+     * @return 查询结果
+     */
+    public Result<Diary> queryDiary(Integer diaryId) {
+        return ResultBuilder.successWithData(SuccessMsgEnums.QUERY_SUCCESS, diaryMapStruct.toDto(diaryMapper.selectById(diaryId)));
+    }
+
 }

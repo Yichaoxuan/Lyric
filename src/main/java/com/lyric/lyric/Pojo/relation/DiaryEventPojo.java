@@ -20,17 +20,17 @@ public class DiaryEventPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 事件ID
      */
-    private Long eventId;
+    private Integer eventId;
 
     /**
      * AI生成置信度
@@ -44,11 +44,13 @@ public class DiaryEventPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param eventId 事件ID
      * @param confidence AI生成置信度
      */
-    public DiaryEventPojo(Long diaryId, Long eventId, Double confidence) {
+    public DiaryEventPojo(Integer id, Integer diaryId, Integer eventId, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.eventId = eventId;
         this.confidence = confidence;

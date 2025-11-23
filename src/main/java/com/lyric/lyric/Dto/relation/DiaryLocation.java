@@ -16,14 +16,19 @@ import lombok.Setter;
 public class DiaryLocation {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 地点ID
      */
-    private Long locationId;
+    private Integer locationId;
 
     /**
      * 地点来源
@@ -36,12 +41,14 @@ public class DiaryLocation {
     private Double confidence;
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param locationId 地点ID
      * @param locationSource 地点来源
      * @param confidence 置信度
      */
-    public DiaryLocation(Long diaryId, Long locationId, String locationSource, Double confidence) {
+    public DiaryLocation(Integer id, Integer diaryId, Integer locationId, String locationSource, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.locationId = locationId;
         this.locationSource = locationSource;

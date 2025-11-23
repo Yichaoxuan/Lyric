@@ -21,7 +21,7 @@ public class PersonPojp {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 人物名称
@@ -90,6 +90,7 @@ public class PersonPojp {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param name 人物名称
      * @param alias 人物别称
      * @param relation 与用户的关系
@@ -99,9 +100,10 @@ public class PersonPojp {
      * @param appearanceCount 出现次数
      * @param importance 重要性等级
      */
-    public PersonPojp(String name, String alias, String relation, String tags,
+    public PersonPojp(Integer id, String name, String alias, String relation, String tags,
                       LocalDateTime firstAppearance, LocalDateTime lastAppearance,
                       Integer appearanceCount, ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.alias = alias;
         this.relation = relation;

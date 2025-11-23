@@ -27,7 +27,7 @@ public interface DiaryTagMapper {
      * @return 日记-标签关联实体
      */
     @Select("SELECT * FROM diary_tag WHERE id = #{id}")
-    DiaryTagPojo selectById(Long id);
+    DiaryTagPojo selectById(Integer id);
     
     /**
      * 根据日记ID查询所有关联的标签
@@ -35,7 +35,7 @@ public interface DiaryTagMapper {
      * @return 日记-标签关联列表
      */
     @Select("SELECT * FROM diary_tag WHERE diary_id = #{diaryId}")
-    List<DiaryTagPojo> selectByDiaryId(Long diaryId);
+    List<DiaryTagPojo> selectByDiaryId(Integer diaryId);
     
     /**
      * 查询所有日记-标签关联
@@ -58,7 +58,7 @@ public interface DiaryTagMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_tag WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据日记ID和标签ID删除关联记录
@@ -67,5 +67,5 @@ public interface DiaryTagMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_tag WHERE diary_id = #{diaryId} AND tag_id = #{tagId}")
-    int deleteByDiaryIdAndTagId(@Param("diaryId") Long diaryId, @Param("tagId") Long tagId);
+    int deleteByDiaryIdAndTagId(@Param("diaryId") Integer diaryId, @Param("tagId") Integer tagId);
 }

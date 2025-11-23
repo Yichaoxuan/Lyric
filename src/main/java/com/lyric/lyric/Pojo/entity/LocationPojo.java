@@ -20,7 +20,7 @@ public class LocationPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 地点名称
@@ -99,6 +99,7 @@ public class LocationPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param name 地点名称
      * @param alias 地点别名
      * @param longitude 经度
@@ -110,9 +111,10 @@ public class LocationPojo {
      * @param appearanceCount 出现次数
      * @param importance 重要性等级
      */
-    public LocationPojo(String name, String alias, Double longitude, Double latitude, String city,
+    public LocationPojo(Integer id, String name, String alias, Double longitude, Double latitude, String city,
                     String geoHash, LocalDateTime firstAppearance, LocalDateTime lastAppearance,
                     Integer appearanceCount, ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.alias = alias;
         this.longitude = longitude;

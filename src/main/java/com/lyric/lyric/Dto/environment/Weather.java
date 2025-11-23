@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 /**
  * 天气请求DTO类
  * 只包含前端可信字段
@@ -16,9 +18,14 @@ import lombok.Setter;
 public class Weather {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 城市
@@ -28,7 +35,7 @@ public class Weather {
     /**
      * 天气日期
      */
-    private String weatherDate;
+    private LocalDateTime weatherDate;
 
     /**
      * 天气状况
@@ -38,16 +45,19 @@ public class Weather {
     /**
      * 温度
      */
-    private String temperature;
+    private Double temperature;
+    
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param city 城市
      * @param weatherDate 天气日期
      * @param weatherCondition 天气状况
      * @param temperature 温度
      */
-    public Weather(Long diaryId, String city, String weatherDate, String weatherCondition, String temperature) {
+    public Weather(Integer id, Integer diaryId, String city, LocalDateTime weatherDate, String weatherCondition, Double temperature) {
+        this.id = id;
         this.diaryId = diaryId;
         this.city = city;
         this.weatherDate = weatherDate;

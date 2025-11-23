@@ -27,7 +27,7 @@ public interface TagMapper {
      * @return 标签实体
      */
     @Select("SELECT * FROM tag WHERE id = #{id}")
-    TagPojo selectById(Long id);
+    TagPojo selectById(Integer id);
     
     /**
      * 查询所有标签
@@ -51,5 +51,5 @@ public interface TagMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM tag WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

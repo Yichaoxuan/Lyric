@@ -27,7 +27,7 @@ public interface DiaryLocationMapper {
      * @return 日记-地点关联实体
      */
     @Select("SELECT * FROM diary_location WHERE id = #{id}")
-    DiaryLocationPojo selectById(Long id);
+    DiaryLocationPojo selectById(Integer id);
     
     /**
      * 根据日记ID查询所有关联的地点
@@ -35,7 +35,7 @@ public interface DiaryLocationMapper {
      * @return 日记-地点关联列表
      */
     @Select("SELECT * FROM diary_location WHERE diary_id = #{diaryId}")
-    List<DiaryLocationPojo> selectByDiaryId(Long diaryId);
+    List<DiaryLocationPojo> selectByDiaryId(Integer diaryId);
     
     /**
      * 查询所有日记-地点关联
@@ -59,7 +59,7 @@ public interface DiaryLocationMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_location WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据日记ID和地点ID删除关联记录
@@ -68,5 +68,5 @@ public interface DiaryLocationMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_location WHERE diary_id = #{diaryId} AND location_id = #{locationId}")
-    int deleteByDiaryIdAndLocationId(@Param("diaryId") Long diaryId, @Param("locationId") Long locationId);
+    int deleteByDiaryIdAndLocationId(@Param("diaryId") Integer diaryId, @Param("locationId") Integer locationId);
 }

@@ -27,7 +27,7 @@ public interface WeatherMapper {
      * @return 天气实体
      */
     @Select("SELECT * FROM weather WHERE id = #{id}")
-    WeatherPojo selectById(Long id);
+    WeatherPojo selectById(Integer id);
     
     /**
      * 根据日记ID查询天气
@@ -35,7 +35,7 @@ public interface WeatherMapper {
      * @return 天气实体
      */
     @Select("SELECT * FROM weather WHERE diary_id = #{diaryId}")
-    WeatherPojo selectByDiaryId(Long diaryId);
+    WeatherPojo selectByDiaryId(Integer diaryId);
     
     /**
      * 查询所有天气记录
@@ -59,5 +59,5 @@ public interface WeatherMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM weather WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

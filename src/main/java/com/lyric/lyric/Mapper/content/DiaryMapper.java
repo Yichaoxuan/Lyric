@@ -27,7 +27,7 @@ public interface DiaryMapper {
      * @return 日记实体
      */
     @Select("SELECT * FROM diary WHERE id = #{id}")
-    DiaryPojo selectById(Long id);
+    DiaryPojo selectById(Integer id);
     
     /**
      * 查询所有日记
@@ -53,5 +53,5 @@ public interface DiaryMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

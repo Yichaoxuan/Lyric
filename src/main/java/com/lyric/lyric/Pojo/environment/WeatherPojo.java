@@ -21,12 +21,12 @@ public class WeatherPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 关联的日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 城市
@@ -55,13 +55,15 @@ public class WeatherPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param diaryId 关联的日记ID
      * @param city 城市
      * @param weatherDate 天气日期
      * @param weatherCondition 天气状况
      * @param temperature 温度
      */
-    public WeatherPojo(Long diaryId, String city, LocalDate weatherDate, String weatherCondition, Double temperature) {
+    public WeatherPojo(Integer id, Integer diaryId, String city, LocalDate weatherDate, String weatherCondition, Double temperature) {
+        this.id = id;
         this.diaryId = diaryId;
         this.city = city;
         this.weatherDate = weatherDate;

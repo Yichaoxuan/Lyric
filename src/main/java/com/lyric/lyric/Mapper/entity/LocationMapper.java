@@ -27,7 +27,7 @@ public interface LocationMapper {
      * @return 地点实体
      */
     @Select("SELECT * FROM location WHERE id = #{id}")
-    LocationPojo selectById(Long id);
+    LocationPojo selectById(Integer id);
     
     /**
      * 查询所有地点
@@ -52,5 +52,5 @@ public interface LocationMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM location WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

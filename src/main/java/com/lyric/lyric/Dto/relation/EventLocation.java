@@ -16,20 +16,28 @@ import lombok.Setter;
 public class EventLocation {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 事件ID
      */
-    private Long eventId;
+    private Integer eventId;
 
     /**
      * 地点ID
      */
-    private Long locationId;
+    private Integer locationId;
+    
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param eventId 事件ID
      * @param locationId 地点ID
      */
-    public EventLocation(Long eventId, Long locationId) {
+    public EventLocation(Integer id, Integer eventId, Integer locationId) {
+        this.id = id;
         this.eventId = eventId;
         this.locationId = locationId;
     }

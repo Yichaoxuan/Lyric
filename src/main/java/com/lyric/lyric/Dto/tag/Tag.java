@@ -16,6 +16,11 @@ import lombok.Setter;
 public class Tag {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 标签名称
      */
     private String name;
@@ -52,12 +57,14 @@ public class Tag {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param name 标签名称
      * @param tagType 标签类型
      * @param color 颜色
      * @param icon 图标
      */
-    public Tag(String name, TagType tagType, String color, String icon) {
+    public Tag(Integer id, String name, TagType tagType, String color, String icon) {
+        this.id = id;
         this.name = name;
         this.tagType = tagType;
         this.color = color;

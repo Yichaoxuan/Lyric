@@ -18,6 +18,11 @@ import java.time.LocalDateTime;
 public class Event {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 事件名称
      */
     private String name;
@@ -59,12 +64,14 @@ public class Event {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param name 事件名称
      * @param eventDate 事件日期
      * @param description 事件描述
      * @param importance 重要性等级
      */
-    public Event(String name, LocalDateTime eventDate, String description, ImportanceLevel importance) {
+    public Event(Integer id, String name, LocalDateTime eventDate, String description, ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.eventDate = eventDate;
         this.description = description;

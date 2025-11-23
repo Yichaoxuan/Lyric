@@ -22,17 +22,17 @@ public class EventLocationPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 事件ID
      */
-    private Long eventId;
+    private Integer eventId;
 
     /**
      * 地点ID
      */
-    private Long locationId;
+    private Integer locationId;
 
     /**
      * 创建时间
@@ -41,10 +41,12 @@ public class EventLocationPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param eventId 事件ID
      * @param locationId 地点ID
      */
-    public EventLocationPojo(Long eventId, Long locationId) {
+    public EventLocationPojo(Integer id, Integer eventId, Integer locationId) {
+        this.id = id;
         this.eventId = eventId;
         this.locationId = locationId;
     }

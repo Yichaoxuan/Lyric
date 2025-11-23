@@ -21,17 +21,17 @@ public class DiaryTagPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 标签ID
      */
-    private Long tagId;
+    private Integer tagId;
 
     /**
      * AI生成置信度
@@ -45,11 +45,13 @@ public class DiaryTagPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param tagId 标签ID
      * @param confidence AI生成置信度
      */
-    public DiaryTagPojo(Long diaryId, Long tagId, Double confidence) {
+    public DiaryTagPojo(Integer id, Integer diaryId, Integer tagId, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.tagId = tagId;
         this.confidence = confidence;

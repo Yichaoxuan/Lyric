@@ -27,7 +27,7 @@ public interface DiaryPersonMapper {
      * @return 日记-人物关联实体
      */
     @Select("SELECT * FROM diary_person WHERE id = #{id}")
-    DiaryPersonPojo selectById(Long id);
+    DiaryPersonPojo selectById(Integer id);
     
     /**
      * 根据日记ID查询所有关联的人物
@@ -35,7 +35,7 @@ public interface DiaryPersonMapper {
      * @return 日记-人物关联列表
      */
     @Select("SELECT * FROM diary_person WHERE diary_id = #{diaryId}")
-    List<DiaryPersonPojo> selectByDiaryId(Long diaryId);
+    List<DiaryPersonPojo> selectByDiaryId(Integer diaryId);
     
     /**
      * 查询所有日记-人物关联
@@ -58,7 +58,7 @@ public interface DiaryPersonMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_person WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据日记ID和人物ID删除关联记录
@@ -67,5 +67,5 @@ public interface DiaryPersonMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM diary_person WHERE diary_id = #{diaryId} AND person_id = #{personId}")
-    int deleteByDiaryIdAndPersonId(@Param("diaryId") Long diaryId, @Param("personId") Long personId);
+    int deleteByDiaryIdAndPersonId(@Param("diaryId") Integer diaryId, @Param("personId") Integer personId);
 }

@@ -18,6 +18,11 @@ import java.time.LocalDateTime;
 public class Location {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 地点名称
      */
     private String name;
@@ -84,6 +89,7 @@ public class Location {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param name 地点名称
      * @param alias 地点别称
      * @param longitude 经度
@@ -94,9 +100,10 @@ public class Location {
      * @param lastAppearance 最后一次出现时间
      * @param importance 重要性等级
      */
-    public Location(String name, String alias, Double longitude, Double latitude, String city,
+    public Location(Integer id, String name, String alias, Double longitude, Double latitude, String city,
                    String geoHash, LocalDateTime firstAppearance, LocalDateTime lastAppearance,
                    ImportanceLevel importance) {
+        this.id = id;
         this.name = name;
         this.alias = alias;
         this.longitude = longitude;

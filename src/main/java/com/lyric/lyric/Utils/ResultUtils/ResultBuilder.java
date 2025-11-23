@@ -2,7 +2,6 @@ package com.lyric.lyric.Utils.ResultUtils;
 
 import com.lyric.lyric.Enums.message.ErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
-import com.lyric.lyric.Utils.ResultUtils.Result;
 
 /**
  * 统一响应结果构建器

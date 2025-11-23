@@ -21,7 +21,7 @@ public class TagPojo {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 标签名称
@@ -70,13 +70,15 @@ public class TagPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
+     * @param id 主键ID
      * @param name 标签名称
      * @param tagType 标签类型
      * @param color 标签颜色
      * @param icon 表情图标
      * @param usageCount 使用次数
      */
-    public TagPojo(String name, TagType tagType, String color, String icon, Integer usageCount) {
+    public TagPojo(Integer id, String name, TagType tagType, String color, String icon, Integer usageCount) {
+        this.id = id;
         this.name = name;
         this.tagType = tagType;
         this.color = color;

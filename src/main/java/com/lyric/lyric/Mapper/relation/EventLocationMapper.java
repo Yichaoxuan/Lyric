@@ -27,7 +27,7 @@ public interface EventLocationMapper {
      * @return 事件-地点关联实体
      */
     @Select("SELECT * FROM event_location WHERE id = #{id}")
-    EventLocationPojo selectById(Long id);
+    EventLocationPojo selectById(Integer id);
     
     /**
      * 根据事件ID查询所有关联的地点
@@ -35,7 +35,7 @@ public interface EventLocationMapper {
      * @return 事件-地点关联列表
      */
     @Select("SELECT * FROM event_location WHERE event_id = #{eventId}")
-    List<EventLocationPojo> selectByEventId(Long eventId);
+    List<EventLocationPojo> selectByEventId(Integer eventId);
     
     /**
      * 查询所有事件-地点关联
@@ -58,7 +58,7 @@ public interface EventLocationMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM event_location WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
     
     /**
      * 根据事件ID和地点ID删除关联记录
@@ -67,5 +67,5 @@ public interface EventLocationMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM event_location WHERE event_id = #{eventId} AND location_id = #{locationId}")
-    int deleteByEventIdAndLocationId(@Param("eventId") Long eventId, @Param("locationId") Long locationId);
+    int deleteByEventIdAndLocationId(@Param("eventId") Integer eventId, @Param("locationId") Integer locationId);
 }

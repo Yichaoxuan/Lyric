@@ -27,7 +27,7 @@ public interface PersonMapper {
      * @return 人物实体
      */
     @Select("SELECT * FROM person WHERE id = #{id}")
-    PersonPojo selectById(Long id);
+    PersonPojo selectById(Integer id);
     
     /**
      * 查询所有人物
@@ -52,5 +52,5 @@ public interface PersonMapper {
      * @return 影响的行数
      */
     @Delete("DELETE FROM person WHERE id = #{id}")
-    int deleteById(Long id);
+    int deleteById(Integer id);
 }

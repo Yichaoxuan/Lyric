@@ -29,8 +29,41 @@ public class DiaryController {
      * @param diary 日记DTO对象
      * @return 创建结果
      */
-//    @PostMapping("/insertDiary")
-//    public Result insertDiary(@RequestBody Diary diary) {
-//        return diaryService.insertDiary(diary);
-//    }
+    @PostMapping("/insertDiary")
+    public Result<Void> insertDiary(@RequestBody Diary diary) {
+        return diaryService.insertDiary(diary);
+    }
+
+    /**
+     * 删除日记
+     *
+     * @param diaryId 日记ID
+     * @return 删除结果
+     */
+    @PostMapping("/deleteDiary")
+    public Result<Void> deleteDiary(@RequestBody Integer diaryId) {
+        return diaryService.deleteDiary(diaryId);
+    }
+
+    /**
+     * 修改日记
+     *
+     * @param diary 日记DTO对象
+     * @return 修改结果
+     */
+    @PostMapping("/modifyDiary")
+    public Result<Void> modifyDiary(@RequestBody Diary diary) {
+        return diaryService.modifyDiary(diary);
+    }
+
+    /**
+     * 查询日记
+     *
+     * @param diaryId 日记ID
+     * @return 查询结果
+     */
+    @PostMapping("/queryDiary")
+    public Result<Diary> queryDiary(@RequestBody Integer diaryId) {
+        return diaryService.queryDiary(diaryId);
+    }
 }

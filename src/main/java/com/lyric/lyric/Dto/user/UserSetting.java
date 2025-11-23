@@ -16,6 +16,11 @@ import lombok.Setter;
 public class UserSetting {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 首次使用日期
      */
     private String firstUseDate;
@@ -29,13 +34,16 @@ public class UserSetting {
      * 用户配置
      */
     private String userConfig;
+    
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param firstUseDate 首次使用日期
      * @param apiConfig API配置
      * @param userConfig 用户配置
      */
-    public UserSetting(String firstUseDate, String apiConfig, String userConfig) {
+    public UserSetting(Integer id, String firstUseDate, String apiConfig, String userConfig) {
+        this.id = id;
         this.firstUseDate = firstUseDate;
         this.apiConfig = apiConfig;
         this.userConfig = userConfig;

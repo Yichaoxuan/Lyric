@@ -16,26 +16,34 @@ import lombok.Setter;
 public class DiaryPerson {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 人物ID
      */
-    private Long personId;
+    private Integer personId;
 
     /**
      * 置信度
      */
     private Double confidence;
+    
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param personId 人物ID
      * @param confidence 置信度
      */
-    public DiaryPerson(Long diaryId, Long personId, Double confidence) {
+    public DiaryPerson(Integer id, Integer diaryId, Integer personId, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.personId = personId;
         this.confidence = confidence;

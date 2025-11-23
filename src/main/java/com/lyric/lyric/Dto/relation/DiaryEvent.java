@@ -16,14 +16,19 @@ import lombok.Setter;
 public class DiaryEvent {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 事件ID
      */
-    private Long eventId;
+    private Integer eventId;
 
     /**
      * 置信度
@@ -31,11 +36,13 @@ public class DiaryEvent {
     private Double confidence;
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param eventId 事件ID
      * @param confidence 置信度
      */
-    public DiaryEvent(Long diaryId, Long eventId, Double confidence) {
+    public DiaryEvent(Integer id, Integer diaryId, Integer eventId, Double confidence) {
+        this.id = id;
         this.diaryId = diaryId;
         this.eventId = eventId;
         this.confidence = confidence;

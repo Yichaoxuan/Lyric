@@ -18,9 +18,14 @@ import java.time.LocalDateTime;
 public class MediaFile {
 
     /**
+     * 主键ID
+     */
+    private Integer id;
+
+    /**
      * 日记ID
      */
-    private Long diaryId;
+    private Integer diaryId;
 
     /**
      * 文件名
@@ -69,6 +74,7 @@ public class MediaFile {
 
     /**
      * 有参构造方法
+     * @param id 主键ID
      * @param diaryId 日记ID
      * @param fileName 文件名
      * @param filePath 文件路径
@@ -76,7 +82,8 @@ public class MediaFile {
      * @param fileSize 文件大小
      * @param uploadTime 上传时间
      */
-    public MediaFile(Long diaryId, String fileName, String filePath, FileType fileType, Long fileSize, LocalDateTime uploadTime) {
+    public MediaFile(Integer id, Integer diaryId, String fileName, String filePath, FileType fileType, Long fileSize, LocalDateTime uploadTime) {
+        this.id = id;
         this.diaryId = diaryId;
         this.fileName = fileName;
         this.filePath = filePath;
