@@ -1,4 +1,4 @@
-package com.lyric.lyric.Cless.message;
+package com.lyric.lyric.Initializer.message;
 
 import com.lyric.lyric.Config.message.MsgConfig;
 import com.lyric.lyric.Enums.message.ErrorMsgEnums;

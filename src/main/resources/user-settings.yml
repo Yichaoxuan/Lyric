@@ -1,0 +1,51 @@
+# 用户设置配置文件
+# 用于配置用户的各种个性化选项和API密钥
+
+# 功能开关配置
+features:
+  # AI分析功能开关
+  ai_analytics: true
+  
+  # 智能标签生成功能开关
+  smart_label_generation: true
+  
+  # 实体标签生成功能开关
+  entity_label_generation: true
+  
+  # 位置标记功能开关
+  location_marking: true
+  
+  # 天气识别功能开关
+  weather_identification: true
+
+# 用户偏好配置
+preferences:
+  # 首次使用日期
+  first_use_date: 2025-11-23
+  
+  # 默认城市
+  default_city: "北京"
+
+# API配置
+api:
+  # Deepseek API密钥
+  deepseek_api_key: "sk-f4a347e73a024c85a1a90faea04d4d26"
+
+  # 百度自然语言处理API
+  baidu_nlp_api_key: "4kyWjZUUoIHGHj69bFFDEQ5A"
+  
+  # 百度自然语言处理Secret密钥
+  baidu_nlp_secret_key: "Jn6iNKJv6BXn4de1kSzdAEMplyU42Exb"
+  
+  # HanLP（汉语处理平台）API
+  hanlp_api_key: "OTM4MkBiYnMuaGFubHAuY29tOmhCeTNncVJUQng1Nnl3Ync="
+  
+  # 百度地图API
+  baidu_map_api_key: "https://api.map.baidu.com/"
+  
+  # 和风天气API
+  qweather_api_key: "081d41c1b7c14713abbaee69df4a919d"
+  qweather_api_host: "kd4t2ba85n.re.qweatherapi.com"
+  
+  # 表情符号API
+  emoji_api_key: "yDRabFtmMPGBlrZhReVJerVwJazdtOKi"
