@@ -1,0 +1,54 @@
+# 消息配置文件
+# 统一管理系统中的成功和错误消息
+
+response-message:
+  # 错误消息配置
+  error:
+    diary_not_found:
+      code: "404"
+      message: "日记未找到"
+    diary_content_empty:
+      code: "400"
+      message: "日记内容不能为空"
+    diary_title_empty:
+      code: "400"
+      message: "日记标题不能为空"
+    media_upload_failed:
+      code: "500"
+      message: "媒体文件上传失败"
+    media_type_not_supported:
+      code: "400"
+      message: "不支持的媒体文件类型"
+    ai_processing_error:
+      code: "500"
+      message: "AI处理失败"
+    ai_model_not_available:
+      code: "503"
+      message: "AI模型不可用"
+    ai_request_timeout:
+      code: "408"
+      message: "AI请求超时"
+    user_setting_update_failed:
+      code: "500"
+      message: "用户设置更新失败"
+    user_preference_invalid:
+      code: "400"
+      message: "用户偏好设置无效"
+  
+  # 成功消息配置
+  success:
+    save_success:
+      code: "200"
+      message: "保存成功"
+    delete_success:
+      code: "200"
+      message: "删除成功"
+    modify_success:
+      code: "200"
+      message: "修改成功"
+    query_success:
+      code: "200"
+      message: "查询成功"
+    setting_success:
+      code: "200"
+      message: "设置成功"
