@@ -1,4 +1,4 @@
-package com.lyric.lyric.Controller;
+package com.lyric.lyric.Controller.Diary;
 
 import com.lyric.lyric.Dto.content.Diary;
 import com.lyric.lyric.Service.diary.DiaryService;

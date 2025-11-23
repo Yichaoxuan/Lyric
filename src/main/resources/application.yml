@@ -16,7 +16,8 @@ spring:
       
   # 配置额外的配置文件
   config:
-    import: classpath:message-config.yml
+    import: classpath:message-config.yml,classpath:user-settings.yml
+
 
 # MyBatis 配置
 mybatis:
