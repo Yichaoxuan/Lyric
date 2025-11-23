@@ -30,14 +30,6 @@ public class ResultBuilder {
      * @param <T>         数据类型
      * @return Result对象
      */
-    /**
-     * 构建成功响应结果（有数据）
-     *
-     * @param successEnum 成功消息枚举
-     * @param data        响应数据
-     * @param <T>         数据类型
-     * @return Result对象
-     */
     public static <T> Result<T> successWithData(SuccessMsgEnums successEnum, T data) {
         return Result.success(successEnum.getCode(), data);
     }
