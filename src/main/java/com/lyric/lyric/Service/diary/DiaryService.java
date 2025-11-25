@@ -6,11 +6,11 @@ import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import com.lyric.lyric.MapStruct.content.DiaryMapStruct;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.Pojo.content.DiaryPojo;
-import com.lyric.lyric.Utils.DateTime.DateTimeUtils;
-import com.lyric.lyric.Utils.ResultUtils.Result;
-import com.lyric.lyric.Utils.ResultUtils.ResultBuilder;
-import com.lyric.lyric.Utils.WordCount.WordCountUtils;
-import lombok.experimental.Accessors;
+import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
+import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
+import com.lyric.lyric.Utils.resultUtils.Result;
+import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
+import com.lyric.lyric.Utils.wordCount.WordCountUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +18,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiaryService {
 
-    @Accessors
     private final DiaryMapper diaryMapper;
 
-    @Accessors
     private final DiaryMapStruct diaryMapStruct;
 
-    public DiaryService(DiaryMapper diaryMapper, DiaryMapStruct diaryMapStruct) {
+    private final AIAnalysisService AIAnalysisService;
+
+    public DiaryService(DiaryMapper diaryMapper, DiaryMapStruct diaryMapStruct, AIAnalysisService AIAnalysisService) {
         this.diaryMapper = diaryMapper;
         this.diaryMapStruct = diaryMapStruct;
+        this.AIAnalysisService = AIAnalysisService;
     }
 
     /**
@@ -51,9 +52,11 @@ public class DiaryService {
             diaryMapper.insert(diaryPojo);
         }
 
-        //判断是否开启AI分析
+        //保存日记,并返回日记Id
+        Integer dairyId = diaryMapper.insert(diaryPojo);
 
-        diaryMapper.insert(diaryPojo);
+        //判断是否开启AI分析
+        AIAnalysisService.tagAnalysis(dairyId, diary.getContent());
 
         return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
 

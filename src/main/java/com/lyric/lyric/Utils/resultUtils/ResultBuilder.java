@@ -1,4 +1,4 @@
-package com.lyric.lyric.Utils.ResultUtils;
+package com.lyric.lyric.Utils.resultUtils;
 
 import com.lyric.lyric.Enums.message.ErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;

@@ -2,7 +2,7 @@ package com.lyric.lyric.Controller.message;
 
 import com.lyric.lyric.Pojo.message.MessageConfigPojo;
 import com.lyric.lyric.Service.message.MessageService;
-import com.lyric.lyric.Utils.ResultUtils.Result;
+import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

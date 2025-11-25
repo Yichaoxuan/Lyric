@@ -1,4 +1,4 @@
-package com.lyric.lyric.Utils.DateTime;
+package com.lyric.lyric.Utils.dateTime;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;

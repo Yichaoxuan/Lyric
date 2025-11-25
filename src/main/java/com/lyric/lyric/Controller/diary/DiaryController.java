@@ -1,8 +1,8 @@
-package com.lyric.lyric.Controller.Diary;
+package com.lyric.lyric.Controller.diary;
 
 import com.lyric.lyric.Dto.content.Diary;
 import com.lyric.lyric.Service.diary.DiaryService;
-import com.lyric.lyric.Utils.ResultUtils.Result;
+import com.lyric.lyric.Utils.resultUtils.Result;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

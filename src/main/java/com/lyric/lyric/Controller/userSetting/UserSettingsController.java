@@ -1,8 +1,9 @@
 package com.lyric.lyric.Controller.userSetting;
 
+import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
-import com.lyric.lyric.Utils.ResultUtils.Result;
+import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class UserSettingsController {
     @GetMapping("/feature/{featureName}")
     public Result<Boolean> isFeatureEnabled(@PathVariable String featureName) {
         logger.debug("检查功能启用状态: {}", featureName);
-        boolean enabled = userSettingsService.isFeatureEnabled(featureName);
+        boolean enabled = userSettingsService.isFeatureEnabled(UserFunctionEnum.valueOf(featureName));
         logger.debug("功能 {} 启用状态: {}", featureName, enabled);
         return Result.success(SuccessMsgEnums.QUERY_SUCCESS.getCode(), enabled);
     }

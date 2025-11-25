@@ -1,6 +1,7 @@
 package com.lyric.lyric.Service.userSettings;
 
 import com.lyric.lyric.Config.userSetting.UserSettingsConfig;
+import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,19 +44,24 @@ public class UserSettingsService {
         userSettingsConfig.updateFromUserSettingsPojo(userSettings);
         logger.info("用户设置更新完成");
     }
-
+    
     /**
-     * 检查特定功能是否启用
+     * 检查特定功能是否启用（通过枚举）
      *
-     * @param featureName 功能名称 ("aiAnalytics", "smartLabelGeneration", "entityLabelGeneration", 
-     *                    "locationMarking", "weatherIdentification")
+     * @param function 功能枚举
      * @return 如果功能启用返回true，否则返回false
      */
-    public boolean isFeatureEnabled(String featureName) {
-        logger.debug("检查功能是否启用: {}", featureName);
+    public boolean isFeatureEnabled(UserFunctionEnum function) {
+        logger.debug("检查功能是否启用: {}", function.getDisplayName());
+
+        // 检查AI分析功能总开关是否启用
+        if(!userSettingsConfig.getFeatures().isAiAnalytics()){
+            logger.warn("AI分析功能已禁用，请启用后再试");
+            return false;
+        }
         
-        boolean isEnabled = switch (featureName) {
-            case "aiAnalytics" -> userSettingsConfig.getFeatures().isAiAnalytics();
+        boolean isEnabled = switch (function.getCode()) {
+            case "aiAnalytics" -> true;
             case "smartLabelGeneration" -> userSettingsConfig.getFeatures().isSmartLabelGeneration();
             case "entityLabelGeneration" -> userSettingsConfig.getFeatures().isEntityLabelGeneration();
             case "locationMarking" -> userSettingsConfig.getFeatures().isLocationMarking();
@@ -63,7 +69,7 @@ public class UserSettingsService {
             default -> false;
         };
 
-        logger.debug("功能 {} 启用状态: {}", featureName, isEnabled);
+        logger.debug("功能 {}({}) 启用状态: {}", function.getDisplayName(), function.getCode(), isEnabled);
         return isEnabled;
     }
     
