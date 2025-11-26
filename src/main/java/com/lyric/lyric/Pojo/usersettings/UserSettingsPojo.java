@@ -56,6 +56,11 @@ public class UserSettingsPojo {
     private boolean isWeatherIdentification;
 
     /**
+     * 分析规则
+     */
+    private String analysisRules;
+
+    /**
      * Deepseek API配置
      */
     private String deepseekAPIKey;

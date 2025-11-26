@@ -34,6 +34,9 @@ response-message:
     user_preference_invalid:
       code: "400"
       message: "用户偏好设置无效"
+    diary_not_in_trash:
+      code: "400"
+      message: "日记不在回收站中"
   
   # 成功消息配置
   success:
@@ -52,3 +55,9 @@ response-message:
     setting_success:
       code: "200"
       message: "设置成功"
+    move_to_trash_success:
+      code: "200"
+      message: "已移入回收站"
+    restore_from_trash_success:
+      code: "200"
+      message: "已从回收站恢复"

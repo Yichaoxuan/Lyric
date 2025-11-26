@@ -1,5 +1,6 @@
 package com.lyric.lyric.Dto.content;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,11 +62,13 @@ public class Diary {
     /**
      * 写作开始时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime writingStartTime;
 
     /**
      * 写作结束时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime writingEndTime;
 
     /**
@@ -77,41 +80,6 @@ public class Diary {
      * 日记日期
      */
     private LocalDate diaryDate;
-
-    /**
-     * 内容类型枚举
-     */
-    public enum ContentType {
-        /**
-         * 日记
-         */
-        DIARY,
-
-        /**
-         * 文章
-         */
-        ARTICLE,
-
-        /**
-         * 笔记
-         */
-        NOTE
-    }
-
-    /**
-     * 内容格式枚举
-     */
-    public enum ContentFormat {
-        /**
-         * 富文本
-         */
-        RICH_TEXT,
-
-        /**
-         * Markdown格式
-         */
-        MARKDOWN
-    }
 
     /**
      * 有参构造方法
@@ -144,5 +112,71 @@ public class Diary {
         this.writingEndTime = writingEndTime;
         this.writingDuration = writingDuration;
         this.diaryDate = diaryDate;
+    }
+
+    /**
+     * 内容类型枚举
+     */
+    public enum ContentType {
+        /**
+         * 日记
+         */
+        DIARY("diary"),
+
+        /**
+         * 文章
+         */
+        ARTICLE("article"),
+
+        /**
+         * 笔记
+         */
+        NOTE("note");
+
+        private final String value;
+
+        ContentType(String contentTypeValue) {
+            this.value = contentTypeValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+    }
+
+    /**
+     * 内容格式枚举
+     */
+    public enum ContentFormat {
+        /**
+         * 富文本
+         */
+        RICH_TEXT("rich_text"),
+
+        /**
+         * Markdown格式
+         */
+        MARKDOWN("markdown");
+
+        private final String value;
+
+        ContentFormat(String contentFormatValue) {
+            this.value = contentFormatValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value; // 返回小写形式以匹配数据库约束
+        }
     }
 }

@@ -17,6 +17,7 @@ public enum ErrorMsgEnums {
     DIARY_TITLE_EMPTY("日记标题不能为空"),
     MEDIA_UPLOAD_FAILED("媒体文件上传失败"),
     MEDIA_TYPE_NOT_SUPPORTED("不支持的媒体文件类型"),
+    DIARY_NOT_IN_TRASH("日记不在回收站中"),
     
     //AI模块
     AI_PROCESSING_ERROR("AI处理失败"),

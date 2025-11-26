@@ -18,7 +18,9 @@ public class UserSettingsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserSettingsService.class);
     
-    private final UserSettingsConfig userSettingsConfig;    public UserSettingsService(UserSettingsConfig userSettingsConfig) {
+    private final UserSettingsConfig userSettingsConfig;
+
+    public UserSettingsService(UserSettingsConfig userSettingsConfig) {
         this.userSettingsConfig = userSettingsConfig;
     }
 

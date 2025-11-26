@@ -15,6 +15,8 @@ public enum SuccessMsgEnums {
     DELETE_SUCCESS("删除成功"),
     MODIFY_SUCCESS("修改成功"),
     QUERY_SUCCESS("查询成功"),
+    MOVE_TO_TRASH_SUCCESS("已移入回收站"),
+    RESTORE_FROM_TRASH_SUCCESS("已从回收站恢复"),
 
     //用户设置
     SETTING_SUCCESS("设置成功");

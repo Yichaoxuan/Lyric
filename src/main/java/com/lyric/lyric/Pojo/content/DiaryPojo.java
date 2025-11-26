@@ -24,111 +24,62 @@ public class DiaryPojo {
      * 主键ID
      */
     private Integer id;
-
     /**
      * 日记标题
      */
     private String title;
-
     /**
      * 日记内容
      */
     private String content;
-
     /**
      * 内容类型
      */
     private ContentType contentType;
-
     /**
      * 编辑器格式
      */
     private ContentFormat contentFormat;
-
     /**
      * 是否删除 (0:否, 1:是)
      */
     private Integer isDeleted;
-
     /**
      * 是否为草稿 (0:否, 1:是)
      */
     private Integer isDraft;
-
     /**
      * 情感得分 (-2.0 到 2.0)
      */
     private Double emotionScore;
-
     /**
      * 字数统计
      */
     private Integer wordCount;
-
     /**
      * 写作开始时间
      */
     private LocalDateTime writingStartTime;
-
     /**
      * 写作结束时间
      */
     private LocalDateTime writingEndTime;
-
     /**
      * 写作时长(分钟)
      */
     private Integer writingDuration;
-
     /**
      * 日记日期
      */
     private LocalDate diaryDate;
-
     /**
      * 创建时间
      */
     private LocalDateTime createdAt;
-
     /**
      * 更新时间
      */
     private LocalDateTime updatedAt;
-
-    /**
-     * 内容类型枚举
-     */
-    public enum ContentType {
-        /**
-         * 日记
-         */
-        DIARY,
-
-        /**
-         * 文章
-         */
-        ARTICLE,
-
-        /**
-         * 笔记
-         */
-        NOTE
-    }
-
-    /**
-     * 内容格式枚举
-     */
-    public enum ContentFormat {
-        /**
-         * 富文本
-         */
-        RICH_TEXT,
-
-        /**
-         * Markdown格式
-         */
-        MARKDOWN
-    }
 
     /**
      * 有参构造方法（不包含自动生成的字段）
@@ -163,5 +114,71 @@ public class DiaryPojo {
         this.writingEndTime = writingEndTime;
         this.writingDuration = writingDuration;
         this.diaryDate = diaryDate;
+    }
+
+    /**
+     * 内容类型枚举
+     */
+    public enum ContentType {
+        /**
+         * 日记
+         */
+        DIARY("diary"),
+
+        /**
+         * 文章
+         */
+        ARTICLE("article"),
+
+        /**
+         * 笔记
+         */
+        NOTE("note");
+
+        private final String value;
+
+        ContentType(String contentTypeValue) {
+            this.value = contentTypeValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+    }
+
+    /**
+     * 内容格式枚举
+     */
+    public enum ContentFormat {
+        /**
+         * 富文本
+         */
+        RICH_TEXT("rich_text"),
+
+        /**
+         * Markdown格式
+         */
+        MARKDOWN("markdown");
+
+        private final String value;
+
+        ContentFormat(String contentFormatValue) {
+            this.value = contentFormatValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value; // 返回小写形式以匹配数据库约束
+        }
     }
 }

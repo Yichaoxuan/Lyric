@@ -1,4 +1,4 @@
-package com.lyric.lyric.Dto.user;
+package com.lyric.lyric.Dto.usersettings;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserSetting {
+public class UserSettings {
 
     /**
      * 主键ID
@@ -42,7 +42,7 @@ public class UserSetting {
      * @param apiConfig API配置
      * @param userConfig 用户配置
      */
-    public UserSetting(Integer id, String firstUseDate, String apiConfig, String userConfig) {
+    public UserSettings(Integer id, String firstUseDate, String apiConfig, String userConfig) {
         this.id = id;
         this.firstUseDate = firstUseDate;
         this.apiConfig = apiConfig;

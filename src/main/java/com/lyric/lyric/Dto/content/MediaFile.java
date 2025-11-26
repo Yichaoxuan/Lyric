@@ -53,26 +53,6 @@ public class MediaFile {
     private LocalDateTime uploadTime;
 
     /**
-     * 文件类型枚举
-     */
-    public enum FileType {
-        /**
-         * 图片文件
-         */
-        IMAGE,
-
-        /**
-         * 音频文件
-         */
-        AUDIO,
-
-        /**
-         * 视频文件
-         */
-        VIDEO
-    }
-
-    /**
      * 有参构造方法
      * @param id 主键ID
      * @param diaryId 日记ID
@@ -90,5 +70,41 @@ public class MediaFile {
         this.fileType = fileType;
         this.fileSize = fileSize;
         this.uploadTime = uploadTime;
+    }
+
+    /**
+     * 文件类型枚举
+     */
+    public enum FileType {
+        /**
+         * 图片文件
+         */
+        IMAGE("image"),
+
+        /**
+         * 音频文件
+         */
+        AUDIO("audio"),
+
+        /**
+         * 视频文件
+         */
+        VIDEO("video");
+
+        private final String value;
+
+        FileType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return value;// 返回小写形式以匹配数据库约束
+        }
+
     }
 }

@@ -40,6 +40,7 @@ public class UserSettingsVerification {
             logger.info("用户偏好配置:");
             logger.info("  首次使用日期: {}", userSettingsConfig.getPreferences().getFirstUseDate());
             logger.info("  默认城市: {}", userSettingsConfig.getPreferences().getDefaultCity());
+            logger.info("分析规则：{}", userSettingsConfig.getPreferences().getAnalysisRules());
             
             // 验证API配置（仅记录是否存在，不记录具体值）
             logger.info("API配置验证:");

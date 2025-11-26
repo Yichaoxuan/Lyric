@@ -17,7 +17,7 @@ public interface MediaFileMapper {
      * @return 影响的行数
      */
     @Insert("INSERT INTO media_file(diary_id, file_name, file_path, file_type, file_size, upload_time) " +
-            "VALUES(#{diaryId}, #{fileName}, #{filePath}, #{fileType}, #{fileSize}, #{uploadTime})")
+            "VALUES(#{diaryId}, #{fileName}, #{filePath}, #{fileType.value}, #{fileSize}, #{uploadTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(MediaFilePojo mediaFile);
     
@@ -50,7 +50,7 @@ public interface MediaFileMapper {
      * @return 影响的行数
      */
     @Update("UPDATE media_file SET diary_id=#{diaryId}, file_name=#{fileName}, file_path=#{filePath}, " +
-            "file_type=#{fileType}, file_size=#{fileSize}, upload_time=#{uploadTime} WHERE id=#{id}")
+            "file_type=#{fileType.value}, file_size=#{fileSize}, upload_time=#{uploadTime} WHERE id=#{id}")
     int update(MediaFilePojo mediaFile);
     
     /**

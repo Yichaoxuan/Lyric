@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/diary")
 public class DiaryController {
 
-    @Accessors
     private final DiaryService diaryService;
 
     public DiaryController(DiaryService diaryService) {
         this.diaryService = diaryService;
     }
 
-    // 日记相关接口
     /**
      * 创建日记
      *
@@ -35,15 +33,38 @@ public class DiaryController {
     }
 
     /**
-     * 删除日记
+     * 将日记移至回收站
+     *
+     * @param diaryId 日记ID
+     * @return 操作结果
+     */
+    @PostMapping("/moveToTrash")
+    public Result<Void> moveToTrash(@RequestBody Integer diaryId) {
+        return diaryService.moveToTrash(diaryId);
+    }
+    
+    /**
+     * 从回收站永久删除日记
      *
      * @param diaryId 日记ID
      * @return 删除结果
      */
-    @PostMapping("/deleteDiary")
-    public Result<Void> deleteDiary(@RequestBody Integer diaryId) {
-        return diaryService.deleteDiary(diaryId);
+    @PostMapping("/permanentlyDelete")
+    public Result<Void> permanentlyDelete(@RequestBody Integer diaryId) {
+        return diaryService.permanentlyDeleteDiary(diaryId);
     }
+    
+    /**
+     * 从回收站恢复日记
+     *
+     * @param diaryId 日记ID
+     * @return 恢复结果
+     */
+    @PostMapping("/restoreFromTrash")
+    public Result<Void> restoreFromTrash(@RequestBody Integer diaryId) {
+        return diaryService.restoreFromTrash(diaryId);
+    }
+
 
     /**
      * 修改日记
