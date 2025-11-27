@@ -21,79 +21,145 @@ import java.time.LocalDate;
 public class UserSettingsPojo {
 
     /**
-     * 首次使用日期
+     * 功能开关配置
      */
-    private LocalDate firstUseDate;
+    private Features features = new Features();
+    /**
+     * 用户偏好配置
+     */
+    private Preferences preferences = new Preferences();
+    /**
+     * API配置
+     */
+    private Api api = new Api();
 
     /**
-     * 默认城市
+     * 功能开关配置内部类
+     * 包含所有功能开关的配置项
      */
-    private String defaultCity;
+    @Setter
+    @Getter
+    public static class Features {
+        /**
+         * AI分析功能开关
+         * 控制是否启用AI分析功能
+         */
+        private boolean aiAnalytics = true;
+
+        /**
+         * 智能标签生成功能开关
+         * 控制是否启用智能标签生成功能
+         */
+        private boolean smartLabelGeneration = true;
+
+        /**
+         * 实体标签生成功能开关
+         * 控制是否启用实体标签生成功能
+         */
+        private boolean entityLabelGeneration = true;
+
+        /**
+         * 位置标记功能开关
+         * 控制是否启用位置标记功能
+         */
+        private boolean locationMarking = true;
+
+        /**
+         * 天气识别功能开关
+         * 控制是否启用天气识别功能
+         */
+        private boolean weatherIdentification = true;
+
+    }
 
     /**
-     * 是否启用AI分析功能
+     * 用户偏好配置内部类
+     * 包含用户偏好相关的配置项
      */
-    private boolean isAIAnalytics;
+    @Setter
+    @Getter
+    public  static class Preferences {
+        /**
+         * 首次使用日期
+         * 记录用户首次使用应用的日期
+         */
+        private LocalDate firstUseDate;
+
+        /**
+         * 默认城市
+         * 用户设置的默认城市，用于天气等服务
+         */
+        private String defaultCity;
+
+        /**
+         * 分析规则
+         * 用户自定义的内容分析规则
+         */
+        private String analysisRules;
+
+        /**
+         * 响应消息生成规则
+         * 用户自定义的响应消息生成规则
+         */
+        private String responseMessageGenerationRules;
+
+    }
 
     /**
-     * 是否启用智能标签生成功能
+     * API配置内部类
+     * 包含所有第三方API的密钥和配置信息
      */
-    private boolean isSmartLabelGeneration;
+    @Setter
+    @Getter
+    public static class Api {
+        /**
+         * DeepSeek API密钥
+         * 用于访问DeepSeek AI服务的API密钥
+         */
+        private String deepseekApiKey;
 
-    /**
-     * 是否启用实体标签生成功能
-     */
-    private boolean isEntityLabelGeneration;
+        /**
+         * 百度NLP API Key
+         * 用于访问百度自然语言处理服务的API Key
+         */
+        private String baiduNlpApiKey;
 
-    /**
-     * 是否启用位置标记功能
-     */
-    private boolean isLocationMarking;
+        /**
+         * 百度NLP Secret Key
+         * 用于访问百度自然语言处理服务的Secret Key
+         */
+        private String baiduNlpSecretKey;
 
-    /**
-     * 是否启用天气识别功能
-     */
-    private boolean isWeatherIdentification;
+        /**
+         * HanLP API密钥
+         * 用于访问HanLP自然语言处理服务的API密钥
+         */
+        private String hanlpApiKey;
 
-    /**
-     * 分析规则
-     */
-    private String analysisRules;
+        /**
+         * 百度地图API密钥
+         * 用于访问百度地图服务的API密钥
+         */
+        private String baiduMapApiKey;
 
-    /**
-     * Deepseek API配置
-     */
-    private String deepseekAPIKey;
+        /**
+         * QWeather API密钥
+         * 用于访问QWeather天气服务的API密钥
+         */
+        private String qweatherApiKey;
 
-    /**
-     * 百度自然语言处理API配置
-     */
-    private String baiduNPLAPIKey;
+        /**
+         * QWeather API主机地址
+         * QWeather天气服务的API主机地址
+         */
+        private String qweatherApiHost;
 
-    /**
-     * 百度自然语言处理Secret密钥
-     */
-    private String baiduNLPAPIKey;
+        /**
+         * Emoji API密钥
+         * 用于访问Emoji服务的API密钥
+         */
+        private String emojiApiKey;
 
-    /**
-     * HanLP（汉语处理平台）API配置
-     */
-    private String HanLPAPIKey;
-
-    /**
-     * 百度地图API配置
-     */
-    private String baiduMapAPIKey;
-
-    /**
-     * 和风天气API配置
-     */
-    private String qWeatherAPIKey;
-    private String qWeatherAPIHost;
-
-    /**
-     * 表情符号API配置
-     */
-    private String EmojiAPIKey;
+    }
 
 }

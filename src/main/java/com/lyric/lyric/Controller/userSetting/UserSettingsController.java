@@ -36,7 +36,7 @@ public class UserSettingsController {
     @GetMapping("/getUserSettings")
     public Result<UserSettingsPojo> getUserSettings() {
         logger.info("收到获取用户设置的请求");
-        UserSettingsPojo settings = userSettingsService.getUserSettings();
+        UserSettingsPojo settings = userSettingsService.getLatestConfig();
         logger.info("成功获取用户设置");
         return Result.success(SuccessMsgEnums.SETTING_SUCCESS.getCode(), settings);
     }

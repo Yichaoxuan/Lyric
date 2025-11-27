@@ -63,8 +63,8 @@ public class DiaryService {
         //保存日记,并返回日记Id
         Integer dairyId = diaryMapper.insert(diaryPojo);
 
-        //调用AI分析进行内容分析，生成标签
-//        AIAnalysisService.tagAnalysis(dairyId, diary.getContent());
+        //异步调用AI分析进行内容分析，生成标签
+        AIAnalysisService.tagAnalysis(dairyId, diary.getContent());
 
         return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
 

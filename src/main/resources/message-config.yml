@@ -1,63 +1,65 @@
-# 消息配置文件
-# 统一管理系统中的成功和错误消息
+# 响应消息配置
 
 response-message:
-  # 错误消息配置
-  error:
-    diary_not_found:
-      code: "404"
-      message: "日记未找到"
-    diary_content_empty:
-      code: "400"
-      message: "日记内容不能为空"
-    diary_title_empty:
-      code: "400"
-      message: "日记标题不能为空"
-    media_upload_failed:
-      code: "500"
-      message: "媒体文件上传失败"
-    media_type_not_supported:
-      code: "400"
-      message: "不支持的媒体文件类型"
-    ai_processing_error:
-      code: "500"
-      message: "AI处理失败"
-    ai_model_not_available:
-      code: "503"
-      message: "AI模型不可用"
-    ai_request_timeout:
-      code: "408"
-      message: "AI请求超时"
-    user_setting_update_failed:
-      code: "500"
-      message: "用户设置更新失败"
-    user_preference_invalid:
-      code: "400"
-      message: "用户偏好设置无效"
-    diary_not_in_trash:
-      code: "400"
-      message: "日记不在回收站中"
-  
-  # 成功消息配置
   success:
     save_success:
       code: "200"
-      message: "保存成功"
+      message: "保存成功啦~这次做得还不错嘛"
     delete_success:
       code: "200"
-      message: "删除成功"
-    modify_success:
-      code: "200"
-      message: "修改成功"
-    query_success:
-      code: "200"
-      message: "查询成功"
-    setting_success:
-      code: "200"
-      message: "设置成功"
-    move_to_trash_success:
-      code: "200"
-      message: "已移入回收站"
+      message: "删除完成！这种小事对我来说轻轻松松啦"
     restore_from_trash_success:
       code: "200"
-      message: "已从回收站恢复"
+      message: "已经从回收站恢复好了，下次要小心点哦"
+    message_config_success:
+      code: "200"
+      message: "消息配置完成！虽然是你要求的，但确实做得不错呢"
+    setting_success:
+      code: "200"
+      message: "设置成功！这下满意了吧？"
+    query_success:
+      code: "200"
+      message: "查询完成！结果不是理所当然的嘛"
+    move_to_trash_success:
+      code: "200"
+      message: "已经移入回收站啦，可别后悔哦"
+    modify_success:
+      code: "200"
+      message: "修改成功！这次就勉强夸你一下好了"
+  error:
+    ai_model_not_available:
+      code: "503"
+      message: "哼~现在AI模型不在服务状态呢，真是的...明明人家都准备好了的说"
+    diary_content_empty:
+      code: "400"
+      message: "喂！日记内容怎么能是空的啊！至少写点什么嘛..."
+    media_upload_failed:
+      code: "500"
+      message: "呜...媒体文件上传失败了啦，都怪服务器不争气"
+    ai_processing_error:
+      code: "500"
+      message: "真是的，AI处理出错了...这种时候就该好好反省一下呢"
+    ai_request_timeout:
+      code: "408"
+      message: "等太久了啦！AI请求超时了，真是让人着急"
+    media_type_not_supported:
+      code: "400"
+      message: "这种媒体文件类型不支持哦，你是在故意为难我吗？"
+    diary_not_found:
+      code: "404"
+      message: "找不到日记啦！你是不是记错了？"
+    diary_not_in_trash:
+      code: "400"
+      message: "日记根本不在回收站里，别乱说嘛"
+    user_setting_update_failed:
+      code: "500"
+      message: "用户设置更新失败了...真是的，系统又在闹脾气"
+    user_preference_invalid:
+      code: "400"
+      message: "你的偏好设置有问题啦，好好检查一下嘛"
+    diary_title_empty:
+      code: "400"
+      message: "标题怎么能是空的！这样一点都不认真哦"
+    response_message_command_not_input:
+      code: "400"
+      message: "响应消息命令都没输入，让人家怎么工作嘛"

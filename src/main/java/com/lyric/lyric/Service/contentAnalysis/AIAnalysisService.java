@@ -2,14 +2,17 @@ package com.lyric.lyric.Service.contentAnalysis;
 
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
+import com.lyric.lyric.Pojo.message.MessageConfigPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
+import com.lyric.lyric.Utils.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
  * AI分析服务类
- * 用于处理日记内容的AI分析，包括标签生成等功能
+ * 用于处理日记内容的AI分析，包括标签生成,响应消息生成等功能
  *
  * @author Yichaoxuan
  * @since 2025-11-24
@@ -17,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AIAnalysisService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserSettingsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AIAnalysisService.class);
 
     private final UserSettingsService userSettingsService;
 
@@ -44,6 +47,7 @@ public class AIAnalysisService {
      *
      * @param diaryId 日记ID
      */
+    @Async("aiAnalysisExecutor")
     public void tagAnalysis(Integer diaryId) {
        tagAnalysis(diaryId, diaryMapper.selectById(diaryId).getContent());
     }
@@ -54,23 +58,51 @@ public class AIAnalysisService {
      *
      * @param diaryId 日记ID
      * @param content 需要分析的内容
-     * @return AI分析结果
      */
+    @Async("aiAnalysisExecutor")
     public void  tagAnalysis(Integer diaryId, String content) {
         logger.info("开始对日记进行标签分析");
 
         // 判断是否开启了AI分析功能与标签生成功能
         if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
             logger.info("AI分析功能或智能标签生成功能未开启，跳过标签分析");
+            return;
         }
 
         // 获取用户设置的分析规则
-        String rules = userSettingsService.getUserSettings().getAnalysisRules();
+        String rules = userSettingsService.getAnalysisRules();
         // 将内容和规则组合成消息
         String message = content + "\n" + rules;
+        logger.info("开始分析：{}", message);
         // 调用AI分析内容
         String result = callAiAnalysis.analyzeContent(message);
-        // 输出分析结果
-        System.out.println(result);
+        logger.info("AI分析结果：{}", result);
+    }
+
+    /**
+     * 生成指定类型的响应消息
+     *
+     * @param newMessageConfigInstructions 新地响应消息配置指令
+     * @return 生成的响应消息配置指令
+     */
+    public MessageConfigPojo generateResponseMessage(String newMessageConfigInstructions) {
+        // 获取生成规则
+        String rules = userSettingsService.getResponseMessageGenerationRules();
+        // 将规则和消息类型组合成消息
+        String message = newMessageConfigInstructions + "\n" + rules;
+        // 调用AI生成消息
+        String result = callAiAnalysis.analyzeContent(message);
+        
+        // 清理AI返回的结果，去除可能的额外字符
+        result = JsonUtils.removeExtraCharacters(result);
+        
+        // 验证结果是否为有效的JSON
+        if (result == null || !JsonUtils.isValidJson(result)) {
+            logger.error("AI返回的结果不是有效的JSON格式: {}", result);
+            return null;
+        }
+        
+        //将生成的消息解析为MessageConfigPojo
+        return JsonUtils.fromJson(result, MessageConfigPojo.class);
     }
 }

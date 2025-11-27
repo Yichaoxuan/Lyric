@@ -19,7 +19,8 @@ public enum SuccessMsgEnums {
     RESTORE_FROM_TRASH_SUCCESS("已从回收站恢复"),
 
     //用户设置
-    SETTING_SUCCESS("设置成功");
+    SETTING_SUCCESS("设置成功"),
+    MESSAGE_CONFIG_SUCCESS("响应消息更新成功");
 
     /**
      * 成功消息名称

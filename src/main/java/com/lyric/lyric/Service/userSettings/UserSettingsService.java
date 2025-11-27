@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 提供获取和更新用户设置的功能
  *
  * @author Yichaoxun
- * @since 2025-11-23
+ * @since 2025-11-27
  */
 @Service
 public class UserSettingsService {
@@ -25,17 +25,55 @@ public class UserSettingsService {
     }
 
     /**
-     * 获取当前用户设置
+     * 获取当前所有用户设置
      *
      * @return UserSettingsPojo对象
      */
-    public UserSettingsPojo getUserSettings() {
+    public UserSettingsPojo getLatestConfig() {
         logger.debug("正在获取用户设置");
-        UserSettingsPojo settings = userSettingsConfig.toUserSettingsPojo();
+        UserSettingsPojo settings = userSettingsConfig.getLatestUserSettingsConfig();
         logger.debug("成功获取用户设置");
         return settings;
     }
-    
+
+    /**
+     * 获取最新功能配置
+     * @return UserSettingsPojo对象，包含当前功能配置
+     */
+    public UserSettingsPojo.Features getLatestFeatureConfig() {
+        return userSettingsConfig.getLatestFeatureConfig();
+    }
+
+    /**
+     * 获取最新API配置
+     * @return UserSettingsPojo对象，包含当前API配置
+     */
+    public UserSettingsPojo.Api getLatestApiConfig() {
+        return userSettingsConfig.getLatestApiConfig();
+    }
+
+    /**
+     * 获取最新用户偏好配置
+     * @return UserSettingsPojo对象，包含当前用户偏好配置
+     */
+    public UserSettingsPojo.Preferences getLatestUserPreferenceConfig() {
+        return userSettingsConfig.getLatestUserPreferenceConfig();
+    }
+
+    /**
+     * 获取最新分析规则
+     */
+    public String getAnalysisRules() {
+        return userSettingsConfig.getLatestUserPreferenceConfig().getAnalysisRules();
+    }
+
+    /**
+     * 获取最新响应消息生成规则
+     */
+    public String getResponseMessageGenerationRules() {
+        return userSettingsConfig.getLatestUserPreferenceConfig().getResponseMessageGenerationRules();
+    }
+
     /**
      * 更新用户设置
      *
@@ -63,7 +101,7 @@ public class UserSettingsService {
         }
         
         boolean isEnabled = switch (function.getCode()) {
-            case "aiAnalytics" -> true;
+            case "aiAnalytics" -> userSettingsConfig.getFeatures().isAiAnalytics();
             case "smartLabelGeneration" -> userSettingsConfig.getFeatures().isSmartLabelGeneration();
             case "entityLabelGeneration" -> userSettingsConfig.getFeatures().isEntityLabelGeneration();
             case "locationMarking" -> userSettingsConfig.getFeatures().isLocationMarking();
@@ -94,6 +132,7 @@ public class UserSettingsService {
             logger.info("用户偏好配置:");
             logger.info("  首次使用日期: {}", userSettingsConfig.getPreferences().getFirstUseDate());
             logger.info("  默认城市: {}", userSettingsConfig.getPreferences().getDefaultCity());
+            logger.info("  ");
             
             // 打印API配置状态（不显示具体密钥）
             logger.info("API配置状态:");

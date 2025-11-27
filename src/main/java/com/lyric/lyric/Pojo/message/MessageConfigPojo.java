@@ -1,9 +1,6 @@
 package com.lyric.lyric.Pojo.message;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Map;
 
@@ -11,6 +8,7 @@ import java.util.Map;
  * 消息配置POJO类
  * 用于运行时动态更新消息配置
  */
+@Data
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +17,15 @@ public class MessageConfigPojo {
     private Map<String, Message> error;
     private Map<String, Message> success;
 
+    public Message getErrorMessage(String key) {
+        return error.get(key);
+    }
+
+    public Message getSuccessMessage(String key) {
+        return success.get(key);
+    }
+
+    @Data
     @Getter
     @Setter
     public static class Message {

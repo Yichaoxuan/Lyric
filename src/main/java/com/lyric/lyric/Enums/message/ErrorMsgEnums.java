@@ -26,7 +26,8 @@ public enum ErrorMsgEnums {
     
     //用户设置
     USER_SETTING_UPDATE_FAILED("用户设置更新失败"),
-    USER_PREFERENCE_INVALID("用户偏好设置无效");
+    USER_PREFERENCE_INVALID("用户偏好设置无效"),
+    RESPONSE_MESSAGE_COMMAND_NOT_INPUT("响应消息命令未输入");
 
     /**
      * 错误消息名称

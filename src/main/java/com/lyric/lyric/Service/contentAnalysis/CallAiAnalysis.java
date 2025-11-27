@@ -39,7 +39,7 @@ public class CallAiAnalysis {
      */
     private GenerationParam buildGenerationParam(Message userMsg) {
         return GenerationParam.builder()
-                .apiKey(userSettingsService.getUserSettings().getDeepseekAPIKey())
+                .apiKey(userSettingsService.getLatestApiConfig().getDeepseekApiKey())
                 .model("deepseek-v3.2-exp")
                 .incrementalOutput(true)
                 .resultFormat("message")
@@ -65,7 +65,7 @@ public class CallAiAnalysis {
 
         StringBuilder fullResponse = new StringBuilder();
         result.blockingForEach(generationResult -> {
-            String content = generationResult.getOutput().getChoices().get(0).getMessage().getContent();
+            String content = generationResult.getOutput().getChoices().getFirst().getMessage().getContent();
             if (content != null && !content.isEmpty()) {
                 fullResponse.append(content);
                 System.out.print(content);
