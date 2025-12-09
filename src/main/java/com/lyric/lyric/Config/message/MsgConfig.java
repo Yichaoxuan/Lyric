@@ -31,10 +31,17 @@ public class MsgConfig {
     private static final Logger logger = LoggerFactory.getLogger(MsgConfig.class);
 
     /**
-     *  将错误消息配置项保存为Map
+     *  将业务错误消息配置项保存为Map
      *
      */
-    private Map<String, MessageConfigPojo.Message> error = new HashMap<>();
+    private Map<String, MessageConfigPojo.Message> businessError = new HashMap<>();
+    
+    /**
+     *  将系统错误消息配置项保存为Map
+     *
+     */
+    private Map<String, MessageConfigPojo.Message> systemError = new HashMap<>();
+    
     /**
      *  将成功消息配置项保存为Map
      *
@@ -49,8 +56,11 @@ public class MsgConfig {
     public void printConfigurations() {
         logger.info("消息配置加载状态检查:");
 
-        // 检查错误消息配置
-        ConfigLoggerUtil.logConfigStatus(logger, "  错误消息配置", error);
+        // 检查业务错误消息配置
+        ConfigLoggerUtil.logConfigStatus(logger, "  业务错误消息配置", businessError);
+        
+        // 检查系统错误消息配置
+        ConfigLoggerUtil.logConfigStatus(logger, "  系统错误消息配置", systemError);
 
         // 检查成功消息配置
         ConfigLoggerUtil.logConfigStatus(logger, "  成功消息配置", success);
@@ -58,16 +68,16 @@ public class MsgConfig {
 
     /**
      * 根据消息类型获取对应的配置映射
-     * @param messageType 消息类型 ("error" 或 "success")
+     * @param messageType 消息类型 ("businessError", "systemError" 或 "success")
      * @return 对应的配置映射
      */
     public Map<String, MessageConfigPojo.Message> getItems(String messageType) {
-        if ("error".equals(messageType)) {
-            return this.error;
-        } else if ("success".equals(messageType)) {
-            return this.success;
-        }
-        return new HashMap<>();
+        return switch (messageType) {
+            case "businessError" -> this.businessError;
+            case "systemError" -> this.systemError;
+            case "success" -> this.success;
+            default -> new HashMap<>();
+        };
     }
 
     /**
@@ -77,8 +87,11 @@ public class MsgConfig {
      */
     public void updateConfigAndSaveToFile(MessageConfigPojo configPojo) throws IOException {
         // 先更新内存中的配置
-        this.error.clear();
-        this.error.putAll(configPojo.getError());
+        this.businessError.clear();
+        this.businessError.putAll(configPojo.getBusinessError());
+        
+        this.systemError.clear();
+        this.systemError.putAll(configPojo.getSystemError());
 
         this.success.clear();
         this.success.putAll(configPojo.getSuccess());
@@ -98,7 +111,8 @@ public class MsgConfig {
         // 构造要保存的数据结构，匹配YAML文件格式
         Map<String, Object> yamlData = new HashMap<>();
         Map<String, Object> responseMessage = new HashMap<>();
-        responseMessage.put("error", this.error);
+        responseMessage.put("business-error", this.businessError);
+        responseMessage.put("system-error", this.systemError);
         responseMessage.put("success", this.success);
         yamlData.put("response-message", responseMessage);
 
@@ -113,18 +127,29 @@ public class MsgConfig {
      */
     public MessageConfigPojo getLatestConfig() {
         MessageConfigPojo config = new MessageConfigPojo();
-        config.setError(new HashMap<>(this.error));
+        config.setBusinessError(new HashMap<>(this.businessError));
+        config.setSystemError(new HashMap<>(this.systemError));
         config.setSuccess(new HashMap<>(this.success));
         return config;
     }
 
     /**
-     * 获取最新的错误消息配置
-     * @return 包含当前所有错误消息配置的Map
+     * 获取最新的业务错误消息配置
+     * @return 包含当前所有业务错误消息配置的Map
      */
-    public MessageConfigPojo getLatestErrorConfig() {
+    public MessageConfigPojo getLatestBusinessErrorConfig() {
         MessageConfigPojo config = new MessageConfigPojo();
-        config.setError(new HashMap<>(this.error));
+        config.setBusinessError(new HashMap<>(this.businessError));
+        return config;
+    }
+    
+    /**
+     * 获取最新的系统错误消息配置
+     * @return 包含当前所有系统错误消息配置的Map
+     */
+    public MessageConfigPojo getLatestSystemErrorConfig() {
+        MessageConfigPojo config = new MessageConfigPojo();
+        config.setSystemError(new HashMap<>(this.systemError));
         return config;
     }
 
@@ -137,6 +162,4 @@ public class MsgConfig {
         config.setSuccess(new HashMap<>(this.success));
         return config;
     }
-
-
 }

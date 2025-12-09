@@ -1,5 +1,6 @@
 package com.lyric.lyric.Utils.config;
 
+import com.lyric.lyric.Config.userSetting.UserSettingsConfig;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -34,6 +35,51 @@ public class ConfigLoggerUtil {
             }
         } else {
             logger.info("{}: 注入成功 ({})", configName, value);
+        }
+    }
+
+    /**
+     * 特殊处理UserSettingsConfig的内部类对象
+     *
+     * @param logger     日志记录器
+     * @param configName 配置项名称
+     * @param value      UserSettingsConfig中的配置对象
+     */
+    public static void logConfigStatus(Logger logger, String configName, UserSettingsConfig.Features value) {
+        if (value == null) {
+            logger.warn("{}: 未注入 (null)", configName);
+        } else {
+            logger.info("{}: 注入成功", configName);
+        }
+    }
+
+    /**
+     * 特殊处理UserSettingsConfig的内部类对象
+     *
+     * @param logger     日志记录器
+     * @param configName 配置项名称
+     * @param value      UserSettingsConfig中的配置对象
+     */
+    public static void logConfigStatus(Logger logger, String configName, UserSettingsConfig.Preferences value) {
+        if (value == null) {
+            logger.warn("{}: 未注入 (null)", configName);
+        } else {
+            logger.info("{}: 注入成功", configName);
+        }
+    }
+
+    /**
+     * 特殊处理UserSettingsConfig的内部类对象
+     *
+     * @param logger     日志记录器
+     * @param configName 配置项名称
+     * @param value      UserSettingsConfig中的配置对象
+     */
+    public static void logConfigStatus(Logger logger, String configName, UserSettingsConfig.Api value) {
+        if (value == null) {
+            logger.warn("{}: 未注入 (null)", configName);
+        } else {
+            logger.info("{}: 注入成功", configName);
         }
     }
 

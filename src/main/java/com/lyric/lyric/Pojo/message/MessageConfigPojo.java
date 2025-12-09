@@ -14,11 +14,16 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageConfigPojo {
-    private Map<String, Message> error;
+    private Map<String, Message> businessError;
+    private Map<String, Message> systemError;
     private Map<String, Message> success;
 
-    public Message getErrorMessage(String key) {
-        return error.get(key);
+    public Message getBusinessErrorMessage(String key) {
+        return businessError.get(key);
+    }
+    
+    public Message getSystemErrorMessage(String key) {
+        return systemError.get(key);
     }
 
     public Message getSuccessMessage(String key) {

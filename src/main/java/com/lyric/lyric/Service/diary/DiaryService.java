@@ -2,12 +2,16 @@ package com.lyric.lyric.Service.diary;
 
 
 import com.lyric.lyric.Dto.content.Diary;
-import com.lyric.lyric.Enums.message.ErrorMsgEnums;
+import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
+import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
+import com.lyric.lyric.Exception.BusinessException;
+import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.MapStruct.content.DiaryMapStruct;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.Pojo.content.DiaryPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
+import com.lyric.lyric.Service.tag.TagParsingService;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
@@ -24,12 +28,12 @@ public class DiaryService {
 
     private final DiaryMapStruct diaryMapStruct;
 
-    private final AIAnalysisService AIAnalysisService;
+    private final TagParsingService tagParsingService;
 
-    public DiaryService(DiaryMapper diaryMapper, DiaryMapStruct diaryMapStruct, AIAnalysisService AIAnalysisService) {
+    public DiaryService(DiaryMapper diaryMapper, DiaryMapStruct diaryMapStruct, TagParsingService tagParsingService) {
         this.diaryMapper = diaryMapper;
         this.diaryMapStruct = diaryMapStruct;
-        this.AIAnalysisService = AIAnalysisService;
+        this.tagParsingService = tagParsingService;
     }
 
     /**
@@ -40,6 +44,17 @@ public class DiaryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> insertDiary(Diary diary) {
+        // 检查日记标题是否为空
+        if (diary.getTitle() == null || diary.getTitle().trim().isEmpty()) {
+            // 抛出业务异常，由全局异常处理器处理
+            throw new BusinessException(BusinessErrorMsgEnums.DIARY_TITLE_EMPTY);
+        }
+
+        // 检查日记内容是否为空
+        if (diary.getContent() == null || diary.getContent().trim().isEmpty()) {
+            // 抛出业务异常，由全局异常处理器处理
+            throw new BusinessException(BusinessErrorMsgEnums.DIARY_CONTENT_EMPTY);
+        }
 
         //创建DiaryPojo对象并赋值
         DiaryPojo diaryPojo = diaryMapStruct.toPojo(diary);
@@ -55,19 +70,23 @@ public class DiaryService {
         //计算写作时长
         diaryPojo.setWritingDuration(DateTimeUtils.timeBetween(diary.getWritingStartTime(), diary.getWritingEndTime()));
 
-        //判断内容类型，如果是文章或笔记，直接保存
-        if (diary.getContentType() == Diary.ContentType.ARTICLE || diary.getContentType() == Diary.ContentType.NOTE) {
-            diaryMapper.insert(diaryPojo);
+        try {
+            //判断内容类型，如果是文章或笔记，直接保存
+            if (diary.getContentType() == Diary.ContentType.ARTICLE || diary.getContentType() == Diary.ContentType.NOTE) {
+                diaryMapper.insert(diaryPojo);
+            }
+
+            //保存日记,并返回日记Id
+            Integer dairyId = diaryMapper.insert(diaryPojo);
+
+            //异步调用标签分析进行内容分析，生成标签
+            tagParsingService.tagAnalysis(dairyId, diary.getContent());
+
+            return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
-
-        //保存日记,并返回日记Id
-        Integer dairyId = diaryMapper.insert(diaryPojo);
-
-        //异步调用AI分析进行内容分析，生成标签
-        AIAnalysisService.tagAnalysis(dairyId, diary.getContent());
-
-        return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
-
     }
 
     /**
@@ -78,17 +97,26 @@ public class DiaryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> moveToTrash(Integer diaryId) {
-        // 检查日记是否存在
-        DiaryPojo diary = diaryMapper.selectById(diaryId);
-        if (diary == null) {
-            return ResultBuilder.error(ErrorMsgEnums.DIARY_NOT_FOUND);
+        try {
+            // 检查日记是否存在
+            DiaryPojo diary = diaryMapper.selectById(diaryId);
+            if (diary == null) {
+                // 抛出业务异常，由全局异常处理器处理
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
+            }
+            
+            // 设置日记为已删除状态
+            diary.setIsDeleted(1);
+            diaryMapper.update(diary);
+            
+            return ResultBuilder.success(SuccessMsgEnums.MOVE_TO_TRASH_SUCCESS);
+        } catch (BusinessException e) {
+            // 直接重新抛出业务异常
+            throw e;
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
-        
-        // 设置日记为已删除状态
-        diary.setIsDeleted(1);
-        diaryMapper.update(diary);
-        
-        return ResultBuilder.success(SuccessMsgEnums.MOVE_TO_TRASH_SUCCESS);
     }
     
     /**
@@ -99,22 +127,31 @@ public class DiaryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> permanentlyDeleteDiary(Integer diaryId) {
-        // 检查日记是否存在
-        DiaryPojo diary = diaryMapper.selectById(diaryId);
-        if (diary == null) {
-            return ResultBuilder.error(ErrorMsgEnums.DIARY_NOT_FOUND);
+        try {
+            // 检查日记是否存在
+            DiaryPojo diary = diaryMapper.selectById(diaryId);
+            if (diary == null) {
+                // 抛出业务异常，由全局异常处理器处理
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
+            }
+            
+            // 检查日记是否已在回收站中（isDeleted=1）
+            if (diary.getIsDeleted() != 1) {
+                // 如果日记不在回收站中，不能直接永久删除
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_IN_TRASH);
+            }
+            
+            // 彻底删除日记
+            diaryMapper.deleteById(diaryId);
+            
+            return ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
+        } catch (BusinessException e) {
+            // 直接重新抛出业务异常
+            throw e;
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
-        
-        // 检查日记是否已在回收站中（isDeleted=1）
-        if (diary.getIsDeleted() != 1) {
-            // 如果日记不在回收站中，不能直接永久删除
-            return ResultBuilder.error(ErrorMsgEnums.DIARY_NOT_IN_TRASH);
-        }
-        
-        // 彻底删除日记
-        diaryMapper.deleteById(diaryId);
-        
-        return ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
     }
 
     /**
@@ -125,22 +162,31 @@ public class DiaryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> restoreFromTrash(Integer diaryId) {
-        // 检查日记是否存在
-        DiaryPojo diary = diaryMapper.selectById(diaryId);
-        if (diary == null) {
-            return ResultBuilder.error(ErrorMsgEnums.DIARY_NOT_FOUND);
+        try {
+            // 检查日记是否存在
+            DiaryPojo diary = diaryMapper.selectById(diaryId);
+            if (diary == null) {
+                // 抛出业务异常，由全局异常处理器处理
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
+            }
+            
+            // 检查日记是否在回收站中（isDeleted=1）
+            if (diary.getIsDeleted() != 1) {
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_IN_TRASH);
+            }
+            
+            // 恢复日记（设置为未删除状态）
+            diary.setIsDeleted(0);
+            diaryMapper.update(diary);
+
+            return ResultBuilder.success(SuccessMsgEnums.RESTORE_FROM_TRASH_SUCCESS);
+        } catch (BusinessException e) {
+            // 直接重新抛出业务异常
+            throw e;
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
-        
-        // 检查日记是否在回收站中（isDeleted=1）
-        if (diary.getIsDeleted() != 1) {
-            return ResultBuilder.error(ErrorMsgEnums.DIARY_NOT_IN_TRASH);
-        }
-        
-        // 恢复日记（设置为未删除状态）
-        diary.setIsDeleted(0);
-        diaryMapper.update(diary);
-        
-        return ResultBuilder.success(SuccessMsgEnums.RESTORE_FROM_TRASH_SUCCESS);
     }
 
 
@@ -152,9 +198,14 @@ public class DiaryService {
      */
     @Transactional(rollbackFor = Exception.class)
     public Result<Void> modifyDiary(Diary diary) {
-        DiaryPojo diaryPojo = diaryMapStruct.toPojo(diary);
-        diaryMapper.update(diaryPojo);
-        return ResultBuilder.success(SuccessMsgEnums.MODIFY_SUCCESS);
+        try {
+            DiaryPojo diaryPojo = diaryMapStruct.toPojo(diary);
+            diaryMapper.update(diaryPojo);
+            return ResultBuilder.success(SuccessMsgEnums.MODIFY_SUCCESS);
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
     }
 
     /**
@@ -164,7 +215,20 @@ public class DiaryService {
      * @return 查询结果
      */
     public Result<Diary> queryDiary(Integer diaryId) {
-        return ResultBuilder.successWithData(SuccessMsgEnums.QUERY_SUCCESS, diaryMapStruct.toDto(diaryMapper.selectById(diaryId)));
+        try {
+            DiaryPojo diaryPojo = diaryMapper.selectById(diaryId);
+            if (diaryPojo == null) {
+                // 抛出业务异常，由全局异常处理器处理
+                throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
+            }
+            return ResultBuilder.successWithData(SuccessMsgEnums.QUERY_SUCCESS, diaryMapStruct.toDto(diaryPojo));
+        } catch (BusinessException e) {
+            // 直接重新抛出业务异常
+            throw e;
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
     }
 
 }

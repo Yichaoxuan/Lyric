@@ -80,36 +80,21 @@ public class MediaFilePojo {
     /**
      * 文件类型枚举
      */
+    @Getter
     public enum FileType {
         /**
          * 图片文件
          */
-        IMAGE("image"),
+        IMAGE,
 
         /**
          * 音频文件
          */
-        AUDIO("audio"),
+        AUDIO,
 
         /**
          * 视频文件
          */
-        VIDEO("video");
-
-        private final String value;
-
-        FileType(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value;// 返回小写形式以匹配数据库约束
-        }
-
+        VIDEO
     }
 }

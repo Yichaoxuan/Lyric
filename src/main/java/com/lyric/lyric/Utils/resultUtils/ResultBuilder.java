@@ -1,10 +1,11 @@
 package com.lyric.lyric.Utils.resultUtils;
 
-import com.lyric.lyric.Enums.message.ErrorMsgEnums;
+import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
+import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
 import com.lyric.lyric.Config.message.MsgConfig;
 import com.lyric.lyric.Pojo.message.MessageConfigPojo;
-import com.lyric.lyric.Utils.stringFormatConversion.EnumNameConverterUtils;
+import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -31,14 +32,25 @@ public class ResultBuilder implements ApplicationContextAware {
     }
 
     /**
-     * 从配置中获取错误消息
-     * @param errorEnum 错误枚举
+     * 从配置中获取业务错误消息
+     * @param businessErrorEnum 业务错误枚举
      * @return 消息配置
      */
-    private static MessageConfigPojo.Message getErrorMessageConfig(ErrorMsgEnums errorEnum) {
+    private static MessageConfigPojo.Message getErrorMessageConfig(BusinessErrorMsgEnums businessErrorEnum) {
         MsgConfig msgConfig = getMsgConfig();
-        String configKey = EnumNameConverterUtils.toSnakeCase(errorEnum.name());
-        return msgConfig.getError().get(configKey);
+        String configKey = EnumUtils.toSnakeCase(businessErrorEnum.name());
+        return msgConfig.getItems("businessError").get(configKey);
+    }
+    
+    /**
+     * 从配置中获取系统错误消息
+     * @param systemErrorEnum 系统错误枚举
+     * @return 消息配置
+     */
+    private static MessageConfigPojo.Message getErrorMessageConfig(SystemErrorMsgEnums systemErrorEnum) {
+        MsgConfig msgConfig = getMsgConfig();
+        String configKey = EnumUtils.toSnakeCase(systemErrorEnum.name());
+        return msgConfig.getItems("systemError").get(configKey);
     }
 
     /**
@@ -48,8 +60,8 @@ public class ResultBuilder implements ApplicationContextAware {
      */
     private static MessageConfigPojo.Message getSuccessMessageConfig(SuccessMsgEnums successEnum) {
         MsgConfig msgConfig = getMsgConfig();
-        String configKey = EnumNameConverterUtils.toSnakeCase(successEnum.name());
-        return msgConfig.getSuccess().get(configKey);
+        String configKey = EnumUtils.toSnakeCase(successEnum.name());
+        return msgConfig.getItems("success").get(configKey);
     }
 
     /**
@@ -102,35 +114,67 @@ public class ResultBuilder implements ApplicationContextAware {
     }
 
     /**
-     * 构建错误响应结果（无数据）
+     * 构建业务错误响应结果（无数据）
      *
-     * @param errorEnum 错误消息枚举
+     * @param businessErrorEnum 业务错误消息枚举
      * @return Result对象
      */
-    public static Result<Void> error(ErrorMsgEnums errorEnum) {
-        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(errorEnum);
+    public static Result<Void> error(BusinessErrorMsgEnums businessErrorEnum) {
+        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(businessErrorEnum);
         if (messageConfig != null) {
             return Result.error(messageConfig.getCode(), messageConfig.getMessage());
         }
         // 回退到默认值
-        return Result.error("500", errorEnum.name().toLowerCase());
+        return Result.error("400", businessErrorEnum.name().toLowerCase());
     }
 
     /**
-     * 构建错误响应结果（有数据）
+     * 构建系统错误响应结果（无数据）
      *
-     * @param errorEnum 错误消息枚举
-     * @param data      响应数据
-     * @param <T>       数据类型
+     * @param systemErrorEnum 系统错误消息枚举
      * @return Result对象
      */
-    public static <T> Result<T> error(ErrorMsgEnums errorEnum, T data) {
-        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(errorEnum);
+    public static Result<Void> error(SystemErrorMsgEnums systemErrorEnum) {
+        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(systemErrorEnum);
+        if (messageConfig != null) {
+            return Result.error(messageConfig.getCode(), messageConfig.getMessage());
+        }
+        // 回退到默认值
+        return Result.error("500", systemErrorEnum.name().toLowerCase());
+    }
+
+    /**
+     * 构建业务错误响应结果（有数据）
+     *
+     * @param businessErrorEnum 业务错误消息枚举
+     * @param data              响应数据
+     * @param <T>               数据类型
+     * @return Result对象
+     */
+    public static <T> Result<T> error(BusinessErrorMsgEnums businessErrorEnum, T data) {
+        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(businessErrorEnum);
         if (messageConfig != null) {
             return Result.error(messageConfig.getCode(), messageConfig.getMessage(), data);
         }
         // 回退到默认值
-        return Result.error("500", errorEnum.name().toLowerCase(), data);
+        return Result.error("400", businessErrorEnum.name().toLowerCase(), data);
+    }
+
+    /**
+     * 构建系统错误响应结果（有数据）
+     *
+     * @param systemErrorEnum 系统错误消息枚举
+     * @param data            响应数据
+     * @param <T>             数据类型
+     * @return Result对象
+     */
+    public static <T> Result<T> error(SystemErrorMsgEnums systemErrorEnum, T data) {
+        MessageConfigPojo.Message messageConfig = getErrorMessageConfig(systemErrorEnum);
+        if (messageConfig != null) {
+            return Result.error(messageConfig.getCode(), messageConfig.getMessage(), data);
+        }
+        // 回退到默认值
+        return Result.error("500", systemErrorEnum.name().toLowerCase(), data);
     }
 
     @Override

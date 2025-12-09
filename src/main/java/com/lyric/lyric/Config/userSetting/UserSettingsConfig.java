@@ -1,6 +1,8 @@
 package com.lyric.lyric.Config.userSetting;
 
 import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
+import com.lyric.lyric.Utils.config.ConfigLoggerUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -28,6 +30,24 @@ public class UserSettingsConfig {
     private Features features = new Features();
     private Preferences preferences = new Preferences();
     private Api api = new Api();
+
+    /**
+     * 在组件构造完成后打印配置信息
+     * 该方法使用@PostConstruct注解，确保在依赖注入完成后自动执行
+     */
+    @PostConstruct
+    public void printConfigurations() {
+        logger.info("用户设置配置加载状态检查:");
+
+        // 检查功能开关配置
+        ConfigLoggerUtil.logConfigStatus(logger, "功能开关配置", features);
+
+        // 检查用户偏好配置
+        ConfigLoggerUtil.logConfigStatus(logger, "用户偏好配置", preferences);
+
+        // 检查API配置
+        ConfigLoggerUtil.logConfigStatus(logger, "API配置", api);
+    }
 
     /**
      * 转换为UserSettingsPojo对象

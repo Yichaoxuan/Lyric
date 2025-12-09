@@ -31,7 +31,7 @@ public class Tag {
     private TagType tagType;
 
     /**
-     * 颜色
+     * 标签颜色 (十六进制)
      */
     private String color;
 
@@ -39,21 +39,6 @@ public class Tag {
      * 图标
      */
     private String icon;
-
-    /**
-     * 标签类型枚举
-     */
-    public enum TagType {
-        /**
-         * 主题标签
-         */
-        THEME,
-
-        /**
-         * 心情标签
-         */
-        MOOD
-    }
 
     /**
      * 有参构造方法
@@ -69,5 +54,20 @@ public class Tag {
         this.tagType = tagType;
         this.color = color;
         this.icon = icon;
+    }
+
+    /**
+     * 标签类型枚举
+     */
+    public enum TagType {
+        /**
+         * 主题标签
+         */
+        THEME,
+
+        /**
+         * 心情标签
+         */
+        MOOD
     }
 }

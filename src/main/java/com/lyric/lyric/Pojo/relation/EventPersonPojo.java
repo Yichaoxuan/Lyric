@@ -45,13 +45,11 @@ public class EventPersonPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
      * @param eventId 事件ID
      * @param personId 人物ID
      * @param role 人物在事件中的角色
      */
-    public EventPersonPojo(Integer id, Integer eventId, Integer personId, String role) {
-        this.id = id;
+    public EventPersonPojo(Integer eventId, Integer personId, String role) {
         this.eventId = eventId;
         this.personId = personId;
         this.role = role;

@@ -1,9 +1,6 @@
 package com.lyric.lyric.Pojo.content;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,8 +11,8 @@ import java.time.LocalDateTime;
  *
  * @author Lyric
  */
+@Data
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiaryPojo {
@@ -32,6 +29,12 @@ public class DiaryPojo {
      * 日记内容
      */
     private String content;
+
+    /**
+     * 总结描述
+     */
+    private String summary;
+
     /**
      * 内容类型
      */
@@ -86,6 +89,7 @@ public class DiaryPojo {
      * @param id 主键ID
      * @param title 日记标题
      * @param content 日记内容
+     * @param summary 总结描述
      * @param contentType 内容类型
      * @param contentFormat 编辑器格式
      * @param isDeleted 是否删除
@@ -97,13 +101,14 @@ public class DiaryPojo {
      * @param writingDuration 写作时长
      * @param diaryDate 日记日期
      */
-    public DiaryPojo(Integer id, String title, String content, ContentType contentType, ContentFormat contentFormat,
+    public DiaryPojo(Integer id, String title, String content, String summary, ContentType contentType, ContentFormat contentFormat,
                  Integer isDeleted, Integer isDraft, Double emotionScore, Integer wordCount,
                  LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
                  LocalDate diaryDate) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.summary = summary;
         this.contentType = contentType;
         this.contentFormat = contentFormat;
         this.isDeleted = isDeleted;
@@ -119,66 +124,37 @@ public class DiaryPojo {
     /**
      * 内容类型枚举
      */
+    @Getter
     public enum ContentType {
         /**
          * 日记
          */
-        DIARY("diary"),
+        DIARY,
 
         /**
          * 文章
          */
-        ARTICLE("article"),
+        ARTICLE,
 
         /**
          * 笔记
          */
-        NOTE("note");
-
-        private final String value;
-
-        ContentType(String contentTypeValue) {
-            this.value = contentTypeValue;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-
+        NOTE;
     }
 
     /**
      * 内容格式枚举
      */
+    @Getter
     public enum ContentFormat {
         /**
          * 富文本
          */
-        RICH_TEXT("rich_text"),
+        RICH_TEXT,
 
         /**
          * Markdown格式
          */
-        MARKDOWN("markdown");
-
-        private final String value;
-
-        ContentFormat(String contentFormatValue) {
-            this.value = contentFormatValue;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value; // 返回小写形式以匹配数据库约束
-        }
+        MARKDOWN
     }
 }

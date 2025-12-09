@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * 日记-人物关联实体类
  * 对应数据库表: diary_person
  *
- * @author Lyric
+ * @author Yichoaxuan
  */
 @Getter
 @NoArgsConstructor
@@ -44,15 +44,11 @@ public class DiaryPersonPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
      * @param diaryId 日记ID
      * @param personId 人物ID
-     * @param confidence AI生成置信度
      */
-    public DiaryPersonPojo(Integer id, Integer diaryId, Integer personId, Double confidence) {
-        this.id = id;
+    public DiaryPersonPojo(Integer diaryId, Integer personId) {
         this.diaryId = diaryId;
         this.personId = personId;
-        this.confidence = confidence;
     }
 }

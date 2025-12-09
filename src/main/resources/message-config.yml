@@ -1,32 +1,7 @@
 # 响应消息配置
 
 response-message:
-  success:
-    save_success:
-      code: "200"
-      message: "保存成功啦~这次做得还不错嘛"
-    delete_success:
-      code: "200"
-      message: "删除完成！这种小事对我来说轻轻松松啦"
-    restore_from_trash_success:
-      code: "200"
-      message: "已经从回收站恢复好了，下次要小心点哦"
-    message_config_success:
-      code: "200"
-      message: "消息配置完成！虽然是你要求的，但确实做得不错呢"
-    setting_success:
-      code: "200"
-      message: "设置成功！这下满意了吧？"
-    query_success:
-      code: "200"
-      message: "查询完成！结果不是理所当然的嘛"
-    move_to_trash_success:
-      code: "200"
-      message: "已经移入回收站啦，可别后悔哦"
-    modify_success:
-      code: "200"
-      message: "修改成功！这次就勉强夸你一下好了"
-  error:
+  business-error:
     ai_model_not_available:
       code: "503"
       message: "哼~现在AI模型不在服务状态呢，真是的...明明人家都准备好了的说"
@@ -63,3 +38,38 @@ response-message:
     response_message_command_not_input:
       code: "400"
       message: "响应消息命令都没输入，让人家怎么工作嘛"
+  system-error:
+    system_error:
+      code: "500"
+      message: "系统内部错误，请稍后再试"
+    database_error:
+      code: "500"
+      message: "数据库操作失败，请稍后再试"
+    network_error:
+      code: "500"
+      message: "网络连接异常，请检查网络后重试"
+  success:
+    save_success:
+      code: "200"
+      message: "保存成功啦~这次做得还不错嘛"
+    delete_success:
+      code: "200"
+      message: "删除完成！这种小事对我来说轻轻松松啦"
+    restore_from_trash_success:
+      code: "200"
+      message: "已经从回收站恢复好了，下次要小心点哦"
+    message_config_success:
+      code: "200"
+      message: "消息配置完成！虽然是你要求的，但确实做得不错呢"
+    setting_success:
+      code: "200"
+      message: "设置成功！这下满意了吧？"
+    query_success:
+      code: "200"
+      message: "查询完成！结果不是理所当然的嘛"
+    move_to_trash_success:
+      code: "200"
+      message: "已经移入回收站啦，可别后悔哦"
+    modify_success:
+      code: "200"
+      message: "修改成功！这次就勉强夸你一下好了"

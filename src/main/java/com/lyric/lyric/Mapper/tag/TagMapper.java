@@ -35,7 +35,15 @@ public interface TagMapper {
      */
     @Select("SELECT * FROM tag")
     List<TagPojo> selectAll();
-    
+
+    /**
+     * 根据类型查询标签
+     * @param tagType 标签类型
+     * @return 标签列表
+     */
+    @Select("SELECT * FROM tag WHERE tag_type = #{tagType}")
+    List<TagPojo> selectByTagType(TagPojo.TagType tagType);
+
     /**
      * 更新标签
      * @param tag 标签实体

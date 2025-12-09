@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lyric.lyric.Mapper.tag.entity.PersonMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="personResultMap" type="com.lyric.lyric.Pojo.tag.entityTag.PersonPojo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="alias" column="alias"/>
+        <result property="relation" column="relation"/>
+        <result property="personality" column="personality"/>
+        <result property="color" column="color"/>
+        <result property="firstAppearance" column="first_appearance"/>
+        <result property="lastAppearance" column="last_appearance"/>
+        <result property="appearanceCount" column="appearance_count"/>
+        <result property="importance" column="importance"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    
+    <!-- 插入人物 -->
+    <insert id="insert" parameterType="com.lyric.lyric.Pojo.tag.entityTag.PersonPojo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO person(name, alias, relation, personality, color, first_appearance, last_appearance, appearance_count, importance)
+        VALUES(#{name}, #{alias}, #{relation}, #{personality}, #{color}, #{firstAppearance}, #{lastAppearance}, #{appearanceCount}, #{importance})
+    </insert>
+    
+    <!-- 根据ID查询人物 -->
+    <select id="selectById" parameterType="long" resultMap="personResultMap">
+        SELECT * FROM person WHERE id = #{id}
+    </select>
+
+    <!-- 根据名称查询人物 -->
+    <select id="selectByName" parameterType="string" resultMap="personResultMap">
+        SELECT * FROM person WHERE name = #{name}
+    </select>
+
+    <!-- 根据关系查询人物 -->
+    <select id="selectByRelation" parameterType="string" resultMap="personResultMap">
+        SELECT * FROM person WHERE relation = #{relation}
+    </select>
+    
+    <!-- 查询所有人物 -->
+    <select id="selectAll" resultMap="personResultMap">
+        SELECT * FROM person
+    </select>
+    
+    <!-- 更新人物 -->
+    <update id="update" parameterType="com.lyric.lyric.Pojo.tag.entityTag.PersonPojo">
+        UPDATE person
+        SET name=#{name}, alias=#{alias}, relation=#{relation}, personality=#{personality}, color=#{color},
+            first_appearance=#{firstAppearance}, last_appearance=#{lastAppearance}, appearance_count=#{appearanceCount},
+            importance=#{importance}
+        WHERE id=#{id}
+    </update>
+    
+    <!-- 根据ID删除人物 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM person WHERE id = #{id}
+    </delete>
+    
+</mapper>

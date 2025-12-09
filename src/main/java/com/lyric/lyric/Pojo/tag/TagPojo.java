@@ -1,8 +1,9 @@
 package com.lyric.lyric.Pojo.tag;
 
+import com.lyric.lyric.Pojo.AI.AITagJson;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +14,8 @@ import java.time.LocalDateTime;
  *
  * @author Lyric
  */
-@Getter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class TagPojo {
 
     /**
@@ -39,7 +39,7 @@ public class TagPojo {
     private String color;
 
     /**
-     * 表情图标
+     * 图标
      */
     private String icon;
 
@@ -54,8 +54,35 @@ public class TagPojo {
     private LocalDateTime createdAt;
 
     /**
+     * 由AITagJson.ThemeLabel或MoodLabel转换为TagPojo对象
+     * @param themeLabel AITagJson.ThemeLabel对象
+     */
+    public TagPojo(AITagJson.ThemeLabel themeLabel) {
+        this.name = themeLabel.getName();
+        this.tagType = TagType.THEME;
+        this.color = themeLabel.getColor();
+        this.icon = null;
+        this.usageCount = 0;
+        this.createdAt = null;
+    }
+
+    /**
+     * 由AITagJson.MoodLabel转换为TagPojo对象
+     * @param moodLabel AITagJson.MoodLabel对象
+     */
+    public TagPojo(AITagJson.MoodLabel moodLabel) {
+        this.name = moodLabel.getName();
+        this.tagType = TagType.MOOD;
+        this.color = moodLabel.getColor();
+        this.icon = moodLabel.getIcon();
+        this.usageCount = 0;
+        this.createdAt = null;
+    }
+
+    /**
      * 标签类型枚举
      */
+    @Getter
     public enum TagType {
         /**
          * 主题标签
@@ -66,23 +93,5 @@ public class TagPojo {
          * 心情标签
          */
         MOOD
-    }
-
-    /**
-     * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
-     * @param name 标签名称
-     * @param tagType 标签类型
-     * @param color 标签颜色
-     * @param icon 表情图标
-     * @param usageCount 使用次数
-     */
-    public TagPojo(Integer id, String name, TagType tagType, String color, String icon, Integer usageCount) {
-        this.id = id;
-        this.name = name;
-        this.tagType = tagType;
-        this.color = color;
-        this.icon = icon;
-        this.usageCount = usageCount;
     }
 }
