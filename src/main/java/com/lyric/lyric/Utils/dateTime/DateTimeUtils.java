@@ -43,7 +43,7 @@ public class DateTimeUtils {
      * 将Date转换为LocalDateTime
      *
      * @param date Date对象
-     * @return LocalDateTime对象
+     * @return LocalDateTime对象，格式：yyyy-MM-dd HH:mm:ss
      */
     public static LocalDateTime toLocalDateTime(Date date) {
         if (date == null) {
@@ -69,7 +69,7 @@ public class DateTimeUtils {
      * 将Date转换为LocalDate
      *
      * @param date Date对象
-     * @return LocalDate对象
+     * @return LocalDate对象，格式：yyyy-MM-dd
      */
     public static LocalDate toLocalDate(Date date) {
         if (date == null) {
@@ -83,7 +83,7 @@ public class DateTimeUtils {
      *
      * @param dateTime LocalDateTime对象
      * @param pattern 日期时间格式模式
-     * @return 格式化后的字符串
+     * @return 格式化后的字符串，格式由pattern参数决定
      */
     public static String format(LocalDateTime dateTime, String pattern) {
         if (dateTime == null || pattern == null || pattern.isEmpty()) {
@@ -93,10 +93,10 @@ public class DateTimeUtils {
     }
     
     /**
-     * 格式化LocalDateTime为字符串（使用默认格式）
+     * 格式化LocalDateTime为字符串（格式：yyyy-MM-dd HH:mm:ss）
      *
      * @param dateTime LocalDateTime对象
-     * @return 格式化后的字符串
+     * @return 格式化后的字符串，格式：yyyy-MM-dd HH:mm:ss
      */
     public static String format(LocalDateTime dateTime) {
         if (dateTime == null) {
@@ -110,7 +110,7 @@ public class DateTimeUtils {
      *
      * @param date    LocalDate对象
      * @param pattern 日期格式模式
-     * @return 格式化后的字符串
+     * @return 格式化后的字符串，格式由pattern参数决定
      */
     public static String format(LocalDate date, String pattern) {
         if (date == null || pattern == null || pattern.isEmpty()) {
@@ -120,10 +120,10 @@ public class DateTimeUtils {
     }
     
     /**
-     * 格式化LocalDate为字符串（使用默认格式）
+     * 格式化LocalDate为字符串（格式：yyyy-MM-dd）
      *
      * @param date LocalDate对象
-     * @return 格式化后的字符串
+     * @return 格式化后的字符串，格式：yyyy-MM-dd
      */
     public static String format(LocalDate date) {
         if (date == null) {
@@ -137,7 +137,7 @@ public class DateTimeUtils {
      *
      * @param dateTimeStr 日期时间字符串
      * @param pattern     日期时间格式模式
-     * @return LocalDateTime对象
+     * @return LocalDateTime对象，格式由pattern参数决定
      */
     public static LocalDateTime parseDateTime(String dateTimeStr, String pattern) {
         if (dateTimeStr == null || dateTimeStr.isEmpty() || pattern == null || pattern.isEmpty()) {
@@ -147,10 +147,10 @@ public class DateTimeUtils {
     }
     
     /**
-     * 解析字符串为LocalDateTime（使用默认格式）
+     * 解析字符串为LocalDateTime（格式：yyyy-MM-dd HH:mm:ss）
      *
-     * @param dateTimeStr 日期时间字符串
-     * @return LocalDateTime对象
+     * @param dateTimeStr 日期时间字符串，格式：yyyy-MM-dd HH:mm:ss
+     * @return LocalDateTime对象，格式：yyyy-MM-dd HH:mm:ss
      */
     public static LocalDateTime parseDateTime(String dateTimeStr) {
         if (dateTimeStr == null || dateTimeStr.isEmpty()) {
@@ -164,7 +164,7 @@ public class DateTimeUtils {
      *
      * @param dateStr 日期字符串
      * @param pattern 日期格式模式
-     * @return LocalDate对象
+     * @return LocalDate对象，格式由pattern参数决定
      */
     public static LocalDate parseDate(String dateStr, String pattern) {
         if (dateStr == null || dateStr.isEmpty() || pattern == null || pattern.isEmpty()) {
@@ -174,10 +174,10 @@ public class DateTimeUtils {
     }
     
     /**
-     * 解析字符串为LocalDate（使用默认格式）
+     * 解析字符串为LocalDate（格式：yyyy-MM-dd）
      *
-     * @param dateStr 日期字符串
-     * @return LocalDate对象
+     * @param dateStr 日期字符串，格式：yyyy-MM-dd
+     * @return LocalDate对象，格式：yyyy-MM-dd
      */
     public static LocalDate parseDate(String dateStr) {
         if (dateStr == null || dateStr.isEmpty()) {
@@ -235,7 +235,6 @@ public class DateTimeUtils {
      * @param endDateTime   结束日期时间
      * @return 秒数差
      */
-
     public static Integer timeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         if (startDateTime == null || endDateTime == null) {
             return 0;
@@ -247,7 +246,7 @@ public class DateTimeUtils {
     /**
      * 获取当前日期时间
      *
-     * @return 当前日期时间
+     * @return 当前日期时间，格式：yyyy-MM-dd HH:mm:ss
      */
     public static LocalDateTime now() {
         return LocalDateTime.now();
@@ -256,7 +255,7 @@ public class DateTimeUtils {
     /**
      * 获取当前日期
      *
-     * @return 当前日期
+     * @return 当前日期，格式：yyyy-MM-dd
      */
     public static LocalDate today() {
         return LocalDate.now();
@@ -267,7 +266,7 @@ public class DateTimeUtils {
      *
      * @param dateTime 原始日期时间
      * @param days     要增加的天数
-     * @return 增加天数后的日期时间
+     * @return 增加天数后的日期时间，格式：yyyy-MM-dd HH:mm:ss
      */
     public static LocalDateTime plusDays(LocalDateTime dateTime, long days) {
         if (dateTime == null) {
@@ -281,7 +280,7 @@ public class DateTimeUtils {
      *
      * @param date 原始日期
      * @param days 要增加的天数
-     * @return 增加天数后的日期
+     * @return 增加天数后的日期，格式：yyyy-MM-dd
      */
     public static LocalDate plusDays(LocalDate date, long days) {
         if (date == null) {
@@ -295,7 +294,7 @@ public class DateTimeUtils {
      *
      * @param dateTime 原始日期时间
      * @param days     要减少的天数
-     * @return 减少天数后的日期时间
+     * @return 减少天数后的日期时间，格式：yyyy-MM-dd HH:mm:ss
      */
     public static LocalDateTime minusDays(LocalDateTime dateTime, long days) {
         if (dateTime == null) {
@@ -309,7 +308,7 @@ public class DateTimeUtils {
      *
      * @param date 原始日期
      * @param days 要减少的天数
-     * @return 减少天数后的日期
+     * @return 减少天数后的日期，格式：yyyy-MM-dd
      */
     public static LocalDate minusDays(LocalDate date, long days) {
         if (date == null) {

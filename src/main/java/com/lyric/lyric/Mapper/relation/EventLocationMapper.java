@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.relation;
 
-import com.lyric.lyric.Pojo.relation.EventLocationPojo;
+import com.lyric.lyric.POJO.relation.EventLocationPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

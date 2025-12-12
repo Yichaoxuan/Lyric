@@ -4,7 +4,7 @@ import com.lyric.lyric.Config.message.MsgConfig;
 import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
-import com.lyric.lyric.Pojo.message.MessageConfigPojo;
+import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
 import org.slf4j.Logger;

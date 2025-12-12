@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.tag.entity;
 
-import com.lyric.lyric.Pojo.tag.entityTag.LocationPojo;
+import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

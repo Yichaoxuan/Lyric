@@ -1,13 +1,11 @@
 package com.lyric.lyric.MapStruct.environment;
 
-import com.lyric.lyric.Dto.environment.Weather;
-import com.lyric.lyric.Pojo.environment.WeatherPojo;
+import com.lyric.lyric.DTO.weather.Weather;
+import com.lyric.lyric.POJO.weather.WeatherPojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**

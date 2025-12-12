@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.relation;
 
-import com.lyric.lyric.Pojo.relation.DiaryTagPojo;
+import com.lyric.lyric.POJO.relation.DiaryTagPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -16,8 +16,8 @@ public interface DiaryTagMapper {
      * @param diaryTag 日记-标签关联实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO diary_tag(diary_id, tag_id, confidence) " +
-            "VALUES(#{diaryId}, #{tagId}, #{confidence})")
+    @Insert("INSERT INTO diary_tag(diary_id, tag_id) " +
+            "VALUES(#{diaryId}, #{tagId})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DiaryTagPojo diaryTag);
     
@@ -36,7 +36,19 @@ public interface DiaryTagMapper {
      */
     @Select("SELECT * FROM diary_tag WHERE diary_id = #{diaryId}")
     List<DiaryTagPojo> selectByDiaryId(Integer diaryId);
-    
+
+    /**
+     * 根据标签ID查询所有关联的日记
+     */
+    @Select("SELECT * FROM diary_tag WHERE tag_id = #{tagId}")
+    List<DiaryTagPojo> selectByTagId(Integer tagId);
+
+    /**
+     * 通过日记ID和标签ID查询关联记录
+     */
+    @Select("SELECT * FROM diary_tag WHERE diary_id = #{diaryId} AND tag_id = #{tagId}")
+    DiaryTagPojo selectByDiaryIdAndTagId(Integer diaryId, Integer tagId);
+
     /**
      * 查询所有日记-标签关联
      * @return 日记-标签关联列表
@@ -49,7 +61,7 @@ public interface DiaryTagMapper {
      * @param diaryTag 日记-标签关联实体
      * @return 影响的行数
      */
-    @Update("UPDATE diary_tag SET diary_id=#{diaryId}, tag_id=#{tagId}, confidence=#{confidence} WHERE id=#{id}")
+    @Update("UPDATE diary_tag SET diary_id=#{diaryId}, tag_id=#{tagId} WHERE id=#{id}")
     int update(DiaryTagPojo diaryTag);
     
     /**

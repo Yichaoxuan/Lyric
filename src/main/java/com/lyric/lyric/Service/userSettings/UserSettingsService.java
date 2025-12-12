@@ -2,7 +2,7 @@ package com.lyric.lyric.Service.userSettings;
 
 import com.lyric.lyric.Config.userSetting.UserSettingsConfig;
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
-import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
+import com.lyric.lyric.POJO.usersettings.UserSettingsPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -65,6 +65,13 @@ public class UserSettingsService {
      */
     public String getAnalysisRules() {
         return userSettingsConfig.getLatestUserPreferenceConfig().getAnalysisRules();
+    }
+
+    /**
+     * 获取人物标签去重规则
+     */
+    public String getPersonTagDuplicationRules() {
+        return userSettingsConfig.getLatestUserPreferenceConfig().getPersonTagDuplicationRules();
     }
 
     /**

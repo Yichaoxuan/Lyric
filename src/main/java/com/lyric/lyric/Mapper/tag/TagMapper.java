@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.tag;
 
-import com.lyric.lyric.Pojo.tag.TagPojo;
+import com.lyric.lyric.POJO.tag.BaseTagPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface TagMapper {
     @Insert("INSERT INTO tag(name, tag_type, color, icon, usage_count) " +
             "VALUES(#{name}, #{tagType}, #{color}, #{icon}, #{usageCount})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insert(TagPojo tag);
+    int insert(BaseTagPojo tag);
     
     /**
      * 根据ID查询标签
@@ -27,22 +27,22 @@ public interface TagMapper {
      * @return 标签实体
      */
     @Select("SELECT * FROM tag WHERE id = #{id}")
-    TagPojo selectById(Integer id);
+    BaseTagPojo selectById(Integer id);
     
     /**
      * 查询所有标签
      * @return 标签列表
      */
     @Select("SELECT * FROM tag")
-    List<TagPojo> selectAll();
+    List<BaseTagPojo> selectAll();
 
     /**
-     * 根据类型查询标签
+     * 根据标签类型查询标签
      * @param tagType 标签类型
      * @return 标签列表
      */
     @Select("SELECT * FROM tag WHERE tag_type = #{tagType}")
-    List<TagPojo> selectByTagType(TagPojo.TagType tagType);
+    List<BaseTagPojo> selectByTagType(BaseTagPojo.TagType tagType);
 
     /**
      * 更新标签
@@ -51,7 +51,7 @@ public interface TagMapper {
      */
     @Update("UPDATE tag SET name=#{name}, tag_type=#{tagType}, color=#{color}, icon=#{icon}, " +
             "usage_count=#{usageCount} WHERE id=#{id}")
-    int update(TagPojo tag);
+    int update(BaseTagPojo tag);
     
     /**
      * 根据ID删除标签

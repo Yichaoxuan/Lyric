@@ -1,7 +1,7 @@
 package com.lyric.lyric.Config.message;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.lyric.lyric.Pojo.message.MessageConfigPojo;
+import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

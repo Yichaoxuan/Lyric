@@ -1,9 +1,8 @@
 package com.lyric.lyric.Controller.diary;
 
-import com.lyric.lyric.Dto.content.Diary;
-import com.lyric.lyric.Service.diary.DiaryService;
+import com.lyric.lyric.DTO.content.Diary;
+import com.lyric.lyric.Service.content.DiaryService;
 import com.lyric.lyric.Utils.resultUtils.Result;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +26,9 @@ public class DiaryController {
      * @param diary 日记DTO对象
      * @return 创建结果
      */
-    @PostMapping("/insertDiary")
-    public Result<Void> insertDiary(@RequestBody Diary diary) {
-        return diaryService.insertDiary(diary);
+    @PostMapping("/saveDiary")
+    public Result<Void> saveDiary(@RequestBody Diary diary) {
+        return diaryService.saveDiary(diary);
     }
 
     /**

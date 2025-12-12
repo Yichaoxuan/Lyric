@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.tag.entity;
 
-import com.lyric.lyric.Dto.tag.entityTag.Person;
-import com.lyric.lyric.Pojo.tag.entityTag.PersonPojo;
+import com.lyric.lyric.DTO.tag.entityTag.Person;
+import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Utils.stringProcessing.stringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.environment;
 
-import com.lyric.lyric.Pojo.environment.WeatherPojo;
+import com.lyric.lyric.POJO.weather.WeatherPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

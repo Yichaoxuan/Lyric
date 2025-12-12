@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.content;
 
-import com.lyric.lyric.Dto.content.MediaFile;
-import com.lyric.lyric.Pojo.content.MediaFilePojo;
+import com.lyric.lyric.DTO.content.MediaFile;
+import com.lyric.lyric.POJO.content.MediaFilePojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

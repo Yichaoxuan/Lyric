@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.relation;
 
-import com.lyric.lyric.Pojo.relation.DiaryEventPojo;
+import com.lyric.lyric.POJO.relation.DiaryEventPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -16,8 +16,8 @@ public interface DiaryEventMapper {
      * @param diaryEvent 日记-事件关联实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO diary_event(diary_id, event_id, confidence) " +
-            "VALUES(#{diaryId}, #{eventId}, #{confidence})")
+    @Insert("INSERT INTO diary_event(diary_id, event_id) " +
+            "VALUES(#{diaryId}, #{eventId})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DiaryEventPojo diaryEvent);
     
@@ -49,7 +49,7 @@ public interface DiaryEventMapper {
      * @param diaryEvent 日记-事件关联实体
      * @return 影响的行数
      */
-    @Update("UPDATE diary_event SET diary_id=#{diaryId}, event_id=#{eventId}, confidence=#{confidence} WHERE id=#{id}")
+    @Update("UPDATE diary_event SET diary_id=#{diaryId}, event_id=#{eventId} WHERE id=#{id}")
     int update(DiaryEventPojo diaryEvent);
     
     /**

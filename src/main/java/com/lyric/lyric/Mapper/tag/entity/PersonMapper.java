@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.tag.entity;
 
-import com.lyric.lyric.Pojo.tag.entityTag.PersonPojo;
+import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -30,6 +30,14 @@ public interface PersonMapper {
     PersonPojo selectById(Integer id);
 
     /**
+     * 根据性别
+     * @param gender 人物性别
+     * @return 人物列表
+     */
+    @Select("SELECT * FROM person WHERE gender = #{gender}")
+    List<PersonPojo> selectByGender(String gender);
+
+    /**
      * 根据名称查询人物
      * @param name 人物名称
      * @return 人物实体
@@ -42,8 +50,17 @@ public interface PersonMapper {
      * @param relation 人物关系
      * @return 人物列表
      */
-    @Select("SELECT * FROM person WHERE relation = #{relation}")
+    @Select("SELECT * FROM person WHERE relation LIKE '%' || #{relation} || '%'")
     List<PersonPojo> selectByRelation(String relation);
+
+    /**
+     * 根据名称和关系查询人物
+     * @param name 人物名称
+     * @param relation 人物关系
+     * @return 人物列表
+     */
+    @Select("SELECT * FROM person WHERE name = #{name} AND relation LIKE '%' || #{relation} || '%'")
+    List<PersonPojo> selectByNameAndRelation(String name, String relation);
 
     /**
      * 查询所有人物

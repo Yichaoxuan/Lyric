@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.relation;
 
-import com.lyric.lyric.Pojo.relation.DiaryLocationPojo;
+import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -16,8 +16,8 @@ public interface DiaryLocationMapper {
      * @param diaryLocation 日记-地点关联实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO diary_location(diary_id, location_id, location_source, confidence) " +
-            "VALUES(#{diaryId}, #{locationId}, #{locationSource}, #{confidence})")
+    @Insert("INSERT INTO diary_location(diary_id, location_id, appearance_date, mention_type) " +
+            "VALUES(#{diaryId}, #{locationId}, #{appearanceDate}, #{mentionType})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DiaryLocationPojo diaryLocation);
     
@@ -50,7 +50,7 @@ public interface DiaryLocationMapper {
      * @return 影响的行数
      */
     @Update("UPDATE diary_location SET diary_id=#{diaryId}, location_id=#{locationId}, " +
-            "location_source=#{locationSource}, confidence=#{confidence} WHERE id=#{id}")
+            "appearance_date=#{appearanceDate}, mention_type=#{mentionType} WHERE id=#{id}")
     int update(DiaryLocationPojo diaryLocation);
     
     /**

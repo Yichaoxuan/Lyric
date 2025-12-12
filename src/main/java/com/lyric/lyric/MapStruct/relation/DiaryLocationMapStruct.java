@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.relation;
 
-import com.lyric.lyric.Dto.relation.DiaryLocation;
-import com.lyric.lyric.Pojo.relation.DiaryLocationPojo;
+import com.lyric.lyric.DTO.relation.DiaryLocation;
+import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -24,7 +24,6 @@ public interface DiaryLocationMapStruct {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "locationSource", ignore = true)
     DiaryLocationPojo toPojo(DiaryLocation diaryLocation);
     
     /**

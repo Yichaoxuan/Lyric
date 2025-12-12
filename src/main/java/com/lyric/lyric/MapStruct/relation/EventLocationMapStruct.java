@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.relation;
 
-import com.lyric.lyric.Dto.relation.EventLocation;
-import com.lyric.lyric.Pojo.relation.EventLocationPojo;
+import com.lyric.lyric.DTO.relation.EventLocation;
+import com.lyric.lyric.POJO.relation.EventLocationPojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

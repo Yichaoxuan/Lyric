@@ -3,25 +3,22 @@ package com.lyric.lyric.Service.contentAnalysis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
-import com.lyric.lyric.Pojo.AI.AITagJson;
-import com.lyric.lyric.Pojo.message.MessageConfigPojo;
-import com.lyric.lyric.Service.tag.TagParsingService;
+import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
-import com.lyric.lyric.Utils.json.JsonConversionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.messages.AbstractMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * AI分析服务类
  * 用于处理日记内容的AI分析，包括标签生成,响应消息生成等功能
  *
  * @author Yichaoxuan
- * @since 2025-11-24
+ * @since 2025-12-11
  */
 @Service
 public class AIAnalysisService {
@@ -34,6 +31,8 @@ public class AIAnalysisService {
 
     private final DiaryMapper diaryMapper;
 
+    private final PromptConstructionService promptConstructionService;
+
     /**
      * AI分析服务构造函数
      *
@@ -41,31 +40,38 @@ public class AIAnalysisService {
      * @param callAiAnalysis     AI调用服务
      * @param diaryMapper        日记数据访问对象
      */
-    public AIAnalysisService(UserSettingsService userSettingsService, CallAiAnalysis callAiAnalysis, DiaryMapper diaryMapper) {
+    public AIAnalysisService(UserSettingsService userSettingsService, CallAiAnalysis callAiAnalysis, DiaryMapper diaryMapper, PromptConstructionService promptConstructionService) {
         this.userSettingsService = userSettingsService;
         this.callAiAnalysis = callAiAnalysis;
         this.diaryMapper = diaryMapper;
+        this.promptConstructionService = promptConstructionService;
     }
 
     /**
-     * 对指定日记进行标签分析
-     * 通过日记ID获取日记内容，并调用AI分析生成标签
-     *
-     * @param diaryId 日记ID
+     * 人物标签去重分析
      */
-    public AITagJson tagAnalysis(Integer diaryId) throws JsonProcessingException {
-       tagAnalysis(diaryId, diaryMapper.selectById(diaryId).getContent());
-        return null;
+    public Integer personTagDeduplicationAnalysis(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
+        logger.info("开始对人物标签进行去重分析");
+
+        // 判断是否开启了AI分析功能与标签生成功能
+        if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
+
+            return -1;
+        }
+
+        //构建提示词
+        Prompt prompt = promptConstructionService.buildPersonTagDeduplicationPrompt(newPersonName, newPersonInfo, candidatePersons);
+        logger.info("提示词：{}", prompt.toString());
+        return Integer.parseInt(callAiAnalysis.analyze(prompt));
     }
 
     /**
      * 对指定内容进行标签分析
      * 使用用户设置的分析规则，调用AI分析内容并输出结果
      *
-     * @param diaryId 日记ID
      * @param content 需要分析的内容
      */
-    public AITagJson  tagAnalysis(Integer diaryId, String content) throws JsonProcessingException {
+    public AITagJson  tagAnalysis(String content) throws JsonProcessingException {
         logger.info("开始对日记进行标签分析");
 
         // 判断是否开启了AI分析功能与标签生成功能
@@ -74,14 +80,12 @@ public class AIAnalysisService {
             return null;
         }
 
-        // 获取用户设置的分析规则
-        String rules = userSettingsService.getAnalysisRules();
-        // 将内容和规则组合成消息
-        String message = content + "\n" + rules;
-        logger.info("开始分析：{}", message);
+        // 构建提示词
+        Prompt prompt = promptConstructionService.buildPrompt(content);
+        logger.info("提示词：{}", prompt.toString());
 
         // 调用AI分析内容
-        AITagJson AITag = callAiAnalysis.analyzeContent(message);
+        AITagJson AITag = callAiAnalysis.analyzeContent(prompt);
         logger.info("AI分析结果：{}", AITag.toString());
         return AITag;
     }

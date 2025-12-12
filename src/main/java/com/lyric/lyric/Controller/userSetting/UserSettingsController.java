@@ -1,7 +1,7 @@
 package com.lyric.lyric.Controller.userSetting;
 
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
-import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
+import com.lyric.lyric.POJO.usersettings.UserSettingsPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;

@@ -1,6 +1,6 @@
 package com.lyric.lyric.Utils.wordCount;
 
-import com.lyric.lyric.Dto.content.Diary;
+import com.lyric.lyric.DTO.content.Diary;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 

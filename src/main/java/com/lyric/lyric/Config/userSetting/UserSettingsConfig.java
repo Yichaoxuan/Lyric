@@ -1,6 +1,6 @@
 package com.lyric.lyric.Config.userSetting;
 
-import com.lyric.lyric.Pojo.usersettings.UserSettingsPojo;
+import com.lyric.lyric.POJO.usersettings.UserSettingsPojo;
 import com.lyric.lyric.Utils.config.ConfigLoggerUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -74,6 +74,7 @@ public class UserSettingsConfig {
         pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
         pojoPreferences.setDefaultCity(preferences.getDefaultCity());
         pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
+        pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
         pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
 
 
@@ -108,6 +109,7 @@ public class UserSettingsConfig {
         preferences.setFirstUseDate(userSettingsPojo.getPreferences().getFirstUseDate());
         preferences.setDefaultCity(userSettingsPojo.getPreferences().getDefaultCity());
         preferences.setAnalysisRules(userSettingsPojo.getPreferences().getAnalysisRules());
+        preferences.setPersonTagDuplicationRules(userSettingsPojo.getPreferences().getPersonTagDuplicationRules());
         preferences.setResponseMessageGenerationRules(userSettingsPojo.getPreferences().getResponseMessageGenerationRules());
         // 更新功能开关配置
         features.setAiAnalytics(userSettingsPojo.getFeatures().isAiAnalytics());
@@ -160,6 +162,7 @@ public class UserSettingsConfig {
         pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
         pojoPreferences.setDefaultCity(preferences.getDefaultCity());
         pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
+        pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
         pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
         return pojoPreferences;
     }
@@ -244,6 +247,12 @@ public class UserSettingsConfig {
          * 用户自定义的内容分析规则
          */
         private String analysisRules;
+
+        /**
+         * 人物标签去重规则
+         * 用于对人物标签进行去重
+         */
+        private String personTagDuplicationRules;
 
         /**
          * 响应消息生成规则

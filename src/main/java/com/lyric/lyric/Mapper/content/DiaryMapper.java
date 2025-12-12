@@ -1,6 +1,6 @@
 package com.lyric.lyric.Mapper.content;
 
-import com.lyric.lyric.Pojo.content.DiaryPojo;
+import com.lyric.lyric.POJO.content.DiaryPojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
