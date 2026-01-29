@@ -1,13 +1,11 @@
 package com.lyric.lyric.Service.contentAnalysis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,9 @@ import java.util.List;
  * @author Yichaoxuan
  * @since 2025-12-11
  */
+@Slf4j
 @Service
 public class AIAnalysisService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AIAnalysisService.class);
 
     private final UserSettingsService userSettingsService;
 
@@ -51,7 +48,7 @@ public class AIAnalysisService {
      * 人物标签去重分析
      */
     public Integer personTagDeduplicationAnalysis(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
-        logger.info("开始对人物标签进行去重分析");
+        log.info("开始对人物标签进行AI去重分析");
 
         // 判断是否开启了AI分析功能与标签生成功能
         if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
@@ -61,7 +58,7 @@ public class AIAnalysisService {
 
         //构建提示词
         Prompt prompt = promptConstructionService.buildPersonTagDeduplicationPrompt(newPersonName, newPersonInfo, candidatePersons);
-        logger.info("提示词：{}", prompt.toString());
+        log.info("提示词：{}", prompt.toString());
         return Integer.parseInt(callAiAnalysis.analyze(prompt));
     }
 
@@ -71,22 +68,21 @@ public class AIAnalysisService {
      *
      * @param content 需要分析的内容
      */
-    public AITagJson  tagAnalysis(String content) throws JsonProcessingException {
-        logger.info("开始对日记进行标签分析");
+    public AITagJson  tagAnalysis(String content) {
+        log.info("开始对日记进行标签分析");
 
         // 判断是否开启了AI分析功能与标签生成功能
         if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
-            logger.info("AI分析功能或智能标签生成功能未开启，跳过标签分析");
+            log.info("AI分析功能或智能标签生成功能未开启，跳过标签分析");
             return null;
         }
 
         // 构建提示词
         Prompt prompt = promptConstructionService.buildPrompt(content);
-        logger.info("提示词：{}", prompt.toString());
 
         // 调用AI分析内容
         AITagJson AITag = callAiAnalysis.analyzeContent(prompt);
-        logger.info("AI分析结果：{}", AITag.toString());
+        log.info("AI分析完毕，结果为：{}", AITag.toString());
         return AITag;
     }
 
@@ -109,7 +105,7 @@ public class AIAnalysisService {
 //
 //        // 验证结果是否为有效的JSON
 //        if (result == null || !JsonConversionUtils.isValidJson(result)) {
-//            logger.error("AI返回的结果不是有效的JSON格式: {}", result);
+//            log.error("AI返回的结果不是有效的JSON格式: {}", result);
 //            return null;
 //        }
 //

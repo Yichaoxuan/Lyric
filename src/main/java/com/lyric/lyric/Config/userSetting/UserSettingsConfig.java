@@ -73,6 +73,7 @@ public class UserSettingsConfig {
         // 设置用户偏好
         pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
         pojoPreferences.setDefaultCity(preferences.getDefaultCity());
+        pojoPreferences.setGender(preferences.getGender());
         pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
         pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
         pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
@@ -161,6 +162,7 @@ public class UserSettingsConfig {
         UserSettingsPojo.Preferences pojoPreferences = new UserSettingsPojo.Preferences();
         pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
         pojoPreferences.setDefaultCity(preferences.getDefaultCity());
+        pojoPreferences.setGender(preferences.getGender());
         pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
         pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
         pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
@@ -241,6 +243,12 @@ public class UserSettingsConfig {
          * 用户设置的默认城市，用于天气等服务
          */
         private String defaultCity;
+
+         /**
+         * 性别
+         * 用户设置的性别
+         */
+        private String gender;
 
         /**
          * 分析规则

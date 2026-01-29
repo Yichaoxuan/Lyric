@@ -33,9 +33,9 @@ public class DiaryEventPojo {
     private Integer eventId;
 
     /**
-     * 创建时间
+     * 发生时间
      */
-    private LocalDateTime createdAt;
+    private LocalDateTime appearanceDate;
 
     /**
      * 有参构造方法（不包含自动生成的字段）

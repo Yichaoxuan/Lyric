@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * 日记-人物关联实体类
@@ -34,7 +33,7 @@ public class DiaryPersonPojo {
     private Integer personId;
 
     /**
-     * 日记日期
+     * 出现日期
      */
     private LocalDate appearanceDate;
 
@@ -42,11 +41,6 @@ public class DiaryPersonPojo {
      * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
      */
     private MentionType mentionType;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 
     public DiaryPersonPojo (Integer diaryId, Integer personId, LocalDate appearanceDate, MentionType mentionType) {
         this.diaryId = diaryId;

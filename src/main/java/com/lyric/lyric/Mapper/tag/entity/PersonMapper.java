@@ -16,8 +16,8 @@ public interface PersonMapper {
      * @param person 人物实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO person(name, alias, relation, personality, color, first_appearance, last_appearance, appearance_count, importance) " +
-            "VALUES(#{name}, #{alias}, #{relation}, #{personality}, #{color}, #{firstAppearance}, #{lastAppearance}, #{appearanceCount}, #{importance})")
+    @Insert("INSERT INTO person(name, alias, gender, relation, personality, color, first_appearance, last_appearance, appearance_count, importance) " +
+            "VALUES(#{name}, #{alias}, #{gender}, #{relation}, #{personality}, #{color}, #{firstAppearance}, #{lastAppearance}, #{appearanceCount}, #{importance})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(PersonPojo person);
     
@@ -35,7 +35,7 @@ public interface PersonMapper {
      * @return 人物列表
      */
     @Select("SELECT * FROM person WHERE gender = #{gender}")
-    List<PersonPojo> selectByGender(String gender);
+    List<PersonPojo> selectByGender(Integer gender);
 
     /**
      * 根据名称查询人物
@@ -74,7 +74,7 @@ public interface PersonMapper {
      * @param person 人物实体
      * @return 影响的行数
      */
-    @Update("UPDATE person SET name=#{name}, alias=#{alias}, relation=#{relation}, personality=#{personality}, color=#{color}, " +
+    @Update("UPDATE person SET name=#{name}, alias=#{alias}, gender=#{gender}, relation=#{relation}, personality=#{personality}, color=#{color}, " +
             "first_appearance=#{firstAppearance}, last_appearance=#{lastAppearance}, appearance_count=#{appearanceCount}, " +
             "importance=#{importance} WHERE id=#{id}")
     int update(PersonPojo person);

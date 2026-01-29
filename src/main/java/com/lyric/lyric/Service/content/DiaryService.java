@@ -55,34 +55,32 @@ public class DiaryService {
             throw new BusinessException(BusinessErrorMsgEnums.DIARY_CONTENT_EMPTY);
         }
 
-        //创建DiaryPojo对象并赋值
+        // 创建DiaryPojo对象并赋值
         DiaryPojo diaryPojo = diaryMapStruct.toPojo(diary);
 
-        //设置默认值
+        // 设置默认值
         diaryPojo.setIsDeleted(1);
         diaryPojo.setIsDraft(1);
         diaryPojo.setEmotionScore(0.0);
 
-        //统计字数
+        // 统计字数
         diaryPojo.setWordCount(WordCountUtils.calculateWordCount(diary.getContent(), diary.getContentFormat()));
 
-        //计算写作时长
+        // 计算写作时长
         diaryPojo.setWritingDuration(DateTimeUtils.timeBetween(diary.getWritingStartTime(), diary.getWritingEndTime()));
 
         try {
-            //判断内容类型，如果是文章或笔记，直接保存
+            // 判断内容类型，如果是文章或笔记，直接保存
             if (diary.getContentType() == Diary.ContentType.ARTICLE || diary.getContentType() == Diary.ContentType.NOTE) {
                 diaryMapper.insert(diaryPojo);
                 return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
             }
 
-            //保存日记,并返回日记Id
-            Integer dairyId = diaryMapper.insert(diaryPojo);
+            // 保存日记,并获取日记Id添加到日记实体类中
+            diaryMapper.insert(diaryPojo);
+            diary.setId(diaryPojo.getId());
 
-            //将日记Id添加到日记实体类中
-            diary.setId(dairyId);
-
-            //异步调用标签分析进行内容分析，生成标签
+            // 异步调用标签分析进行内容分析，生成标签
             tagParsingService.tagAnalysis(diary);
 
 

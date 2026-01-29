@@ -29,7 +29,7 @@ public class stringUtils {
         if (str == null || str.isEmpty()) {
             return new ArrayList<>();
         }
-        return Arrays.asList(str.split(","));
+        return Arrays.stream(str.split(",")).collect(Collectors.toList());
     }
 
     /**

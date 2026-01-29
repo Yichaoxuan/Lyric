@@ -62,7 +62,7 @@ public class BaseTagPojo {
         this.tagType = TagType.THEME;
         this.color = themeTag.getColor();
         this.icon = null;
-        this.usageCount = 0;
+        this.usageCount = 1;
         this.createdAt = null;
     }
 
@@ -81,6 +81,7 @@ public class BaseTagPojo {
 
     /**
      * 标签类型枚举
+     * 枚举值：THEME(主题标签), MOOD（心情标签）
      */
     @Getter
     public enum TagType {

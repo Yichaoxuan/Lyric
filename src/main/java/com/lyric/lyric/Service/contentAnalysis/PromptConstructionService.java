@@ -4,12 +4,14 @@ package com.lyric.lyric.Service.contentAnalysis;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
 
+@Slf4j
 @Service
 public class PromptConstructionService {
 
@@ -30,8 +32,8 @@ public class PromptConstructionService {
         // 构建用户提示词
         Message userMessage = new UserMessage(content);
         // 获取用户设置的分析规则，构建系统提示词
-        Message systemMessage = new SystemMessage(userSettingsService.getAnalysisRules());
-
+        String systemMessageGender = replacePlaceholder(userSettingsService.getAnalysisRules(), "gender", userSettingsService.getLatestUserPreferenceConfig().getGender());
+        Message systemMessage = new SystemMessage(systemMessageGender);
         return new Prompt(List.of(userMessage, systemMessage));
     }
 

@@ -8,18 +8,16 @@ import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.content.DiaryPojo;
 import com.lyric.lyric.POJO.tag.entityTag.EventPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class TagParsingService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TagParsingService.class);
 
     private final AIAnalysisService aiAnalysisService;
 
@@ -60,10 +58,10 @@ public class TagParsingService {
             if (aiTag != null) {
                 processAITag(diary.getId(), aiTag);
             } else {
-                logger.info("标签分析结果为空，可能是功能未开启");
+               log.info("标签分析结果为空，可能是功能未开启");
             }
         } catch (Exception e) {
-            logger.error("处理AI标签分析结果时发生异常", e);
+            log.error("处理AI标签,分析结果时发生异常", e);
         }
     }
 
@@ -72,7 +70,7 @@ public class TagParsingService {
      * @param diaryId 日记ID
      * @param aiTag AI分析结果
      */
-    private void processAITag(Integer diaryId, AITagJson aiTag) {
+    public void processAITag(Integer diaryId, AITagJson aiTag) {
         try {
 
             //获取日记
@@ -80,21 +78,23 @@ public class TagParsingService {
 
             //判断是否获取到日记
             if (diary == null) {
-                logger.warn("未找到该日记,日记Id为：{}", diaryId);
+                log.warn("未找到该日记,日记Id为：{}", diaryId);
                 // 等待一段时间后重试，以解决并发问题
                 try {
                     Thread.sleep(1000);
                     diary = diaryMapper.selectById(diaryId);
                     if (diary == null) {
-                        logger.warn("重试后仍未找到该日记,日记Id为：{}", diaryId);
+                        log.warn("重试后仍未找到该日记,日记Id为：{}", diaryId);
                         return;
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    logger.warn("等待日记保存时被中断,日记Id为：{}", diaryId);
+                    log.warn("等待日记保存时被中断,日记Id为：{}", diaryId);
                     return;
                 }
             }
+
+            log.info("开始处理AI标签分析结果,日记Id为：{}", diaryId);
 
             //获取总结描述
             String summary = aiTag.getSummary();
@@ -105,17 +105,19 @@ public class TagParsingService {
             //更新日记
             diaryMapper.update(diary);
 
+            log.info("总结描述为：{}" , summary);
+
             // 获取标签集合
             AITagJson.Labels labels = aiTag.getLabels();
             if (labels == null) {
-                logger.warn("标签集合为空");
+                log.warn("标签集合为空");
                 return;
             }
 
             // 获取基础标签
             AITagJson.Tag tag = labels.getTag();
             if (tag == null) {
-                logger.warn("基础标签为空");
+                log.warn("基础标签为空");
                 return;
             }
 
@@ -125,7 +127,7 @@ public class TagParsingService {
             //获取实体标签
             AITagJson.EntityTag entityTag = labels.getEntityTag();
             if (entityTag == null) {
-                logger.warn("实体标签为空");
+                log.warn("实体标签为空");
                 return;
             }
 
@@ -136,40 +138,55 @@ public class TagParsingService {
             // 获取事件实体标签
             Map<String, AITagJson.EventInfo> eventInfoMap = entityTag.getEvent();
 
-            //转换为基础主题标签对象并插入数据库
+            // 转换为基础主题标签对象并插入数据库
             if (themes != null) {
+
+                log.info("---开始进行主题标签处理---");
+
                 for (AITagJson.ThemeTag theme : themes) {
-                    //判断主题标签是否存在
+                    // 判断返回的theme是否为空
                     if (theme == null) {
                         continue;
                     }
-                    //去重并插入数据库
+                    // 去重并插入数据库
                     baseTagService.themeTagDeduplication(diaryId, theme);
                 }
+
+                log.info("---主题标签处理结束---");
             }
 
-            //转换为基础情绪标签对象并插入数据库
+            // 转换为基础情绪标签对象并插入数据库
             if (moods != null) {
+
+                log.info("---开始进行情绪标签处理---");
+
                 for (AITagJson.MoodTag mood : moods) {
-                    //判断mood是否为空
+                    // 判断返回的mood是否为空
                     if (mood == null) {
                         continue;
                     }
 
-                    //去重并插入数据库
+                    // 去重并插入数据库
                     baseTagService.moodTagDeduplication(diaryId, mood);
                 }
+
+                log.info("---情绪标签处理结束---");
             }
 
-            //转换为人物实体标签对象并插入数据库
+            // 转换为人物实体标签对象并插入数据库
             if (personInfoMapMap != null) {
+
+                log.info("---开始进行人物实体处理---");
+
                 personInfoMapMap.forEach((name, person) -> {
-                    //调用人物去重处理器
+                    // 调用人物去重处理器
                     personsService.personDeduplicator(diaryId, name, person);
                 });
+
+                log.info("---人物实体标签处理结束---");
             }
 
-            //转换为地点实体标签对象并插入数据库
+            // 转换为地点实体标签对象并插入数据库
             if (locationInfoMap != null) {
                 locationInfoMap.forEach((name, location) -> {
                     locationService.locationDeduplicator(diaryId, name, location);
@@ -186,17 +203,9 @@ public class TagParsingService {
                 });
             }
 
-            logger.info("标签分析处理完成");
-            logger.debug("标签描述：{}", summary);
-            logger.debug("基础标签数量 - 主题: {}, 心情: {}",
-                themes != null ? themes.size() : 0,
-                moods != null ? moods.size() : 0);
-            logger.debug("实体标签数量 - 人物: {}, 地点: {}, 事件: {}",
-                personInfoMapMap != null ? personInfoMapMap.size() : 0,
-                locationInfoMap != null ? locationInfoMap.size() : 0,
-                eventInfoMap != null ? eventInfoMap.size() : 0);
+            log.info("标签分析处理完成");
         } catch (Exception e) {
-            logger.error("处理AI标签时发生异常", e);
+            log.error("处理AI标签时发生异常", e);
         }
     }
 }

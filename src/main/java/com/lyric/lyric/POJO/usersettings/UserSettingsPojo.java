@@ -92,6 +92,12 @@ public class UserSettingsPojo {
         private String defaultCity;
 
         /**
+         * 性别
+         * 用户设置的性别
+         */
+        private String gender;
+
+        /**
          * 分析规则
          * 用户自定义的内容分析规则
          */

@@ -1,12 +1,11 @@
 package com.lyric.lyric.POJO.AI; // 请根据您的项目结构调整包路径
 
 import com.lyric.lyric.POJO.relation.DiaryPersonPojo;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,14 @@ public class AITagJson {
      */
     private Labels labels;
 
+    @Override
+    public String toString() {
+        return "AITagJson{" +
+                "总结:'" + summary + "\n" +
+                "标签:" + labels +  "\n" +
+                "}" + "\n";
+    }
+
     /**
      * 标签集合内部类
      */
@@ -47,6 +54,14 @@ public class AITagJson {
          * 实体标签（人物、地点、事件）
          */
         private EntityTag entityTag;
+
+        @Override
+        public String toString() {
+            return "标签{" +
+                    "基础标签：" + tag + "\n" +
+                    "实体标签：" + entityTag + "\n" +
+                    "}" + "\n";
+        }
     }
 
     /**
@@ -66,6 +81,14 @@ public class AITagJson {
          * 心情标签列表
          */
         private List<MoodTag> moods;
+
+        @Override
+        public String toString() {
+            return "基础标签{" +
+                    "主题标签：" + themes + "\n" +
+                    "心情标签：" + moods + "\n" +
+                    "}" + "\n";
+        }
     }
 
     /**
@@ -86,6 +109,14 @@ public class AITagJson {
          * 颜色代码
          */
         private String color;
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "名称:'" + name + "\n" +
+                    ", 颜色代码:'" + color + "\n" +
+                    "}" + "\n";
+        }
     }
 
     /**
@@ -111,6 +142,15 @@ public class AITagJson {
          * Emoji表情
          */
         private String icon;
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "名称:'" + name + "\n" +
+                    ", 颜色代码:'" + color + "\n" +
+                    ", Emoji表情:'" + icon + "\n" +
+                    "}" + "\n";
+        }
     }
 
     /**
@@ -141,6 +181,15 @@ public class AITagJson {
          * Value: 该事件的详细信息
          */
         private Map<String, EventInfo> event;
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "人物实体映射：" + person + "\n" +
+                    "地点实体映射：" + location + "\n" +
+                    "事件实体映射：" + event + "\n" +
+                    "}" + "\n";
+        }
     }
 
     /**
@@ -182,24 +231,16 @@ public class AITagJson {
          */
         private String color;
 
-        /**
-         * 提及类型枚举
-         */
-        public enum MentionType {
-            /**
-             * 实际出现
-             */
-            ACTUAL,
-
-            /**
-             * 提及
-             */
-            MENTION,
-
-            /**
-             * 回忆
-             */
-            MEMORY
+        @Override
+        public String toString() {
+            return "{" +
+                    "关系:'" + relationship + "\n" +
+                    ", 性别:'" + gender + "\n" +
+                    ", 性格总结:'" + personality + "\n" +
+                    ", 被提及/出现时间:'" + appearanceDate + "\n" +
+                    ", 类型:'" + mentionType + "\n" +
+                    ", 颜色代码:'" + color + "\n" +
+                    "}" + "\n";
         }
     }
 
@@ -232,24 +273,14 @@ public class AITagJson {
          */
         private String color;
 
-        /**
-         * 提及类型枚举
-         */
-        public enum MentionType {
-            /**
-             * 实际去到
-             */
-            ACTUAL,
-
-            /**
-             * 提及
-             */
-            MENTION,
-
-            /**
-             * 回忆
-             */
-            MEMORY
+        @Override
+        public String toString() {
+            return "{" +
+                    "描述:'" + description + "\n" +
+                    ", 被提及/出现时间:'" + appearanceDate + "\n" +
+                    ", 类型:'" + mentionType + "\n" +
+                    ", 颜色代码:'" + color + "\n" +
+                    "}" + "\n";
         }
     }
 
@@ -289,5 +320,16 @@ public class AITagJson {
          * 颜色代码
          */
         private String color;
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "发生地点:'" + location + "\n" +
+                    ", 发生日期:'" + date + "\n" +
+                    ", 事件描述:'" + description + "\n" +
+                    ", 参与人物及其角色映射:'" + persons + "\n" +
+                    ", 颜色代码:'" + color + "\n" +
+                    "}" + "\n";
+        }
     }
 }

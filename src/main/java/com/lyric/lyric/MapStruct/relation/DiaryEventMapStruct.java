@@ -23,7 +23,6 @@ public interface DiaryEventMapStruct {
      * @return POJO对象
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     DiaryEventPojo toPojo(DiaryEvent diaryEvent);
     
     /**

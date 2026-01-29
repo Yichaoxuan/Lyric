@@ -75,29 +75,6 @@ public class PersonPojo {
     private ImportanceLevel importance;
 
     /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
-
-    /**
-     * 数据库映射构造
-     */
-    public PersonPojo(Integer id, String name, String alias, String relation, Integer gender, String personality, String color, LocalDateTime firstAppearance, LocalDateTime lastAppearance, Integer appearanceCount, ImportanceLevel importance, LocalDateTime createdAt) {
-        this.id = id;
-        this.name = name;
-        this.alias = alias;
-        this.relation = relation;
-        this.gender = gender;
-        this.personality = personality;
-        this.color = color;
-        this.firstAppearance = firstAppearance;
-        this.lastAppearance = lastAppearance;
-        this.appearanceCount = appearanceCount;
-        this.importance = importance;
-        this.createdAt = createdAt;
-    }
-
-    /**
      * 由AITagJson.personInfo 转换为PersonPojo对象
      *
      * @param name 人物名称
@@ -111,45 +88,39 @@ public class PersonPojo {
         this.color = persons.getColor();
         this.firstAppearance = null;
         this.lastAppearance = null;
-        this.appearanceCount = null;
+        this.appearanceCount = 1;
         this.importance = null;
     }
 
     /**
      * 将性别字符串转换为对应的编码
-     * 
+     *
      * @param gender 性别字符串，"男"、"女"或其他
      * @return Integer 性别编码，1表示男性，2表示女性，0表示未知
      */
-    public Integer genderName(String gender) {
-        switch (gender) {
-            case "男":
-                return 1;
-            case "女":
-                return 2;
-            default:
-                return 0;
-        }
+    public static Integer genderName(String gender) {
+        return switch (gender) {
+            case "男" -> 1;
+            case "女" -> 2;
+            default -> 0;
+        };
     }
 
     /**
      * 获取性别字符串表示
-     * 
+     *
      * @return String 性别字符串，"男"、"女"或"未知"
      */
-    public String getGender() {
-        switch (this.gender) {
-            case 1:
-                return "男";
-            case 2:
-                return "女";
-            default:
-                return "未知";
-        }
+    public String getGenderName() {
+        return switch (this.gender) {
+            case 1 -> "男";
+            case 2 -> "女";
+            default -> "未知";
+        };
     }
 
     /**
-     * 设置性别（字符串形式）
+     * 将性别字符串转换为对应的编码
      * 
      * @param gender 性别字符串，"男"、"女"或其他
      */
