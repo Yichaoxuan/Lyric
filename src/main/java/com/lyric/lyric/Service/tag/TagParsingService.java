@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 标签解析服务
+ * 标签解析服务类
  *
  * @author Yichaoxuan
  * @serial 2025/12/12
@@ -195,7 +195,7 @@ public class TagParsingService {
             // 转换为地点实体标签对象并插入数据库
             if (locationInfoMap != null) {
                 locationInfoMap.forEach((name, location) -> {
-                    locationService.locationDeduplicator(diaryId, name, location);
+                    locationService.locationDeduplication(diaryId, name, location);
                 });
             }
 

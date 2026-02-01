@@ -18,7 +18,7 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.listToString;
 import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
 
 /**
- * 提供人物标签处理的相关方法
+ * 人物标签处理服务类
  *
  * @author Yichaoxuan
  * @since 2026-01-30
@@ -50,19 +50,19 @@ public class PersonsService {
      */
     public void personDeduplicator(Integer diaryId, String newPersonName, AITagJson.PersonInfo newPersonInfo) {
 
-        //一级匹配 通过性别匹配
+        //一级匹配 匹配性别
         log.info("开始一级匹配：性别：{}", newPersonInfo.getGender());
         List<PersonPojo> candidatePersons = findByGender(newPersonInfo.getGender());
         log.info("一级匹配结束，候选人物列表：{}", candidatePersons);
         if (candidatePersons != null && !candidatePersons.isEmpty()) {
 
-            //二级匹配 通过名字和别称匹配
+            //二级匹配 匹配名字和别称
             log.info("开始二级匹配：名称与别名：{}", newPersonName);
             candidatePersons = findExactMatch(newPersonName, candidatePersons);
             log.info("二级匹配结束，候选人物列表：{}", candidatePersons);
             if (!candidatePersons.isEmpty()) {
 
-                //三级匹配 通过关系匹配
+                //三级匹配 匹配关系
                 log.info("开始三级匹配：关系：{}", newPersonInfo.getRelationship());
                 candidatePersons = findByNameAndRelation(newPersonInfo.getRelationship(), candidatePersons);
                 log.info("三级匹配结束，候选人物列表：{}", candidatePersons);
@@ -79,7 +79,7 @@ public class PersonsService {
                     }
 
                     // 如果候选列表大于1，则进行四级匹配
-                    // 四级匹配 通过AI匹配
+                    // 四级匹配 AI匹配
                     log.info("开始四级匹配：AI 姓名：{}", newPersonName);
                     Integer matchTheCharacterIndex = aiAnalysisService.personTagDeduplicationAnalysis(newPersonName, newPersonInfo, candidatePersons);
                     if(matchTheCharacterIndex == -1) {

@@ -27,7 +27,7 @@ spring:
     import: classpath:message-config.yml,classpath:user-settings.yml
 
   # 配置Jackson日期时间格式
-  jackson:
+  Jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 

@@ -19,6 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 日记服务类
+ * 提供日记相关处理方法
+ *
+ * @author Yichaoxuan
+ * @serial 2025/12/12
+ */
 @Slf4j
 @Service
 public class DiaryService {

@@ -7,12 +7,16 @@ import java.util.List;
 
 /**
  * 日记-地点关联数据访问层接口
+ *
+ * @author Yichaoxuan
+ * @serial 2026-02-04
  */
 @Mapper
 public interface DiaryLocationMapper {
     
     /**
      * 插入一条日记-地点关联记录
+     *
      * @param diaryLocation 日记-地点关联实体
      * @return 影响的行数
      */
@@ -22,23 +26,27 @@ public interface DiaryLocationMapper {
     int insert(DiaryLocationPojo diaryLocation);
     
     /**
-     * 根据ID查询日记-地点关联
-     * @param id 关联ID
-     * @return 日记-地点关联实体
-     */
-    @Select("SELECT * FROM diary_location WHERE id = #{id}")
-    DiaryLocationPojo selectById(Integer id);
-    
-    /**
      * 根据日记ID查询所有关联的地点
+     *
      * @param diaryId 日记ID
      * @return 日记-地点关联列表
      */
     @Select("SELECT * FROM diary_location WHERE diary_id = #{diaryId}")
     List<DiaryLocationPojo> selectByDiaryId(Integer diaryId);
-    
+
+    /**
+     * 根据日记ID和地点ID查询关联记录
+     *
+     * @param diaryId 日记ID
+     * @param locationId 地点ID
+     * @return 日记-地点关联实体
+     */
+    @Select("SELECT * FROM diary_location WHERE diary_id = #{diaryId} AND location_id = #{locationId}")
+    DiaryLocationPojo selectByDiaryIdAndLocationId(@Param("diaryId") Integer diaryId, @Param("locationId") Integer locationId);
+
     /**
      * 查询所有日记-地点关联
+     *
      * @return 日记-地点关联列表
      */
     @Select("SELECT * FROM diary_location")

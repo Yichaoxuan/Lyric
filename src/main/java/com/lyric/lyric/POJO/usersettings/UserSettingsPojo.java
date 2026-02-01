@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.prefs.Preferences;
 
 /**
  * 用户设置实体类
@@ -93,14 +92,22 @@ public class UserSettingsPojo {
         private LocalDate firstUseDate;
 
         /**
+         * 默认区县
+         */
+        private String defaultDistrict;
+
+        /**
          * 默认城市
-         * 用户设置的默认城市，用于天气等服务
          */
         private String defaultCity;
 
         /**
+         * 默认省份
+         */
+        private String defaultProvince;
+
+        /**
          * 默认国家
-         * 用户设置的默认国家，用于天气等服务
          */
         private String defaultCountry;
 
@@ -134,7 +141,9 @@ public class UserSettingsPojo {
             if (isEnter) {
                 sb.append("\n");
             }
+            sb.append("- 默认区县：").append(defaultDistrict).append("\n");
             sb.append("- 默认城市：").append(defaultCity).append("\n");
+            sb.append("- 默认省份：").append(defaultProvince).append("\n");
             sb.append("- 默认国家：").append(defaultCountry).append("\n");
             sb.append("- 性别：").append(gender).append("\n");
             sb.append("- 年龄：").append(age).append("\n");
@@ -161,7 +170,13 @@ public class UserSettingsPojo {
          * 人物标签去重规则
          * 用于对人物标签进行去重
          */
-        private String personTagDuplicationRules;
+        private String CharacterTagDeduplicationRules;
+
+        /**
+         * 地点标签去重规则
+         * 用于对地点标签进行去重
+         */
+        private String PlaceLabelDeduplicationRules;
 
         /**
          * 响应消息生成规则

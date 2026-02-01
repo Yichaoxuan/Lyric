@@ -16,7 +16,7 @@ import java.time.LocalDate;
  * 用于加载和管理用户设置配置
  *
  * @author Yichaoxun
- * @since 2026-01-31
+ * @since 2026-02-04
  */
 @Slf4j
 @Setter
@@ -76,7 +76,9 @@ public class UserSettingsConfig {
 
         // 设置用户信息
         pojoUserInfo.setFirstUseDate(userInfo.getFirstUseDate());
+        pojoUserInfo.setDefaultDistrict(userInfo.getDefaultDistrict());
         pojoUserInfo.setDefaultCity(userInfo.getDefaultCity());
+        pojoUserInfo.setDefaultProvince(userInfo.getDefaultProvince());
         pojoUserInfo.setDefaultCountry(userInfo.getDefaultCountry());
         pojoUserInfo.setGender(userInfo.getGender());
         pojoUserInfo.setAge(userInfo.getAge());
@@ -84,7 +86,8 @@ public class UserSettingsConfig {
 
         // 设置分析规则
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
-        pojoRules.setPersonTagDuplicationRules(rules.getPersonTagDuplicationRules());
+        pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
+        pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
         // 设置API配置
@@ -117,7 +120,9 @@ public class UserSettingsConfig {
 
         // 更新用户偏好配置
         userInfo.setFirstUseDate(userSettingsPojo.getUserInfo().getFirstUseDate());
+        userInfo.setDefaultDistrict(userSettingsPojo.getUserInfo().getDefaultDistrict());
         userInfo.setDefaultCity(userSettingsPojo.getUserInfo().getDefaultCity());
+        userInfo.setDefaultProvince(userSettingsPojo.getUserInfo().getDefaultProvince());
         userInfo.setDefaultCountry(userSettingsPojo.getUserInfo().getDefaultCountry());
         userInfo.setGender(userSettingsPojo.getUserInfo().getGender());
         userInfo.setAge(userSettingsPojo.getUserInfo().getAge());
@@ -125,7 +130,8 @@ public class UserSettingsConfig {
 
         // 更新规则配置
         rules.setTagAnalysisRules(userSettingsPojo.getRules().getTagAnalysisRules());
-        rules.setPersonTagDuplicationRules(userSettingsPojo.getRules().getPersonTagDuplicationRules());
+        rules.setCharacterTagDeduplicationRules(userSettingsPojo.getRules().getCharacterTagDeduplicationRules());
+        rules.setPlaceLabelDeduplicationRules(userSettingsPojo.getRules().getPlaceLabelDeduplicationRules());
         rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
 
         // 更新功能开关配置
@@ -176,7 +182,9 @@ public class UserSettingsConfig {
      */
     public UserSettingsPojo.UserInfo getLatestUserInfoConfig() {
         UserSettingsPojo.UserInfo pojoUserInfo = new UserSettingsPojo.UserInfo();
+        pojoUserInfo.setDefaultDistrict(userInfo.getDefaultDistrict());
         pojoUserInfo.setDefaultCity(userInfo.getDefaultCity());
+        pojoUserInfo.setDefaultProvince(userInfo.getDefaultProvince());
         pojoUserInfo.setDefaultCountry(userInfo.getDefaultCountry());
         pojoUserInfo.setGender(userInfo.getGender());
         pojoUserInfo.setAge(userInfo.getAge());
@@ -191,7 +199,8 @@ public class UserSettingsConfig {
     public UserSettingsPojo.Rules getLatestRulesConfig() {
         UserSettingsPojo.Rules pojoRules = new UserSettingsPojo.Rules();
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
-        pojoRules.setPersonTagDuplicationRules(rules.getPersonTagDuplicationRules());
+        pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
+        pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
         return pojoRules;
     }
@@ -266,14 +275,23 @@ public class UserSettingsConfig {
         private LocalDate firstUseDate;
 
         /**
+         * 默认区县
+         */
+        private String defaultDistrict;
+
+
+        /**
          * 默认城市
-         * 用户设置的默认城市，用于天气等服务
          */
         private String defaultCity;
 
         /**
+         * 默认省份
+         */
+        private String defaultProvince;
+
+        /**
          * 默认国家
-         * 用户设置的默认国家，用于天气等服务
          */
         private String defaultCountry;
 
@@ -314,7 +332,13 @@ public class UserSettingsConfig {
          * 人物标签去重规则
          * 用于对人物标签进行去重
          */
-        private String personTagDuplicationRules;
+        private String characterTagDeduplicationRules;
+
+        /**
+         * 地点标签去重规则
+         * 用于对地点标签进行去重
+         */
+        private String placeLabelDeduplicationRules;
 
         /**
          * 响应消息生成规则

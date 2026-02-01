@@ -259,6 +259,25 @@ public class AITagJson {
         private String description;
 
         /**
+         * 所在区县
+         */
+        private String district;
+        /**
+         * 所在城市
+         */
+        private String city;
+
+        /**
+         * 省份
+         */
+        private String province;
+
+        /**
+         * 所在国家
+         */
+        private String country;
+
+        /**
          * 被提及/出现的时间(格式: YYYY-MM-DD)
          */
         private String appearanceDate;
@@ -277,6 +296,10 @@ public class AITagJson {
         public String toString() {
             return "{" +
                     "描述:'" + description + "\n" +
+                    ", 所在区县:'" + district + "\n" +
+                    ", 所在城市:'" + city + "\n" +
+                    ", 省份:'" + province + "\n" +
+                    ", 所在国家:'" + country + "\n" +
                     ", 被提及/出现时间:'" + appearanceDate + "\n" +
                     ", 类型:'" + mentionType + "\n" +
                     ", 颜色代码:'" + color + "\n" +

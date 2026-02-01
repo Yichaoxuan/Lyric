@@ -3,6 +3,7 @@ package com.lyric.lyric.Service.contentAnalysis;
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,24 +46,6 @@ public class AIAnalysisService {
     }
 
     /**
-     * 人物标签去重分析
-     */
-    public Integer personTagDeduplicationAnalysis(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
-        log.info("开始对人物标签进行AI去重分析");
-
-        // 判断是否开启了AI分析功能与标签生成功能
-        if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
-
-            return -1;
-        }
-
-        //构建提示词
-        Prompt prompt = promptConstructionService.buildPersonTagDeduplicationPrompt(newPersonName, newPersonInfo, candidatePersons);
-        log.info("提示词：{}", prompt.toString());
-        return Integer.parseInt(callAiAnalysis.analyze(prompt));
-    }
-
-    /**
      * 对指定内容进行标签分析
      * 使用用户设置的分析规则，调用AI分析内容并输出结果
      *
@@ -84,6 +67,41 @@ public class AIAnalysisService {
         AITagJson AITag = callAiAnalysis.analyzeContent(prompt);
         log.info("AI分析完毕，结果为：{}", AITag.toString());
         return AITag;
+    }
+
+    /**
+     * 人物标签去重分析
+     */
+    public Integer personTagDeduplicationAnalysis(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
+        log.info("开始对人物标签进行AI去重分析");
+
+        // 判断是否开启了AI分析功能与
+        if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
+
+            return -1;
+        }
+
+        //构建提示词
+        Prompt prompt = promptConstructionService.buildPersonTagDeduplicationPrompt(newPersonName, newPersonInfo, candidatePersons);
+        log.info("提示词：{}", prompt.toString());
+        return Integer.parseInt(callAiAnalysis.analyze(prompt));
+    }
+
+    /**
+     *  地点标签去重分析
+     */
+    public Integer locationTagDeduplicationAnalysis(String newLocationName, AITagJson.LocationInfo newLocationInfo, List<LocationPojo> candidateLocations) {
+        log.info("开始对地点标签进行AI去重分析");
+
+        // 判断是否开启了AI分析功能
+        if (!userSettingsService.isFeatureEnabled(UserFunctionEnum.AI_ANALYTICS) || !userSettingsService.isFeatureEnabled(UserFunctionEnum.SMART_LABEL_GENERATION)) {
+            return -1;
+        }
+
+        //构建提示词
+        Prompt prompt = promptConstructionService.buildLocationTagDeduplicationPrompt(newLocationName, newLocationInfo, candidateLocations);
+        log.info("提示词：{}", prompt.toString());
+        return Integer.parseInt(callAiAnalysis.analyze(prompt));
     }
 
     /**

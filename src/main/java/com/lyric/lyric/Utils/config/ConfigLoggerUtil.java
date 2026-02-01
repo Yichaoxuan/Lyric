@@ -12,6 +12,9 @@ import java.util.Map;
 /**
  * 配置日志工具类
  * 用于统一记录配置项的加载状态，避免敏感信息泄露
+ *
+ * @author Yichaoxun
+ * @date 2026/02/01
  */
 @Slf4j
 public class ConfigLoggerUtil {
@@ -391,7 +394,9 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - 首次使用日期", value.getFirstUseDate());
+            logConfigStatus(logger, "  - 默认区县", value.getDefaultDistrict());
             logConfigStatus(logger, "  - 默认城市", value.getDefaultCity());
+            logConfigStatus(logger, "  - 默认省", value.getDefaultProvince());
             logConfigStatus(logger, "  - 默认国家", value.getDefaultCountry());
             logConfigStatus(logger, "  - 性别", value.getGender());
             logConfigStatus(logger, "  - 年龄", value.getAge());
@@ -412,7 +417,9 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - 首次使用日期", value.getFirstUseDate());
+            logConfigStatus(logger, "  - 默认区县", value.getDefaultDistrict());
             logConfigStatus(logger, "  - 默认城市", value.getDefaultCity());
+            logConfigStatus(logger, "  - 默认省", value.getDefaultProvince());
             logConfigStatus(logger, "  - 默认国家", value.getDefaultCountry());
             logConfigStatus(logger, "  - 性别", value.getGender());
             logConfigStatus(logger, "  - 年龄", value.getAge());
@@ -452,7 +459,9 @@ public class ConfigLoggerUtil {
         } else {
             log.info("{}:", configName);
             logConfigStatus("  - 首次使用日期", value.getFirstUseDate());
+            logConfigStatus("  - 默认区县", value.getDefaultDistrict());
             logConfigStatus("  - 默认城市", value.getDefaultCity());
+            logConfigStatus("  - 默认省", value.getDefaultProvince());
             logConfigStatus("  - 默认国家", value.getDefaultCountry());
             logConfigStatus("  - 性别", value.getGender());
             logConfigStatus("  - 年龄", value.getAge());
@@ -470,7 +479,7 @@ public class ConfigLoggerUtil {
         if (value == null) {
             log.warn("{}: 未注入 (null)", configName);
         } else {
-            log.info("{}: 注入成功 (用户信息项数量: 6)", configName);
+            log.info("{}: 注入成功 (用户信息项数量: 8)", configName);
         }
     }
 
@@ -484,7 +493,7 @@ public class ConfigLoggerUtil {
         if (value == null) {
             log.warn("{}: 未注入 (null)", configName);
         } else {
-            log.info("{}: 注入成功 (用户信息项数量: 6)", configName);
+            log.info("{}: 注入成功 (用户信息项数量: 8)", configName);
         }
     }
 
@@ -501,7 +510,8 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - 分析规则", value.getTagAnalysisRules());
-            logConfigStatus(logger, "  - 人物标签去重规则", value.getPersonTagDuplicationRules());
+            logConfigStatus(logger, "  - 人物标签去重规则", value.getCharacterTagDeduplicationRules());
+            logConfigStatus(logger, "  - 地点标签去重规则", value.getPlaceLabelDeduplicationRules());
             logConfigStatus(logger, "  - 响应消息生成规则", value.getResponseMessageGenerationRules());
         }
     }
@@ -519,7 +529,8 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - 分析规则", value.getTagAnalysisRules());
-            logConfigStatus(logger, "  - 人物标签去重规则", value.getPersonTagDuplicationRules());
+            logConfigStatus(logger, "  - 人物标签去重规则", value.getCharacterTagDeduplicationRules());
+            logConfigStatus(logger, "  - 地点标签去重规则", value.getPlaceLabelDeduplicationRules());
             logConfigStatus(logger, "  - 响应消息生成规则", value.getResponseMessageGenerationRules());
         }
     }
@@ -536,7 +547,8 @@ public class ConfigLoggerUtil {
         } else {
             log.info("{}:", configName);
             logConfigStatus("  - 分析规则", value.getTagAnalysisRules());
-            logConfigStatus("  - 人物标签去重规则", value.getPersonTagDuplicationRules());
+            logConfigStatus("  - 人物标签去重规则", value.getCharacterTagDeduplicationRules());
+            logConfigStatus("  - 地点标签去重规则", value.getPlaceLabelDeduplicationRules());
             logConfigStatus("  - 响应消息生成规则", value.getResponseMessageGenerationRules());
         }
     }
@@ -553,7 +565,8 @@ public class ConfigLoggerUtil {
         } else {
             log.info("{}:", configName);
             logConfigStatus("  - 分析规则", value.getTagAnalysisRules());
-            logConfigStatus("  - 人物标签去重规则", value.getPersonTagDuplicationRules());
+            logConfigStatus("  - 人物标签去重规则", value.getCharacterTagDeduplicationRules());
+            logConfigStatus("  - 地点标签去重规则", value.getPlaceLabelDeduplicationRules());
             logConfigStatus("  - 响应消息生成规则", value.getResponseMessageGenerationRules());
         }
     }
