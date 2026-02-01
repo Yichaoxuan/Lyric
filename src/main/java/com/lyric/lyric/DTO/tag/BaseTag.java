@@ -8,7 +8,7 @@ import lombok.Setter;
  * 标签请求DTO类
  * 只包含前端可信字段
  *
- * @author Lyric
+ * @author Yichanxuan
  */
 @Getter
 @Setter

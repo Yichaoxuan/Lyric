@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
 
+/**
+ * 提示词构建类
+ *
+ * @author Yichaoxuan
+ * @since 2026-02-01
+ */
 @Slf4j
 @Service
 public class PromptConstructionService {
@@ -32,7 +38,7 @@ public class PromptConstructionService {
         // 构建用户提示词
         Message userMessage = new UserMessage(content);
         // 获取用户设置的分析规则，构建系统提示词
-        String systemMessageGender = replacePlaceholder(userSettingsService.getAnalysisRules(), "gender", userSettingsService.getLatestUserPreferenceConfig().getGender());
+        String systemMessageGender = replacePlaceholder(userSettingsService.getLatestAnalysisRulesConfig(), "基本信息", userSettingsService.getLatestUserInfoConfig().getUserInfoStr(true));
         Message systemMessage = new SystemMessage(systemMessageGender);
         return new Prompt(List.of(userMessage, systemMessage));
     }

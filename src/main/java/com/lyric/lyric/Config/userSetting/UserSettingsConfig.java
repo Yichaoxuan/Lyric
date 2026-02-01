@@ -5,8 +5,7 @@ import com.lyric.lyric.Utils.config.ConfigLoggerUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -17,18 +16,20 @@ import java.time.LocalDate;
  * 用于加载和管理用户设置配置
  *
  * @author Yichaoxun
- * @since 2025-11-27
+ * @since 2026-01-31
  */
+@Slf4j
 @Setter
 @Getter
 @Component
 @ConfigurationProperties(prefix = "user-settings")
 public class UserSettingsConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserSettingsConfig.class);
+
 
     private Features features = new Features();
-    private Preferences preferences = new Preferences();
+    private UserInfo userInfo = new UserInfo();
+    private Rules rules = new Rules();
     private Api api = new Api();
 
     /**
@@ -37,16 +38,19 @@ public class UserSettingsConfig {
      */
     @PostConstruct
     public void printConfigurations() {
-        logger.info("用户设置配置加载状态检查:");
+        log.info("用户设置配置加载状态检查:");
 
         // 检查功能开关配置
-        ConfigLoggerUtil.logConfigStatus(logger, "功能开关配置", features);
+        ConfigLoggerUtil.logConfigStatusSafely("功能开关配置", features);
 
-        // 检查用户偏好配置
-        ConfigLoggerUtil.logConfigStatus(logger, "用户偏好配置", preferences);
+        // 检查用户信息配置
+        ConfigLoggerUtil.logConfigStatusSafely("用户信息配置", userInfo);
+        
+        // 检查分析规则配置
+        ConfigLoggerUtil.logConfigStatusSafely("分析规则配置", rules);
 
         // 检查API配置
-        ConfigLoggerUtil.logConfigStatus(logger, "API配置", api);
+        ConfigLoggerUtil.logConfigStatusSafely("API配置", api);
     }
 
     /**
@@ -55,12 +59,12 @@ public class UserSettingsConfig {
      * @return UserSettingsPojo对象，包含所有用户设置信息
      */
     public UserSettingsPojo toUserSettingsPojo() {
-        logger.debug("开始转换UserSettingsConfig为UserSettingsPojo对象");
 
         UserSettingsPojo userSettingsPojo = new UserSettingsPojo();
         // 创建内部类实例
         UserSettingsPojo.Features pojoFeatures = new UserSettingsPojo.Features();
-        UserSettingsPojo.Preferences pojoPreferences = new UserSettingsPojo.Preferences();
+        UserSettingsPojo.UserInfo pojoUserInfo = new UserSettingsPojo.UserInfo();
+        UserSettingsPojo.Rules pojoRules = new UserSettingsPojo.Rules();
         UserSettingsPojo.Api pojoApi = new UserSettingsPojo.Api();
 
         // 设置功能开关
@@ -70,14 +74,18 @@ public class UserSettingsConfig {
         pojoFeatures.setLocationMarking(features.isLocationMarking());
         pojoFeatures.setWeatherIdentification(features.isWeatherIdentification());
 
-        // 设置用户偏好
-        pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
-        pojoPreferences.setDefaultCity(preferences.getDefaultCity());
-        pojoPreferences.setGender(preferences.getGender());
-        pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
-        pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
-        pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
+        // 设置用户信息
+        pojoUserInfo.setFirstUseDate(userInfo.getFirstUseDate());
+        pojoUserInfo.setDefaultCity(userInfo.getDefaultCity());
+        pojoUserInfo.setDefaultCountry(userInfo.getDefaultCountry());
+        pojoUserInfo.setGender(userInfo.getGender());
+        pojoUserInfo.setAge(userInfo.getAge());
+        pojoUserInfo.setOccupation(userInfo.getOccupation());
 
+        // 设置分析规则
+        pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
+        pojoRules.setPersonTagDuplicationRules(rules.getPersonTagDuplicationRules());
+        pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
         // 设置API配置
         pojoApi.setDeepseekApiKey(api.getDeepseekApiKey());
@@ -91,10 +99,11 @@ public class UserSettingsConfig {
 
         // 将内部类实例设置到UserSettingsPojo中
         userSettingsPojo.setFeatures(pojoFeatures);
-        userSettingsPojo.setPreferences(pojoPreferences);
+        userSettingsPojo.setUserInfo(pojoUserInfo);
+        userSettingsPojo.setRules(pojoRules);
         userSettingsPojo.setApi(pojoApi);
 
-        logger.debug("完成UserSettingsPojo对象转换，包含偏好设置、功能开关和API配置");
+        log.info("用户设置配置更新完成");
         return userSettingsPojo;
     }
 
@@ -104,14 +113,21 @@ public class UserSettingsConfig {
      * @param userSettingsPojo UserSettingsPojo对象，包含要更新的用户设置信息
      */
     public void updateFromUserSettingsPojo(UserSettingsPojo userSettingsPojo) {
-        logger.info("开始更新用户设置配置");
+        log.info("开始更新用户设置配置");
 
         // 更新用户偏好配置
-        preferences.setFirstUseDate(userSettingsPojo.getPreferences().getFirstUseDate());
-        preferences.setDefaultCity(userSettingsPojo.getPreferences().getDefaultCity());
-        preferences.setAnalysisRules(userSettingsPojo.getPreferences().getAnalysisRules());
-        preferences.setPersonTagDuplicationRules(userSettingsPojo.getPreferences().getPersonTagDuplicationRules());
-        preferences.setResponseMessageGenerationRules(userSettingsPojo.getPreferences().getResponseMessageGenerationRules());
+        userInfo.setFirstUseDate(userSettingsPojo.getUserInfo().getFirstUseDate());
+        userInfo.setDefaultCity(userSettingsPojo.getUserInfo().getDefaultCity());
+        userInfo.setDefaultCountry(userSettingsPojo.getUserInfo().getDefaultCountry());
+        userInfo.setGender(userSettingsPojo.getUserInfo().getGender());
+        userInfo.setAge(userSettingsPojo.getUserInfo().getAge());
+        userInfo.setOccupation(userSettingsPojo.getUserInfo().getOccupation());
+
+        // 更新规则配置
+        rules.setTagAnalysisRules(userSettingsPojo.getRules().getTagAnalysisRules());
+        rules.setPersonTagDuplicationRules(userSettingsPojo.getRules().getPersonTagDuplicationRules());
+        rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
+
         // 更新功能开关配置
         features.setAiAnalytics(userSettingsPojo.getFeatures().isAiAnalytics());
         features.setSmartLabelGeneration(userSettingsPojo.getFeatures().isSmartLabelGeneration());
@@ -129,7 +145,7 @@ public class UserSettingsConfig {
         api.setQweatherApiHost(userSettingsPojo.getApi().getQweatherApiHost());
         api.setEmojiApiKey(userSettingsPojo.getApi().getEmojiApiKey());
 
-        logger.info("用户设置配置更新完成，包括偏好设置、功能开关和API配置");
+        log.info("完成用户设置配置更新");
     }
 
     /**
@@ -155,18 +171,29 @@ public class UserSettingsConfig {
     }
 
     /**
-     * 获取最新的用户偏好配置
-     * @return UserSettingsPojo对象，包含用户偏好配置
+     * 获取最新的用户信息配置
+     * @return UserSettingsPojo对象，包含用户信息配置
      */
-    public UserSettingsPojo.Preferences getLatestUserPreferenceConfig() {
-        UserSettingsPojo.Preferences pojoPreferences = new UserSettingsPojo.Preferences();
-        pojoPreferences.setFirstUseDate(preferences.getFirstUseDate());
-        pojoPreferences.setDefaultCity(preferences.getDefaultCity());
-        pojoPreferences.setGender(preferences.getGender());
-        pojoPreferences.setAnalysisRules(preferences.getAnalysisRules());
-        pojoPreferences.setPersonTagDuplicationRules(preferences.getPersonTagDuplicationRules());
-        pojoPreferences.setResponseMessageGenerationRules(preferences.getResponseMessageGenerationRules());
-        return pojoPreferences;
+    public UserSettingsPojo.UserInfo getLatestUserInfoConfig() {
+        UserSettingsPojo.UserInfo pojoUserInfo = new UserSettingsPojo.UserInfo();
+        pojoUserInfo.setDefaultCity(userInfo.getDefaultCity());
+        pojoUserInfo.setDefaultCountry(userInfo.getDefaultCountry());
+        pojoUserInfo.setGender(userInfo.getGender());
+        pojoUserInfo.setAge(userInfo.getAge());
+        pojoUserInfo.setOccupation(userInfo.getOccupation());
+        return pojoUserInfo;
+    }
+
+    /**
+     * 获取最新的分析规则配置
+     * @return UserSettingsPojo对象，包含分析规则配置
+     */
+    public UserSettingsPojo.Rules getLatestRulesConfig() {
+        UserSettingsPojo.Rules pojoRules = new UserSettingsPojo.Rules();
+        pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
+        pojoRules.setPersonTagDuplicationRules(rules.getPersonTagDuplicationRules());
+        pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
+        return pojoRules;
     }
 
     /**
@@ -226,12 +253,12 @@ public class UserSettingsConfig {
     }
 
     /**
-     * 用户偏好配置内部类
-     * 包含用户偏好相关的配置项
+     * 用户信息内部类
+     * 存储用户信息
      */
     @Setter
     @Getter
-    public static class Preferences {
+    public static class UserInfo {
         /**
          * 首次使用日期
          * 记录用户首次使用应用的日期
@@ -244,17 +271,44 @@ public class UserSettingsConfig {
          */
         private String defaultCity;
 
-         /**
+        /**
+         * 默认国家
+         * 用户设置的默认国家，用于天气等服务
+         */
+        private String defaultCountry;
+
+        /**
          * 性别
          * 用户设置的性别
          */
         private String gender;
 
         /**
-         * 分析规则
+         * 年龄
+         * 用户设置的年龄
+         */
+        private Integer age;
+
+        /**
+         * 职业
+         * 用户设置的职业
+         */
+        private String occupation;
+    }
+
+    /**
+     * 分析规则配置内部类
+     * 用于存储用户自定义的分析规则
+     */
+    @Setter
+    @Getter
+    public  static class Rules {
+
+        /**
+         * 标签分析规则
          * 用户自定义的内容分析规则
          */
-        private String analysisRules;
+        private String tagAnalysisRules;
 
         /**
          * 人物标签去重规则
@@ -267,7 +321,6 @@ public class UserSettingsConfig {
          * 用户自定义的响应消息生成规则
          */
         private String responseMessageGenerationRules;
-
     }
 
     /**

@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * 事件数据访问层接口
+ *
+ * @author Yichaoxuan
  */
 @Mapper
 public interface EventMapper {

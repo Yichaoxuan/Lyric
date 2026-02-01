@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * 消息枚举类的配置类
  * 
- * @since 2025-11-23
+ * @since 2026-01-31
  */
 @Data
 @Getter
@@ -57,13 +57,13 @@ public class MsgConfig {
         logger.info("消息配置加载状态检查:");
 
         // 检查业务错误消息配置
-        ConfigLoggerUtil.logConfigStatus(logger, "  业务错误消息配置", businessError);
+        ConfigLoggerUtil.logConfigStatusSafely(logger, "  业务错误消息配置", businessError);
         
         // 检查系统错误消息配置
-        ConfigLoggerUtil.logConfigStatus(logger, "  系统错误消息配置", systemError);
+        ConfigLoggerUtil.logConfigStatusSafely(logger, "  系统错误消息配置", systemError);
 
         // 检查成功消息配置
-        ConfigLoggerUtil.logConfigStatus(logger, "  成功消息配置", success);
+        ConfigLoggerUtil.logConfigStatusSafely(logger, "  成功消息配置", success);
     }
 
     /**

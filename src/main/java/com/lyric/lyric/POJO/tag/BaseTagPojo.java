@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * 对应数据库表: tag
  * 包含主题标签和心情标签两种类型
  *
- * @author Lyric
+ * @author Yichaoxuan
  */
 @Data
 @NoArgsConstructor

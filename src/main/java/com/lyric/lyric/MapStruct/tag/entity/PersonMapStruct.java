@@ -46,7 +46,6 @@ public interface PersonMapStruct {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "appearanceCount", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(source = "alias", target = "alias", qualifiedByName = "listToString")
     PersonPojo toPojo(Person person);
     

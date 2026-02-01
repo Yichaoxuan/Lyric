@@ -53,32 +53,32 @@ public class UserSettingsService {
     }
 
     /**
-     * 获取最新用户偏好配置
-     * @return UserSettingsPojo对象，包含当前用户偏好配置
+     * 获取最新用户信息配置
+     * @return UserSettingsPojo对象，包含当前用户信息配置
      */
-    public UserSettingsPojo.Preferences getLatestUserPreferenceConfig() {
-        return userSettingsConfig.getLatestUserPreferenceConfig();
+    public UserSettingsPojo.UserInfo getLatestUserInfoConfig() {
+        return userSettingsConfig.getLatestUserInfoConfig();
     }
 
     /**
      * 获取最新分析规则
      */
-    public String getAnalysisRules() {
-        return userSettingsConfig.getLatestUserPreferenceConfig().getAnalysisRules();
+    public String getLatestAnalysisRulesConfig() {
+        return userSettingsConfig.getLatestRulesConfig().getTagAnalysisRules();
     }
 
     /**
      * 获取人物标签去重规则
      */
     public String getPersonTagDuplicationRules() {
-        return userSettingsConfig.getLatestUserPreferenceConfig().getPersonTagDuplicationRules();
+        return userSettingsConfig.getLatestRulesConfig().getPersonTagDuplicationRules();
     }
 
     /**
      * 获取最新响应消息生成规则
      */
     public String getResponseMessageGenerationRules() {
-        return userSettingsConfig.getLatestUserPreferenceConfig().getResponseMessageGenerationRules();
+        return userSettingsConfig.getLatestRulesConfig().getResponseMessageGenerationRules();
     }
 
     /**
@@ -135,12 +135,22 @@ public class UserSettingsService {
             logger.info("  位置标记功能: {}", userSettingsConfig.getFeatures().isLocationMarking());
             logger.info("  天气识别功能: {}", userSettingsConfig.getFeatures().isWeatherIdentification());
             
-            // 打印用户偏好配置
-            logger.info("用户偏好配置:");
-            logger.info("  首次使用日期: {}", userSettingsConfig.getPreferences().getFirstUseDate());
-            logger.info("  默认城市: {}", userSettingsConfig.getPreferences().getDefaultCity());
+            // 打印用户信息配置
+            logger.info("用户信息配置:");
+            logger.info("  首次使用日期: {}", userSettingsConfig.getUserInfo().getFirstUseDate());
+            logger.info("  默认城市: {}", userSettingsConfig.getUserInfo().getDefaultCity());
+            logger.info("  默认国家: {}", userSettingsConfig.getUserInfo().getDefaultCountry());
+            logger.info("  性别: {}", userSettingsConfig.getUserInfo().getGender());
+            logger.info("  年龄: {}", userSettingsConfig.getUserInfo().getAge());
+            logger.info("  职业: {}", userSettingsConfig.getUserInfo().getOccupation());
             logger.info("  ");
-            
+
+            // 打印分析规则配置
+            logger.info("分析规则配置:");
+            logger.info("  标签分析规则: {}", userSettingsConfig.getRules().getTagAnalysisRules());
+            logger.info("  人物标签去重规则: {}", userSettingsConfig.getRules().getPersonTagDuplicationRules());
+            logger.info("  响应消息生成规则: {}", userSettingsConfig.getRules().getResponseMessageGenerationRules());
+
             // 打印API配置状态（不显示具体密钥）
             logger.info("API配置状态:");
             logger.info("  Deepseek API密钥已设置: {}", 

@@ -21,7 +21,7 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
  * 提供人物标签处理的相关方法
  *
  * @author Yichaoxuan
- * @since 2025-12-11
+ * @since 2026-01-30
  */
 @Slf4j
 @Service

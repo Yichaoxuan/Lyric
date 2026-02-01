@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 标签解析服务
+ *
+ * @author Yichaoxuan
+ * @serial 2025/12/12
+ */
 @Slf4j
 @Service
 public class TagParsingService {

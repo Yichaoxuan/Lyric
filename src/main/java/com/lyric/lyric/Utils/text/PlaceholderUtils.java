@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
  * 占位符替换工具类
  * 提供多种方式的占位符替换功能
  *
- * @author Lyric
- * @since 2025-12-12
+ * @author Yichaoxuan
+ * @since 2026-01-31
  */
 public class PlaceholderUtils {
 

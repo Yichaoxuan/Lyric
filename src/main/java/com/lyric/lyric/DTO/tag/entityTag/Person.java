@@ -12,7 +12,7 @@ import java.util.List;
  * 人物请求DTO类
  * 只包含前端可信字段
  *
- * @author Lyric
+ * @author Yichuanxuan
  */
 @Getter
 @Setter

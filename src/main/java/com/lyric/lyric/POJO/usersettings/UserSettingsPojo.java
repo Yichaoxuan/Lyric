@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.prefs.Preferences;
 
 /**
  * 用户设置实体类
  * 用于存储和管理用户的各种配置选项
  *
  * @author Yichaoxun
- * @since 2025-11-23
+ * @since 2026-02-01
  */
 @Getter
 @Setter
@@ -25,9 +26,15 @@ public class UserSettingsPojo {
      */
     private Features features = new Features();
     /**
-     * 用户偏好配置
+     * 用户信息配置
      */
-    private Preferences preferences = new Preferences();
+    private UserInfo userInfo = new UserInfo();
+
+    /**
+     * 分析规则配置
+     */
+    private Rules rules = new Rules();
+
     /**
      * API配置
      */
@@ -73,12 +80,12 @@ public class UserSettingsPojo {
     }
 
     /**
-     * 用户偏好配置内部类
-     * 包含用户偏好相关的配置项
+     * 用户信息内部类
+     * 存储用户信息
      */
     @Setter
     @Getter
-    public  static class Preferences {
+    public static class UserInfo {
         /**
          * 首次使用日期
          * 记录用户首次使用应用的日期
@@ -92,16 +99,63 @@ public class UserSettingsPojo {
         private String defaultCity;
 
         /**
+         * 默认国家
+         * 用户设置的默认国家，用于天气等服务
+         */
+        private String defaultCountry;
+
+        /**
          * 性别
          * 用户设置的性别
          */
         private String gender;
 
         /**
+         * 年龄
+         * 用户设置的年龄
+         */
+        private Integer age;
+
+        /**
+         * 职业
+         * 用户设置的职业
+         */
+        private String occupation;
+
+        /**
+         * 用户基本信息打印
+         * 输出包含用户基本信息的文本
+         *
+         * @param isEnter 首行是否换行 - true: 换行，false: 不换行
+         * @return 包含用户基本信息的文本
+         */
+        public String getUserInfoStr(Boolean isEnter) {
+            StringBuilder sb = new StringBuilder();
+            if (isEnter) {
+                sb.append("\n");
+            }
+            sb.append("- 默认城市：").append(defaultCity).append("\n");
+            sb.append("- 默认国家：").append(defaultCountry).append("\n");
+            sb.append("- 性别：").append(gender).append("\n");
+            sb.append("- 年龄：").append(age).append("\n");
+            sb.append("- 职业：").append(occupation);
+            return sb.toString();
+        }
+    }
+
+    /**
+     * 分析规则配置内部类
+     * 用于存储用户自定义的分析规则
+     */
+    @Setter
+    @Getter
+    public  static class Rules {
+
+        /**
          * 分析规则
          * 用户自定义的内容分析规则
          */
-        private String analysisRules;
+        private String tagAnalysisRules;
 
         /**
          * 人物标签去重规则
@@ -114,7 +168,6 @@ public class UserSettingsPojo {
          * 用户自定义的响应消息生成规则
          */
         private String responseMessageGenerationRules;
-
     }
 
     /**
