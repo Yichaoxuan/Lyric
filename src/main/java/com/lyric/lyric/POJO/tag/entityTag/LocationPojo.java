@@ -4,6 +4,7 @@ import com.lyric.lyric.POJO.AI.AITagJson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -12,8 +13,10 @@ import java.time.LocalDateTime;
  * 对应数据库表: location
  *
  * @author Yichaoxuan
+ * @since 2026-02-01
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationPojo {
@@ -54,9 +57,23 @@ public class LocationPojo {
     private Double latitude;
 
     /**
+     * 所在区县
+     */
+    private String district;
+    /**
      * 所在城市
      */
     private String city;
+
+    /**
+     * 所在省份
+     */
+    private String province;
+
+    /**
+     * 所在国家
+     */
+    private String country;
 
     /**
      * 地理哈希 (用于附近地点查询优化)

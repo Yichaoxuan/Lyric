@@ -3,6 +3,7 @@ package com.lyric.lyric.POJO.relation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,9 +11,11 @@ import java.time.LocalDateTime;
  * 日记-地点关联实体类
  * 对应数据库表: diary_location
  *
- * @author Lyric
+ * @author Yichaoxuan
+ * @serial 2026/02/04
  */
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiaryLocationPojo {

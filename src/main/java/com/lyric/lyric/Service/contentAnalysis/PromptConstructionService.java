@@ -2,6 +2,7 @@ package com.lyric.lyric.Service.contentAnalysis;
 
 
 import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
  * 提示词构建类
  *
  * @author Yichaoxuan
- * @since 2026-02-01
+ * @since 2026-02-04
  */
 @Slf4j
 @Service
@@ -73,6 +74,36 @@ public class PromptConstructionService {
 
         // 获取用户设置的去重规则，构建系统提示词
         Message systemMessage = new SystemMessage(userSettingsService.getPersonTagDuplicationRules());
+
+        return new Prompt(List.of(userMessage, systemMessage));
+    }
+
+    /**
+     * 地点标签去重提示词构建
+     * 构建地点标签去重的提示词
+     * @param newLocationName 新地点名称
+     * @param newLocationInfo 新地点信息
+     * @param candidateLocations 候选地点列表
+     *
+     * @return 提示词
+     */
+    public Prompt buildLocationTagDeduplicationPrompt(String newLocationName, AITagJson.LocationInfo newLocationInfo, List<LocationPojo> candidateLocations) {
+        //构建用户提示词
+        StringBuilder sb = new StringBuilder();
+        sb.append("新地点信息：\n");
+        sb.append("名称：").append(newLocationName).append("\n");
+        sb.append("描述：").append(newLocationInfo.getDescription()).append("\n");
+
+        sb.append("候选地点列表：\n");
+        for (LocationPojo candidateLocation : candidateLocations) {
+            sb.append("索引：").append(candidateLocations.indexOf(candidateLocation) + 1).append("\n");
+            sb.append("名称：").append(candidateLocation.getName()).append("\n");
+            sb.append("地点描述：").append(candidateLocation.getDescription()).append("\n");
+        }
+        Message userMessage = new UserMessage(sb.toString());
+
+        // 获取用户设置的去重规则，构建系统提示词
+        Message systemMessage = new SystemMessage(userSettingsService.getResponseMessageGenerationRules());
 
         return new Prompt(List.of(userMessage, systemMessage));
     }

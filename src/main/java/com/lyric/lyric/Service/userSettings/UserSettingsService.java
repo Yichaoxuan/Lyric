@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 提供获取和更新用户设置的功能
  *
  * @author Yichaoxun
- * @since 2025-11-27
+ * @since 2026-02-04
  */
 @Service
 public class UserSettingsService {
@@ -68,10 +68,17 @@ public class UserSettingsService {
     }
 
     /**
-     * 获取人物标签去重规则
+     * 获取最新人物标签去重规则
      */
     public String getPersonTagDuplicationRules() {
-        return userSettingsConfig.getLatestRulesConfig().getPersonTagDuplicationRules();
+        return userSettingsConfig.getLatestRulesConfig().getCharacterTagDeduplicationRules();
+    }
+
+    /**
+     *  获取最新地点标签生成规则
+     */
+    public String getLocationTagGenerationRules() {
+        return userSettingsConfig.getLatestRulesConfig().getPlaceLabelDeduplicationRules();
     }
 
     /**
@@ -148,7 +155,8 @@ public class UserSettingsService {
             // 打印分析规则配置
             logger.info("分析规则配置:");
             logger.info("  标签分析规则: {}", userSettingsConfig.getRules().getTagAnalysisRules());
-            logger.info("  人物标签去重规则: {}", userSettingsConfig.getRules().getPersonTagDuplicationRules());
+            logger.info("  人物标签去重规则: {}", userSettingsConfig.getRules().getCharacterTagDeduplicationRules());
+            logger.info("  地点标签生成规则: {}", userSettingsConfig.getRules().getPlaceLabelDeduplicationRules());
             logger.info("  响应消息生成规则: {}", userSettingsConfig.getRules().getResponseMessageGenerationRules());
 
             // 打印API配置状态（不显示具体密钥）
