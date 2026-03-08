@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 /**
  * 日记-地点关联实体类
  * 对应数据库表: diary_location
@@ -36,19 +34,9 @@ public class DiaryLocationPojo {
     private Integer locationId;
 
     /**
-     * 日记日期
-     */
-    private LocalDateTime appearanceDate;
-
-    /**
      * 类型：ACTUAL(实际到达)、MENTION(提及)、MEMORY(回忆)
      */
     private MentionType mentionType;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
 
     /**
      * 有参构造方法（不包含自动生成的字段）

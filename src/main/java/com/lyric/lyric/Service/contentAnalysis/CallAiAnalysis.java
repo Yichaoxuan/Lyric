@@ -1,17 +1,19 @@
 package com.lyric.lyric.Service.contentAnalysis;
 
 import com.lyric.lyric.POJO.AI.AITagJson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 
 /**
  * AI分析调用类
- * 用于调用SpringAI使用deepseek进行AI内容分析
+ * 用于调用SpringAI使用AI大模型行AI内容分析
  *
  * @author Yichaoxuan
- * @since 2025-12-11
+ * @since 2026-02-17
  */
+@Slf4j
 @Service
 public class CallAiAnalysis {
 

@@ -7,10 +7,10 @@ import java.util.Date;
 
 /**
  * 日期时间工具类
- * 提供常用的日期时间处理功能，包括格式转换、时间差计算等
+ * 提供常用的日期时间处理功能，包括格式化事件获取、格式转换、时间差计算等
  *
  * @author Lyric
- * @since 2025-11-21
+ * @since 2026-02-16
  */
 public class DateTimeUtils {
     
@@ -25,7 +25,7 @@ public class DateTimeUtils {
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_PATTERN);
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
     public static final DateTimeFormatter DATE_TIME_MS_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_MS_PATTERN);
-    
+
     /**
      * 将LocalDateTime转换为Date
      *

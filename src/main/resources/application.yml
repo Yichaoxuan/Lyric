@@ -3,13 +3,21 @@ spring:
   application:
     name: 逝流
 
+  #AI大模型
   ai:
-    deepseek:
-      api-key: ${user-settings.api.deepseek_api_key}
-      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    openai:
+      api-key: sk-c2336cbabb9f427ca296d5e6ec68a450
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
       chat:
-        options:
-          model: deepseek-v3.2
+          options:
+              model: qwen3.5-plus
+
+  #    deepseek:
+#      api-key: ${user-settings.api.deepseek_api_key}
+#      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+#      chat:
+#        options:
+#          model: deepseek-v3.2
 
   # 配置使用SQLite数据库
   datasource:

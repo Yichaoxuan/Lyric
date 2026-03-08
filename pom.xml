@@ -1,186 +1,160 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目：使用稳定的Spring Boot版本，与Spring AI 1.1.2兼容 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.7</version>
         <relativePath/>
-        <!--  lookup parent from repository  -->
     </parent>
+
     <groupId>com.Lyric</groupId>
     <artifactId>Lyric</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Lyric</name>
-    <description>Lyric</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+    <description>Lyric AI Application with Spring AI OpenAI-compatible Qwen</description>
+
     <properties>
         <java.version>21</java.version>
     </properties>
+
+    <!-- 添加Spring AI的仓库（Spring AI尚未完全发布到Maven中央仓库） -->
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled> <!-- 里程碑版本不是快照，所以禁用snapshots -->
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <!-- 依赖管理：导入Spring AI BOM，统一管理版本 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
-        <!--  spring web组件  -->
+        <!-- Spring Boot Web组件：提供REST API能力 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!--  简化 MyBatis 配置  -->
+
+        <!-- Spring AI OpenAI Starter：通过OpenAI兼容接口调用通义千问 -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-starter-model-azure-openai</artifactId>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>3.0.5</version>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
-        <!--  lombok减少样板代码  -->
+        <!-- Lombok：减少样板代码 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--  测试框架  -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- 添加mockito-inline依赖以解决代理加载警告 -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>4.11.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!--  JUnit Platform Launcher  -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--  mybatis测试  -->
+
+        <!-- MyBatis与SQLite（根据您的业务需求保留） -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter-test</artifactId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>3.0.5</version>
-            <scope>test</scope>
         </dependency>
-        <!--  sqlite3驱动包  -->
-        <!--  https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc  -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.51.0.0</version>
         </dependency>
-        <!--  运行时热更新  -->
+
+        <!-- 参数验证 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- JetBrains Annotations：提供 @NotNull 等注解 -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+        </dependency>
+
+        <!-- JSON处理 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- 开发工具：热重启 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        <!--  参数验证  -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <!--  Java 8 时间类型的 JSON 序列化  -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <!-- JSON处理 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <!-- YAML处理 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-        </dependency>
-        <!--  MapStruct  自动生成对象映射代码 -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.5.5.Final</version>
-        </dependency>
-        <!--  HTML解析器  -->
+
+        <!-- 工具库：HTML解析、MapStruct等（按需保留） -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.15.3</version>
         </dependency>
-        <!--  Markdown解析器 -->
         <dependency>
-            <groupId>com.atlassian.commonmark</groupId>
-            <artifactId>commonmark</artifactId>
-            <version>0.15.2</version>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
         </dependency>
-        <!-- Spring AOP -->
+
+        <!-- 测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
-        <!--  DashScope API  -->
+
         <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-deepseek</artifactId>
-        </dependency>
-        <!-- HanLP -->
-        <dependency>
-            <groupId>com.hankcs</groupId>
-            <artifactId>hanlp</artifactId>
-            <version>portable-1.8.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hankcs.hanlp.restful</groupId>
-            <artifactId>hanlp-restful</artifactId>
-            <version>0.0.15</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- 百度智慧云api -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter-test</artifactId>
+            <version>3.0.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </path>
-                        <!--  告诉编译器：用MapStruct处理注解  -->
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
@@ -199,14 +173,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <!-- 添加Surefire插件配置以解决Mockito警告 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-XX:+EnableDynamicAgentLoading -XX:-UseSharedSpaces</argLine>
                 </configuration>
             </plugin>
         </plugins>

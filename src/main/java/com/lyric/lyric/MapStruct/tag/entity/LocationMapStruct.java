@@ -10,7 +10,6 @@ import java.util.List;
 
 /**
  * 地点对象映射器
- *
  */
 @Mapper(componentModel = "spring")
 public interface LocationMapStruct {
@@ -24,7 +23,6 @@ public interface LocationMapStruct {
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "appearanceCount", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     LocationPojo toPojo(Location location);
     
     /**

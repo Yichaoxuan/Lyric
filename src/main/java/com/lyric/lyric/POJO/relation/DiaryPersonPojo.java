@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.time.LocalDate;
-
 /**
  * 日记-人物关联实体类
  * 对应数据库表: diary_person
@@ -33,19 +31,13 @@ public class DiaryPersonPojo {
     private Integer personId;
 
     /**
-     * 出现日期
-     */
-    private LocalDate appearanceDate;
-
-    /**
      * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
      */
     private MentionType mentionType;
 
-    public DiaryPersonPojo (Integer diaryId, Integer personId, LocalDate appearanceDate, MentionType mentionType) {
+    public DiaryPersonPojo (Integer diaryId, Integer personId, MentionType mentionType) {
         this.diaryId = diaryId;
         this.personId = personId;
-        this.appearanceDate = appearanceDate;
         this.mentionType = mentionType;
     }
 

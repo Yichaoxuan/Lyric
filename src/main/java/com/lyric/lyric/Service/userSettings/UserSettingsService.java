@@ -161,9 +161,9 @@ public class UserSettingsService {
 
             // 打印API配置状态（不显示具体密钥）
             logger.info("API配置状态:");
-            logger.info("  Deepseek API密钥已设置: {}", 
-                userSettingsConfig.getApi().getDeepseekApiKey() != null && 
-                !userSettingsConfig.getApi().getDeepseekApiKey().isEmpty());
+            logger.info("  AI大模型 API密钥已设置: {}",
+                userSettingsConfig.getApi().getAiLLMApiKey() != null &&
+                !userSettingsConfig.getApi().getAiLLMApiKey().isEmpty());
             logger.info("  百度NLP API密钥已设置: {}", 
                 userSettingsConfig.getApi().getBaiduNlpApiKey() != null && 
                 !userSettingsConfig.getApi().getBaiduNlpApiKey().isEmpty());

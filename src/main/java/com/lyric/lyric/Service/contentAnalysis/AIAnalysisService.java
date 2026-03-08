@@ -1,7 +1,6 @@
 package com.lyric.lyric.Service.contentAnalysis;
 
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
-import com.lyric.lyric.Mapper.content.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
@@ -9,7 +8,6 @@ import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
@@ -17,7 +15,7 @@ import java.util.List;
  * 用于处理日记内容的AI分析，包括标签生成,响应消息生成等功能
  *
  * @author Yichaoxuan
- * @since 2025-12-11
+ * @since 2026-02-08
  */
 @Slf4j
 @Service
@@ -27,8 +25,6 @@ public class AIAnalysisService {
 
     private final CallAiAnalysis callAiAnalysis;
 
-    private final DiaryMapper diaryMapper;
-
     private final PromptConstructionService promptConstructionService;
 
     /**
@@ -36,12 +32,11 @@ public class AIAnalysisService {
      *
      * @param userSettingsService 用户设置服务
      * @param callAiAnalysis     AI调用服务
-     * @param diaryMapper        日记数据访问对象
+     * @param promptConstructionService 提示词构造服务
      */
-    public AIAnalysisService(UserSettingsService userSettingsService, CallAiAnalysis callAiAnalysis, DiaryMapper diaryMapper, PromptConstructionService promptConstructionService) {
+    public AIAnalysisService(UserSettingsService userSettingsService, CallAiAnalysis callAiAnalysis, PromptConstructionService promptConstructionService) {
         this.userSettingsService = userSettingsService;
         this.callAiAnalysis = callAiAnalysis;
-        this.diaryMapper = diaryMapper;
         this.promptConstructionService = promptConstructionService;
     }
 
@@ -71,6 +66,11 @@ public class AIAnalysisService {
 
     /**
      * 人物标签去重分析
+     *
+     * @param newPersonName 新人物名称
+     * @param newPersonInfo 新人物信息
+     * @param candidatePersons 候选人物列表
+     * @return 如果存在重复的标签，则返回重复标签的索引，否则返回-1
      */
     public Integer personTagDeduplicationAnalysis(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
         log.info("开始对人物标签进行AI去重分析");
@@ -89,6 +89,11 @@ public class AIAnalysisService {
 
     /**
      *  地点标签去重分析
+     *
+     * @param newLocationName 新地点名称
+     * @param newLocationInfo 新地点信息
+     * @param candidateLocations 候选地点列表
+     * @return 如果存在重复的标签，则返回重复标签的索引，否则返回-1
      */
     public Integer locationTagDeduplicationAnalysis(String newLocationName, AITagJson.LocationInfo newLocationInfo, List<LocationPojo> candidateLocations) {
         log.info("开始对地点标签进行AI去重分析");

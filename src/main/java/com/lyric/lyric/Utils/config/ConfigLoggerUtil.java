@@ -611,7 +611,7 @@ public class ConfigLoggerUtil {
             logger.warn("{}: 未注入 (null)", configName);
         } else {
             logger.info("{}:", configName);
-            logConfigStatus(logger, "  - DeepSeek API密钥", value.getDeepseekApiKey());
+            logConfigStatus(logger, "  - AI大模型 API密钥", value.getAiLLMApiKey());
             logConfigStatus(logger, "  - 百度NLP API Key", value.getBaiduNlpApiKey());
             logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
@@ -634,7 +634,7 @@ public class ConfigLoggerUtil {
             logger.warn("{}: 未注入 (null)", configName);
         } else {
             logger.info("{}:", configName);
-            logConfigStatus(logger, "  - DeepSeek API密钥", value.getDeepseekApiKey());
+            logConfigStatus(logger, "  - AI大模型 API密钥", value.getAiLLMApiKey());
             logConfigStatus(logger, "  - 百度NLP API Key", value.getBaiduNlpApiKey());
             logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
@@ -656,7 +656,7 @@ public class ConfigLoggerUtil {
             log.warn("{}: 未注入 (null)", configName);
         } else {
             log.info("{}:", configName);
-            logConfigStatus("  - DeepSeek API密钥", value.getDeepseekApiKey());
+            logConfigStatus("  - AI大模型 API密钥", value.getAiLLMApiKey());
             logConfigStatus("  - 百度NLP API Key", value.getBaiduNlpApiKey());
             logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());
@@ -678,7 +678,7 @@ public class ConfigLoggerUtil {
             log.warn("{}: 未注入 (null)", configName);
         } else {
             log.info("{}:", configName);
-            logConfigStatus("  - DeepSeek API密钥", value.getDeepseekApiKey());
+            logConfigStatus("  - AI大模型 API密钥", value.getAiLLMApiKey());
             logConfigStatus("  - 百度NLP API Key", value.getBaiduNlpApiKey());
             logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());

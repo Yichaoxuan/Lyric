@@ -91,7 +91,7 @@ public class UserSettingsConfig {
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
         // 设置API配置
-        pojoApi.setDeepseekApiKey(api.getDeepseekApiKey());
+        pojoApi.setAiLLMApiKey(api.getAiLLMApiKey());
         pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
         pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
@@ -142,7 +142,7 @@ public class UserSettingsConfig {
         features.setWeatherIdentification(userSettingsPojo.getFeatures().isWeatherIdentification());
 
         // 更新API配置
-        api.setDeepseekApiKey(userSettingsPojo.getApi().getDeepseekApiKey());
+        api.setAiLLMApiKey(userSettingsPojo.getApi().getAiLLMApiKey());
         api.setBaiduNlpApiKey(userSettingsPojo.getApi().getBaiduNlpApiKey());
         api.setBaiduNlpSecretKey(userSettingsPojo.getApi().getBaiduNlpSecretKey());
         api.setHanlpApiKey(userSettingsPojo.getApi().getHanlpApiKey());
@@ -211,7 +211,7 @@ public class UserSettingsConfig {
      */
     public UserSettingsPojo.Api getLatestApiConfig() {
         UserSettingsPojo.Api pojoApi = new UserSettingsPojo.Api();
-        pojoApi.setDeepseekApiKey(api.getDeepseekApiKey());
+        pojoApi.setAiLLMApiKey(api.getAiLLMApiKey());
         pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
         pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
@@ -355,10 +355,10 @@ public class UserSettingsConfig {
     @Getter
     public static class Api {
         /**
-         * DeepSeek API密钥
-         * 用于访问DeepSeek AI服务的API密钥
+         * AI大模型 API密钥
+         * 用于访问AI服务的API密钥
          */
-        private String deepseekApiKey;
+        private String aiLLMApiKey;
 
         /**
          * 百度NLP API Key

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * 日记-事件关联实体类
@@ -35,17 +35,5 @@ public class DiaryEventPojo {
     /**
      * 发生时间
      */
-    private LocalDateTime appearanceDate;
-
-    /**
-     * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
-     * @param diaryId 日记ID
-     * @param eventId 事件ID
-     */
-    public DiaryEventPojo(Integer id, Integer diaryId, Integer eventId) {
-        this.id = id;
-        this.diaryId = diaryId;
-        this.eventId = eventId;
-    }
+    private LocalDate appearanceDate;
 }

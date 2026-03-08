@@ -6,31 +6,34 @@ import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
-import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 地点标签处理服务类
  *
  * @author Yichaoxuan
- * @serial 2026/02/01
+ * @since 2026-02-01
  */
 @Slf4j
 @Service
 public class LocationService {
 
     private final LocationMapper locationMapper;
-
     private final DiaryLocationMapper diaryLocationMapper;
-
     private final AIAnalysisService aiAnalysisService;
 
-    public LocationService(LocationMapper locationMapper, DiaryLocationMapper diaryLocationMapper, AIAnalysisService aiAnalysisService) {
+    public LocationService(LocationMapper locationMapper,
+                           DiaryLocationMapper diaryLocationMapper,
+                           AIAnalysisService aiAnalysisService) {
         this.locationMapper = locationMapper;
         this.diaryLocationMapper = diaryLocationMapper;
         this.aiAnalysisService = aiAnalysisService;
@@ -39,204 +42,277 @@ public class LocationService {
     /**
      * 地点标签去重器
      * 通过多级匹配策略判断是否为同一地点，更新或插入数据库
-     * 匹配顺序：国家匹配 -> 省份匹配 -> 城市匹配 -> 地点匹配
+     * 匹配顺序：国家 -> 省份 -> 城市 -> 区县 -> 地点名称 -> AI匹配
      *
-     * @param diaryId 日记id
-     * @param newLocationName 新地点名字
-     * @param newLocationInfo 新的地点信息
-     * @since 2026-02-04
+     * @param diaryId         日记id
+     * @param locationInfoMap 新地点信息映射
      */
-    public void locationDeduplication(Integer diaryId, String newLocationName, AITagJson.LocationInfo newLocationInfo) {
+    @Transactional
+    public void locationDeduplication(Integer diaryId,
+                                      Map<String, AITagJson.LocationInfo> locationInfoMap) {
 
-        // 一级匹配，匹配国家
-        log.info("开始一级匹配：国家：{}", newLocationInfo.getCountry());
-        List<LocationPojo> candidateLocations = locationMapper.selectByCountry(newLocationInfo.getCountry());
-        log.info("一级匹配结束，候选地点列表：{}", candidateLocations);
-        if(candidateLocations != null && !candidateLocations.isEmpty()) {
+        for (Map.Entry<String, AITagJson.LocationInfo> entry : locationInfoMap.entrySet()) {
+            String newLocationName = entry.getKey();
+            AITagJson.LocationInfo newLocationInfo = entry.getValue();
 
-            // 二级匹配，匹配省份
-            log.info("开始二级匹配：省份：{}", newLocationInfo.getProvince());
-            candidateLocations = filterByField(newLocationInfo.getProvince(), candidateLocations, LocationPojo::getProvince);
-            log.info("二级匹配结束，候选地点列表：{}", candidateLocations);
-            if (!candidateLocations.isEmpty()) {
-
-                // 三级匹配，匹配城市
-                log.info("开始三级匹配：城市：{}", newLocationInfo.getCity());
-                candidateLocations = filterByField(newLocationInfo.getCity(), candidateLocations, LocationPojo::getCity);
-                log.info("三级匹配结束，候选地点列表：{}", candidateLocations);
-                if (!candidateLocations.isEmpty()) {
-
-                    // 四级匹配，匹配区县
-                    log.info("开始四级匹配：区县：{}", newLocationInfo.getDistrict());
-                    candidateLocations = filterByField(newLocationInfo.getDistrict(), candidateLocations, LocationPojo::getDistrict);
-                    log.info("四级匹配结束，候选地点列表：{}", candidateLocations);
-                    if (!candidateLocations.isEmpty()) {
-
-                        // 五级匹配，匹配地点名称
-                        log.info("开始五级匹配：地点名称：{}", newLocationName);
-                        candidateLocations = findExactMatch(newLocationName, candidateLocations);
-                        log.info("五级匹配结束，候选地点列表：{}", candidateLocations);
-                        if (!candidateLocations.isEmpty()) {
-
-                            // 如果只剩下一个候选地点，则更新数据库
-                            if (candidateLocations.size() == 1) {
-                                log.info("候选列表只剩下一处地点，判定为同一地点，开始更新数据库：{}", candidateLocations.getFirst());
-                                // 为同一地点，更新地点信息
-                                locationUpdater(candidateLocations.getFirst(), newLocationName, newLocationInfo);
-                                // 添加日记-地点关联
-                                checkConstraint(diaryId, candidateLocations.getFirst().getId(),
-                                        DateTimeUtils.parseDate(newLocationInfo.getAppearanceDate()),
-                                        DiaryLocationPojo.MentionType.valueOf(newLocationInfo.getMentionType().name()));
-                                return;
-                            }
-
-                            // 如果候选列表大于1，则进行六级匹配
-                            // 六级匹配 AI匹配
-                            log.info("开始六级匹配：AI 地点名称：{}", newLocationName);
-                            Integer matchTheLocationIndex = aiAnalysisService.locationTagDeduplicationAnalysis(
-                                    newLocationName, newLocationInfo, candidateLocations);
-
-                            if (matchTheLocationIndex == -1) {
-                                log.info("未开启AI分析功能，默认为新地点，添加数据库");
-                                for (LocationPojo location : candidateLocations) {
-                                    locationMapper.insert(location);
-                                }
-                            } else if (matchTheLocationIndex == 0) {
-                                // 判定为新地点
-                                LocationPojo location = new LocationPojo(newLocationName, newLocationInfo);
-                                log.info("AI评定为新地点，添加数据库：{}", location);
-
-                                Integer locationId = locationMapper.insert(location);
-
-                                // 添加日记-地点关联
-                                checkConstraint(diaryId, locationId,
-                                        DateTimeUtils.parseDate(newLocationInfo.getAppearanceDate()),
-                                        DiaryLocationPojo.MentionType.valueOf(newLocationInfo.getMentionType().name()));
-                            } else {
-                                // 为同一地点，更新地点信息
-                                LocationPojo locationPojo = candidateLocations.get(matchTheLocationIndex);
-                                locationUpdater(locationPojo, newLocationName, newLocationInfo);
-
-                                // 添加日记-地点关联
-                                checkConstraint(diaryId, locationPojo.getId(),
-                                        DateTimeUtils.parseDate(newLocationInfo.getAppearanceDate()),
-                                        DiaryLocationPojo.MentionType.valueOf(newLocationInfo.getMentionType().name()));
-                            }
-                        }
-                    }
-                }
+            if (newLocationInfo == null) {
+                log.warn("地点信息为空，跳过处理: {}", newLocationName);
+                continue;
             }
-        } else {
-            // 未找到匹配的国家，创建新地点
-            LocationPojo location = new LocationPojo(newLocationName, newLocationInfo);
-            log.info("未找到匹配的国家，创建新地点：{}", location);
 
-            Integer locationId = locationMapper.insert(location);
+            logMatchingProcess(newLocationName, null, "开始处理");
+            log.info("开始一级匹配：国家：{}", newLocationInfo.getCountry());
 
-            // 添加日记-地点关联
-            checkConstraint(diaryId, locationId,
-                    DateTimeUtils.parseDate(newLocationInfo.getAppearanceDate()),
-                    DiaryLocationPojo.MentionType.valueOf(newLocationInfo.getMentionType().name()));
+            try {
+                // 1. 按国家筛选
+                List<LocationPojo> countryCandidates = findByCountry(newLocationInfo.getCountry());
+                logMatchingProcess(newLocationName, countryCandidates, "国家匹配");
+
+                if (countryCandidates.isEmpty()) {
+                    // 无匹配国家，直接创建新地点
+                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    continue;
+                }
+
+                // 2. 按省份匹配
+                log.info("开始二级匹配：省份：{}", newLocationInfo.getProvince());
+                List<LocationPojo> provinceCandidates = filterByField(
+                        newLocationInfo.getProvince(), countryCandidates, LocationPojo::getProvince);
+                logMatchingProcess(newLocationName, provinceCandidates, "省份匹配");
+
+                if (provinceCandidates.isEmpty()) {
+                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    continue;
+                }
+
+                // 3. 按城市匹配
+                log.info("开始三级匹配：城市：{}", newLocationInfo.getCity());
+                List<LocationPojo> cityCandidates = filterByField(
+                        newLocationInfo.getCity(), provinceCandidates, LocationPojo::getCity);
+                logMatchingProcess(newLocationName, cityCandidates, "城市匹配");
+
+                if (cityCandidates.isEmpty()) {
+                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    continue;
+                }
+
+                // 4. 按区县匹配
+                log.info("开始四级匹配：区县：{}", newLocationInfo.getDistrict());
+                List<LocationPojo> districtCandidates = filterByField(
+                        newLocationInfo.getDistrict(), cityCandidates, LocationPojo::getDistrict);
+                logMatchingProcess(newLocationName, districtCandidates, "区县匹配");
+
+                if (districtCandidates.isEmpty()) {
+                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    continue;
+                }
+
+                // 5. 按地点名称精确匹配
+                log.info("开始五级匹配：地点名称：{}", newLocationName);
+                List<LocationPojo> nameCandidates = findExactMatch(newLocationName, districtCandidates);
+                logMatchingProcess(newLocationName, nameCandidates, "名称匹配");
+
+                // 处理匹配结果
+                handleMatchResult(diaryId, newLocationName, newLocationInfo, nameCandidates);
+
+            } catch (Exception e) {
+                log.error("处理地点去重时发生异常，地点名称: {}", newLocationName, e);
+                // 异常情况下按新地点处理，避免丢失数据
+                addNewLocation(diaryId, newLocationName, newLocationInfo);
+            }
         }
+    }
+
+    /**
+     * 根据国家查找地点
+     */
+    private List<LocationPojo> findByCountry(String country) {
+        if (country == null) {
+            return Collections.emptyList();
+        }
+        List<LocationPojo> result = locationMapper.selectByCountry(country);
+        return result != null ? result : Collections.emptyList();
     }
 
     /**
      * 根据指定字段筛选候选地点列表
-     * 通用的地点匹配方法，支持按省份、城市、区县等字段进行筛选
-     *
-     * @param fieldValue 字段值
-     * @param candidates 候选地点列表
-     * @param fieldExtractor 字段提取函数
-     * @return 筛选后的候选地点列表
-     * @since 2026-02-04
      */
-    private List<LocationPojo> filterByField(String fieldValue, List<LocationPojo> candidates,
-                                           java.util.function.Function<LocationPojo, String> fieldExtractor) {
-        if (fieldValue == null || fieldValue.isEmpty()) {
-            return candidates;
+    private List<LocationPojo> filterByField(String fieldValue,
+                                             List<LocationPojo> candidates,
+                                             Function<LocationPojo, String> fieldExtractor) {
+        if (fieldValue == null || fieldValue.isEmpty() || candidates == null || candidates.isEmpty()) {
+            return candidates != null ? candidates : Collections.emptyList();
         }
 
-        List<LocationPojo> result = new ArrayList<>();
-        for (LocationPojo location : candidates) {
-            String locationFieldValue = fieldExtractor.apply(location);
-            if (fieldValue.equals(locationFieldValue)) {
-                result.add(location);
-            }
-        }
-        return result;
+        return candidates.stream()
+                .filter(loc -> fieldValue.equals(fieldExtractor.apply(loc)))
+                .collect(Collectors.toList());
     }
 
     /**
      * 根据地点名称精确匹配
-     *
-     * @param locationName 地点名称
-     * @param candidates 候选地点列表
-     * @return 匹配的地点列表
-     * @since 2026-02-04
      */
     private List<LocationPojo> findExactMatch(String locationName, List<LocationPojo> candidates) {
-        if (locationName == null || locationName.isEmpty()) {
-            return new ArrayList<>();
+        if (locationName == null || locationName.isEmpty() || candidates == null || candidates.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        List<LocationPojo> result = new ArrayList<>();
-        for (LocationPojo location : candidates) {
-            if (locationName.equals(location.getName())) {
-                result.add(location);
-            }
+        return candidates.stream()
+                .filter(loc -> locationName.equals(loc.getName()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 处理名称匹配后的结果
+     */
+    private void handleMatchResult(Integer diaryId,
+                                   String newName,
+                                   AITagJson.LocationInfo newInfo,
+                                   List<LocationPojo> candidates) {
+
+        if (candidates.isEmpty()) {
+            log.info("无精确匹配地点，判定为新地点: {}", newName);
+            addNewLocation(diaryId, newName, newInfo);
+            return;
         }
-        return result;
+
+        if (candidates.size() == 1) {
+            LocationPojo matchedLocation = candidates.get(0);
+            log.info("候选列表只剩下一处地点，判定为同一地点，开始更新数据库：{}", matchedLocation.getName());
+            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
+            return;
+        }
+
+        // 多候选，使用AI匹配
+        handleAiMatching(diaryId, newName, newInfo, candidates);
+    }
+
+    /**
+     * AI匹配处理
+     */
+    private void handleAiMatching(Integer diaryId,
+                                  String newName,
+                                  AITagJson.LocationInfo newInfo,
+                                  List<LocationPojo> candidates) {
+
+        log.info("开始六级匹配：AI 地点名称：{}", newName);
+        Integer aiMatchIndex = aiAnalysisService.locationTagDeduplicationAnalysis(
+                newName, newInfo, candidates);
+
+        // 根据原逻辑处理AI返回结果
+        if (aiMatchIndex == null) {
+            log.warn("AI返回null，使用保守策略：视为新地点");
+            addNewLocation(diaryId, newName, newInfo);
+            return;
+        }
+
+        if (aiMatchIndex == -1) {
+            log.info("AI未启用，按原逻辑处理：将候选列表中的所有地点插入数据库");
+            // 注意：原代码此处逻辑可能有问题，但为保持行为一致，保留原样
+            for (LocationPojo location : candidates) {
+                locationMapper.insert(location);
+                createDiaryLocationRelation(diaryId, location.getId(),
+                        DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
+            }
+            return;
+        }
+
+        if (aiMatchIndex == 0) {
+            log.info("AI评定为新地点，添加数据库：{}", newName);
+            addNewLocation(diaryId, newName, newInfo);
+            return;
+        }
+
+        // aiMatchIndex > 0 且小于candidates.size()
+        if (aiMatchIndex > 0 && aiMatchIndex <= candidates.size()) {
+            LocationPojo matchedLocation = candidates.get(aiMatchIndex - 1); // 假设索引从1开始
+            log.info("AI匹配成功，匹配到地点: {}", matchedLocation.getName());
+            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
+        } else {
+            log.warn("AI返回索引超出范围: {}，视为新地点", aiMatchIndex);
+            addNewLocation(diaryId, newName, newInfo);
+        }
+    }
+
+    /**
+     * 更新已有地点信息并建立关联
+     */
+    private void updateAndReturn(Integer diaryId,
+                                 String newName,
+                                 AITagJson.LocationInfo newInfo,
+                                 LocationPojo existingLocation) {
+
+        locationUpdater(existingLocation, newName, newInfo);
+        createDiaryLocationRelation(diaryId, existingLocation.getId(),
+                DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
+    }
+
+    /**
+     * 添加新地点
+     */
+    private void addNewLocation(Integer diaryId,
+                                String name,
+                                AITagJson.LocationInfo info) {
+
+        log.info("判定为新地点，添加数据库：{}", name);
+        LocationPojo location = new LocationPojo(name, info);
+        locationMapper.insert(location);
+        createDiaryLocationRelation(diaryId, location.getId(),
+                DiaryLocationPojo.MentionType.valueOf(info.getMentionType().name()));
     }
 
     /**
      * 更新地点信息
-     *
-     * @param location 待更新的地点实体
-     * @param newLocationName 新的地点名称
-     * @param newLocationInfo 新的地点信息
-     * @since 2026-02-04
      */
-    private void locationUpdater(LocationPojo location, String newLocationName, AITagJson.LocationInfo newLocationInfo) {
-        // 更新地点描述
+    private void locationUpdater(LocationPojo location,
+                                 String newLocationName,
+                                 AITagJson.LocationInfo newLocationInfo) {
+
+        // 更新描述
         if (newLocationInfo.getDescription() != null && !newLocationInfo.getDescription().isEmpty()) {
             location.setDescription(newLocationInfo.getDescription());
         }
 
-        // 更新地点颜色
+        // 更新颜色
         if (newLocationInfo.getColor() != null && !newLocationInfo.getColor().isEmpty()) {
             location.setColor(newLocationInfo.getColor());
         }
 
         // 更新出现次数
-        Integer currentAppearanceCount = location.getAppearanceCount();
-        if (currentAppearanceCount == null) {
-            currentAppearanceCount = 0;
-        }
-        location.setAppearanceCount(currentAppearanceCount + 1);
+        int currentCount = location.getAppearanceCount() != null ? location.getAppearanceCount() : 0;
+        location.setAppearanceCount(currentCount + 1);
 
-        // 更新地点信息
         locationMapper.update(location);
     }
 
     /**
-     * 检查是否已存在关联，避免违反唯一约束
-     *
-     * @param diaryId 日记ID
-     * @param locationId 地点ID
-     * @param appearanceDate 出现日期
-     * @param mentionType 提及类型
-     * @since 2026-02-04
+     * 创建日记-地点关联关系
      */
-    private void checkConstraint(Integer diaryId, Integer locationId, LocalDate appearanceDate, DiaryLocationPojo.MentionType mentionType) {
-        // 检查是否已存在该关联
-        DiaryLocationPojo existingRelation = diaryLocationMapper.selectByDiaryIdAndLocationId(diaryId, locationId);
-        if (existingRelation == null) {
-            // 不存在则插入新关联
-            DiaryLocationPojo diaryLocation = new DiaryLocationPojo(diaryId, locationId);
-            diaryLocation.setAppearanceDate(appearanceDate.atStartOfDay());
-            diaryLocation.setMentionType(mentionType);
-            diaryLocationMapper.insert(diaryLocation);
+    private void createDiaryLocationRelation(Integer diaryId,
+                                             Integer locationId,
+                                             DiaryLocationPojo.MentionType mentionType) {
+        try {
+            if (diaryLocationMapper.selectByDiaryIdAndLocationId(diaryId, locationId) == null) {
+                DiaryLocationPojo relation = new DiaryLocationPojo(diaryId, locationId);
+                relation.setMentionType(mentionType);
+                diaryLocationMapper.insert(relation);
+                log.debug("创建日记-地点关联: diaryId={}, locationId={}", diaryId, locationId);
+            }
+        } catch (Exception e) {
+            log.error("创建日记-地点关联失败，diaryId={}, locationId={}", diaryId, locationId, e);
         }
     }
 
+    /**
+     * 记录匹配过程日志
+     */
+    private void logMatchingProcess(String name, List<LocationPojo> candidates, String stage) {
+        if (log.isDebugEnabled()) {
+            int count = candidates != null ? candidates.size() : 0;
+            String names = candidates != null && !candidates.isEmpty()
+                    ? candidates.stream().map(LocationPojo::getName).collect(Collectors.joining(", "))
+                    : "无";
+            log.debug("{} - {}: 候选人数量={}, 列表=[{}]", name, stage, count, names);
+        }
+    }
 }

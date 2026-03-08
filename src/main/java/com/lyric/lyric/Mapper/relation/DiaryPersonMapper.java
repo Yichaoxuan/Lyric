@@ -17,8 +17,8 @@ public interface DiaryPersonMapper {
      * @param diaryPerson 日记-人物关联实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO diary_person(diary_id, person_id, appearance_date, mention_type) " +
-            "VALUES(#{diaryId}, #{personId}, #{appearanceDate}, #{mentionType})")
+    @Insert("INSERT INTO diary_person(diary_id, person_id, mention_type) " +
+            "VALUES(#{diaryId}, #{personId}, #{mentionType})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DiaryPersonPojo diaryPerson);
     
@@ -74,7 +74,7 @@ public interface DiaryPersonMapper {
      * @return 影响的行数
      */
     @Update("UPDATE diary_person SET diary_id=#{diaryId}, person_id=#{personId}, " +
-            "appearance_date=#{appearanceDate}, mention_type=#{mentionType} WHERE id=#{id}")
+            "mention_type=#{mentionType} WHERE id=#{id}")
     int update(DiaryPersonPojo diaryPerson);
     
     /**

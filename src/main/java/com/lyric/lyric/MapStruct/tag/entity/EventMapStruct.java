@@ -1,7 +1,9 @@
 package com.lyric.lyric.MapStruct.tag.entity;
 
-import com.lyric.lyric.DTO.tag.entityTag.Event;
-import com.lyric.lyric.POJO.tag.entityTag.EventPojo;
+import com.lyric.lyric.DTO.tag.entityTag.event.SubEvent;
+import com.lyric.lyric.DTO.tag.entityTag.event.TogEvent;
+import com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo;
+import com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo;
 import com.lyric.lyric.Utils.stringProcessing.stringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +15,7 @@ import java.util.Map;
 
 /**
  * 事件对象映射器
- *
+ * 支持父事件和子事件的DTO与POJO之间的映射
  */
 @Mapper(componentModel = "spring")
 public interface EventMapStruct {
@@ -36,28 +38,53 @@ public interface EventMapStruct {
          return stringUtils.stringToMap(str);
      }
 
+    // ==================== 父事件映射 ====================
+
     /**
-     * 将Event DTO转换为EventPojo实体
-     * @param event DTO对象
+     * 将TogEvent DTO转换为TogEventPojo实体
+     * @param togEvent DTO对象
      * @return POJO对象
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(source = "persons", target = "persons", qualifiedByName = "mapToString")
-    EventPojo toPojo(Event event);
-    
+    @Mapping(target = "diaryId", ignore = true)
+    TogEventPojo toTogEventPojo(TogEvent togEvent);
+
     /**
-     * 将EventPojo实体转换为Event DTO
-     * @param eventPojo POJO对象
+     * 将TogEventPojo实体转换为TogEvent DTO
+     * @param togEventPojo POJO对象
      * @return DTO对象
      */
-    @Mapping(target = "persons", source = "persons", qualifiedByName = "stringToMap")
-    Event toDto(EventPojo eventPojo);
-    
+    TogEvent toTogEventDto(TogEventPojo togEventPojo);
+
     /**
-     * 批量将EventPojo实体列表转换为Event DTO列表
-     * @param eventPojoList POJO对象列表
+     * 批量将TogEventPojo实体列表转换为TogEvent DTO列表
+     * @param togEventPojoList POJO对象列表
      * @return DTO对象列表
      */
-    List<Event> toDtoList(List<EventPojo> eventPojoList);
+    List<TogEvent> toTogEventDtoList(List<TogEventPojo> togEventPojoList);
+
+    // ==================== 子事件映射 ====================
+    
+    /**
+     * 将SubEvent DTO转换为SubEventPojo实体
+     * @param subEvent DTO对象
+     * @return POJO对象
+     */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "togEventId", ignore = true)
+    SubEventPojo toSubEventPojo(SubEvent subEvent);
+    
+    /**
+     * 将SubEventPojo实体转换为SubEvent DTO
+     * @param subEventPojo POJO对象
+     * @return DTO对象
+     */
+    SubEvent toSubEventDto(SubEventPojo subEventPojo);
+    
+    /**
+     * 批量将SubEventPojo实体列表转换为SubEvent DTO列表
+     * @param subEventPojoList POJO对象列表
+     * @return DTO对象列表
+     */
+    List<SubEvent> toSubEventDtoList(List<SubEventPojo> subEventPojoList);
 }

@@ -1,10 +1,8 @@
 package com.lyric.lyric.POJO.tag.entityTag;
 
 import com.lyric.lyric.POJO.AI.AITagJson;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +11,9 @@ import java.time.LocalDateTime;
  * 对应数据库表: location
  *
  * @author Yichaoxuan
- * @since 2026-02-01
+ * @since 2026-02-16
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationPojo {
@@ -101,11 +98,6 @@ public class LocationPojo {
     private ImportanceLevel importance;
 
     /**
-     * 创建时间
-     */
-    private LocalDateTime createdAt;
-
-    /**
      * 由AITagJson.LocationInfo转换为LocationPojo对象
      * @param name 地点名称
      * @param locationInfo AITagJson.LocationInfo对象
@@ -117,13 +109,15 @@ public class LocationPojo {
         this.color = locationInfo.getColor();
         this.longitude = null;
         this.latitude = null;
-        this.city = null;
+        this.district = locationInfo.getDistrict();
+        this.city = locationInfo.getCity();
+        this.province = locationInfo.getProvince();
+        this.country = locationInfo.getCountry();
         this.geoHash = null;
-        this.firstAppearance = null;
-        this.lastAppearance = null;
-        this.appearanceCount = null;
+        this.firstAppearance = DateTimeUtils.now();
+        this.lastAppearance = firstAppearance;
+        this.appearanceCount = 1;
         this.importance = ImportanceLevel.MEDIUM;
-        this.createdAt = null;
     }
 
     /**

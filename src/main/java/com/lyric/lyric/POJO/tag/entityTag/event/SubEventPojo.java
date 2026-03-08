@@ -1,24 +1,24 @@
-package com.lyric.lyric.POJO.tag.entityTag;
+package com.lyric.lyric.POJO.tag.entityTag.event;
 
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
-import com.lyric.lyric.Utils.stringProcessing.stringUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
- * 事件实体类
- * 对应数据库表: event
+ * 子事件实体类
+ * 对应数据库表: sub_event
  *
  * @author Yichaoxuan
  */
 @Data
 @NoArgsConstructor
-public class EventPojo {
+@AllArgsConstructor
+public class SubEventPojo {
 
     /**
      * 主键ID
@@ -26,60 +26,61 @@ public class EventPojo {
     private Integer id;
 
     /**
-     * 事件名称
+     * 父事件Id
+     */
+    private Integer togEventId;
+
+    /**
+     * 子事件名称
      */
     private String name;
 
     /**
-     * 事件日期
+     * 子事件发生日期
      */
     private LocalDate eventDate;
 
     /**
-     * 事件描述
+     * 子事件描述
      */
     private String description;
 
     /**
-     * 参与事件的人物及其角色
-     */
-    private String persons;
-
-    /**
-     * 重要性
+     * 子事件重要性
      */
     private ImportanceLevel importance;
 
     /**
-     * 创建时间
+     * 颜色代码
      */
-    private LocalDateTime createdAt;
+    private String color;
 
     /**
      * 数据库映射构造
      */
-    public EventPojo(Integer id, String name, LocalDate eventDate, String description, String persons, ImportanceLevel importance, LocalDateTime createdAt) {
+    public SubEventPojo(Integer id, String name, LocalDate eventDate, String description, ImportanceLevel importance, String color) {
         this.id = id;
         this.name = name;
         this.eventDate = eventDate;
         this.description = description;
-        this.persons = persons;
         this.importance = importance;
-        this.createdAt = createdAt;
+        this.color = color;
     }
 
     /**
-     * 由AITagJson.EventInfo转换为EventPojo对象
-     * @param name 事件名称
-     * @param event AITagJson.EventInfo对象
+     * 由AITagJson.SubEventInfo转换为SubEventPojo对象
+     *
+     * @param togEventId 父事件ID
+     * @param name       子事件名称
+     * @param event      AITagJson.SubEventInfo对象
      */
-    public EventPojo(String name, AITagJson.EventInfo event) {
+    public SubEventPojo(Integer togEventId, String name, AITagJson.SubEventInfo event) {
+        this.togEventId = togEventId;
         this.name = name;
         this.eventDate = DateTimeUtils.parseDate(event.getDate());
         this.description = event.getDescription();
-        this.persons = stringUtils.mapToString(event.getPersons());
         this.importance = ImportanceLevel.MEDIUM;
-        this.createdAt = null;
+        this.color = event.getColor();
     }
 
     /**

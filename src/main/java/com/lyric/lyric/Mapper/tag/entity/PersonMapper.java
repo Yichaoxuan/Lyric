@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Mapper
 public interface PersonMapper {
-    
+
     /**
      * 插入一条人物记录
      * @param person 人物实体
@@ -22,7 +22,7 @@ public interface PersonMapper {
             "VALUES(#{name}, #{alias}, #{gender}, #{relation}, #{personality}, #{color}, #{firstAppearance}, #{lastAppearance}, #{appearanceCount}, #{importance})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(PersonPojo person);
-    
+
     /**
      * 根据ID查询人物
      * @param id 人物ID
@@ -32,7 +32,7 @@ public interface PersonMapper {
     PersonPojo selectById(Integer id);
 
     /**
-     * 根据性别
+     * 根据性别查询人物
      * @param gender 人物性别
      * @return 人物列表
      */
@@ -70,7 +70,7 @@ public interface PersonMapper {
      */
     @Select("SELECT * FROM person")
     List<PersonPojo> selectAll();
-    
+
     /**
      * 更新人物
      * @param person 人物实体
@@ -80,7 +80,7 @@ public interface PersonMapper {
             "first_appearance=#{firstAppearance}, last_appearance=#{lastAppearance}, appearance_count=#{appearanceCount}, " +
             "importance=#{importance} WHERE id=#{id}")
     int update(PersonPojo person);
-    
+
     /**
      * 根据ID删除人物
      * @param id 人物ID

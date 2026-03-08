@@ -20,8 +20,8 @@ public interface DiaryLocationMapper {
      * @param diaryLocation 日记-地点关联实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO diary_location(diary_id, location_id, appearance_date, mention_type) " +
-            "VALUES(#{diaryId}, #{locationId}, #{appearanceDate}, #{mentionType})")
+    @Insert("INSERT INTO diary_location(diary_id, location_id, mention_type) " +
+            "VALUES(#{diaryId}, #{locationId}, #{mentionType})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DiaryLocationPojo diaryLocation);
     
@@ -58,7 +58,7 @@ public interface DiaryLocationMapper {
      * @return 影响的行数
      */
     @Update("UPDATE diary_location SET diary_id=#{diaryId}, location_id=#{locationId}, " +
-            "appearance_date=#{appearanceDate}, mention_type=#{mentionType} WHERE id=#{id}")
+            "mention_type=#{mentionType} WHERE id=#{id}")
     int update(DiaryLocationPojo diaryLocation);
     
     /**

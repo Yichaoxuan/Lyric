@@ -34,6 +34,11 @@ public class EventLocationPojo {
     private Integer locationId;
 
     /**
+     * 地点到达顺序的索引
+     */
+    private Integer index;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createdAt;
@@ -42,9 +47,11 @@ public class EventLocationPojo {
      * 有参构造方法（不包含自动生成的字段）
      * @param eventId 事件ID
      * @param locationId 地点ID
+     * @param index 地点到达顺序的索引
      */
-    public EventLocationPojo(Integer eventId, Integer locationId) {
+    public EventLocationPojo(Integer eventId, Integer locationId, Integer index) {
         this.eventId = eventId;
         this.locationId = locationId;
+        this.index = index;
     }
 }

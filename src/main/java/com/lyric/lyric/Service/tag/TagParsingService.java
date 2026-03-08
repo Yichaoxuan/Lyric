@@ -1,17 +1,15 @@
 package com.lyric.lyric.Service.tag;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lyric.lyric.DTO.content.Diary;
 import com.lyric.lyric.Mapper.content.DiaryMapper;
-import com.lyric.lyric.Mapper.tag.entity.EventMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.content.DiaryPojo;
-import com.lyric.lyric.POJO.tag.entityTag.EventPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,29 +23,27 @@ import java.util.Map;
 @Service
 public class TagParsingService {
 
-    private final AIAnalysisService aiAnalysisService;
-
     private final DiaryMapper diaryMapper;
 
-
-    private final EventMapper eventMapper;
+    private final AIAnalysisService aiAnalysisService;
 
     private final PersonsService personsService;
 
     private final LocationService locationService;
 
+    private final EventService eventService;
+
     private final BaseTagService baseTagService;
 
-    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper,
-                             EventMapper eventMapper, PersonsService personsService,
-                             LocationService locationService, BaseTagService baseTagService) {
+    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper, PersonsService personsService,
+                             LocationService locationService, EventService eventService, BaseTagService baseTagService) {
         this.aiAnalysisService = aiAnalysisService;
         this.diaryMapper = diaryMapper;
-        this.eventMapper = eventMapper;
         this.personsService = personsService;
         this.locationService = locationService;
+        this.eventService = eventService;
         this.baseTagService = baseTagService;
-    }
+                             }
 
     /**
      * 调用AI进行分析
@@ -55,7 +51,7 @@ public class TagParsingService {
      * @param diary    日记对象
      */
     @Async("aiAnalysisExecutor")
-    public void tagAnalysis(Diary diary) throws JsonProcessingException {
+    public void tagAnalysis(Diary diary) {
         try {
             // 调用AI进行分析
             AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent());
@@ -141,8 +137,8 @@ public class TagParsingService {
             Map<String, AITagJson.PersonInfo> personInfoMapMap = entityTag.getPerson();
             // 获取地点实体标签
             Map<String, AITagJson.LocationInfo> locationInfoMap = entityTag.getLocation();
-            // 获取事件实体标签
-            Map<String, AITagJson.EventInfo> eventInfoMap = entityTag.getEvent();
+            // 获取父事件实体标签
+            Map<String, AITagJson.TogEventInfo> TogEventInfoMap = entityTag.getEvent();
 
             // 转换为基础主题标签对象并插入数据库
             if (themes != null) {
@@ -179,34 +175,39 @@ public class TagParsingService {
                 log.info("---情绪标签处理结束---");
             }
 
+            Map<Integer, Integer> integerIntegerMap;
+
             // 转换为人物实体标签对象并插入数据库
             if (personInfoMapMap != null) {
 
                 log.info("---开始进行人物实体处理---");
 
-                personInfoMapMap.forEach((name, person) -> {
-                    // 调用人物去重处理器
-                    personsService.personDeduplicator(diaryId, name, person);
-                });
+                // 调用人物去重处理器
+                integerIntegerMap = personsService.personDeduplication(diaryId, personInfoMapMap);
 
                 log.info("---人物实体标签处理结束---");
+            } else {
+                integerIntegerMap = new HashMap<>();
             }
 
             // 转换为地点实体标签对象并插入数据库
             if (locationInfoMap != null) {
-                locationInfoMap.forEach((name, location) -> {
-                    locationService.locationDeduplication(diaryId, name, location);
-                });
+
+                log.info("---开始进行地点实体处理---");
+
+                locationService.locationDeduplication(diaryId, locationInfoMap);
+
+                log.info("---地点实体标签处理结束---");
             }
 
             //转换为事件实体标签对象并插入数据库
-            if (eventInfoMap != null) {
-                eventInfoMap.forEach((name, event) -> {
-                    System.out.println(name);
-                    if (name != null && event != null) {
-                        eventMapper.insert(new EventPojo(name, event));
-                    }
-                });
+            if (TogEventInfoMap != null) {
+
+                log.info("---开始进行事件实体标签处理---");
+
+                eventService.eventDeduplication(diaryId, TogEventInfoMap,integerIntegerMap);
+
+                log.info("---事件实体标签处理结束---");
             }
 
             log.info("标签分析处理完成");

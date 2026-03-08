@@ -193,10 +193,10 @@ public class UserSettingsPojo {
     @Getter
     public static class Api {
         /**
-         * DeepSeek API密钥
-         * 用于访问DeepSeek AI服务的API密钥
+         * AI大语言模型 API密钥
+         * 用于访问AI服务的API密钥
          */
-        private String deepseekApiKey;
+        private String aiLLMApiKey;
 
         /**
          * 百度NLP API Key

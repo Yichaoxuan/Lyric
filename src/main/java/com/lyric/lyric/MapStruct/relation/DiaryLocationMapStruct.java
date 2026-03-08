@@ -23,7 +23,6 @@ public interface DiaryLocationMapStruct {
      * @return POJO对象
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     DiaryLocationPojo toPojo(DiaryLocation diaryLocation);
     
     /**
