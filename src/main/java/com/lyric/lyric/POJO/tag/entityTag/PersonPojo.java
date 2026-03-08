@@ -1,6 +1,7 @@
 package com.lyric.lyric.POJO.tag.entityTag;
 
 import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -86,10 +87,10 @@ public class PersonPojo {
         this.gender = genderName(persons.getGender());
         this.personality = persons.getPersonality();
         this.color = persons.getColor();
-        this.firstAppearance = null;
-        this.lastAppearance = null;
+        this.firstAppearance = DateTimeUtils.now();
+        this.lastAppearance = firstAppearance;
         this.appearanceCount = 1;
-        this.importance = null;
+        this.importance = ImportanceLevel.LOW;
     }
 
     /**

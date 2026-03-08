@@ -168,8 +168,8 @@ public class UserSettingsService {
                 userSettingsConfig.getApi().getBaiduNlpApiKey() != null && 
                 !userSettingsConfig.getApi().getBaiduNlpApiKey().isEmpty());
             logger.info("  百度地图API密钥已设置: {}", 
-                userSettingsConfig.getApi().getBaiduMapApiKey() != null && 
-                !userSettingsConfig.getApi().getBaiduMapApiKey().isEmpty());
+                userSettingsConfig.getApi().getBaiduMapApiHost() != null &&
+                !userSettingsConfig.getApi().getBaiduMapApiHost().isEmpty());
             
             logger.info("=== 验证完成 ===");
         } catch (Exception e) {

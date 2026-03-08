@@ -425,7 +425,8 @@ user-settings:
         hanlp_api_key: "OTM4MkBiYnMuaGFubHAuY29tOmhCeTNncVJUQng1Nnl3Ync="
 
         # 百度地图API
-        baidu_map_api_key: "https://api.map.baidu.com/"
+        baidu_map_api_host: "https://api.map.baidu.com"
+        baidu_map_api_key: "P32IFzESut5UnfyJwIksfpYLFTN5ktIq"
 
         # 和风天气API
         qweather_api_key: "081d41c1b7c14713abbaee69df4a919d"

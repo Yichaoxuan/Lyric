@@ -54,6 +54,19 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Apache HttpClient ：用于 HTTP 请求调用百度地图 API（版本由 Spring Boot 管理） -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+        </dependency>
+
+        <!-- geohash 地理哈希计算库 -->
+        <dependency>
+            <groupId>ch.hsr</groupId>
+            <artifactId>geohash</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
         <!-- Spring AI OpenAI Starter：通过OpenAI兼容接口调用通义千问 -->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.ai</groupId>-->
@@ -95,7 +108,7 @@
             <version>24.1.0</version>
         </dependency>
 
-        <!-- JSON处理 -->
+        <!-- JSON 处理 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

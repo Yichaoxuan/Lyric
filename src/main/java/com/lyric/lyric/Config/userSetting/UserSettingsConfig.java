@@ -95,10 +95,12 @@ public class UserSettingsConfig {
         pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
         pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
-        pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
+        api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
+        pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
         pojoApi.setQweatherApiKey(api.getQweatherApiKey());
         pojoApi.setQweatherApiHost(api.getQweatherApiHost());
         pojoApi.setEmojiApiKey(api.getEmojiApiKey());
+
 
         // 将内部类实例设置到UserSettingsPojo中
         userSettingsPojo.setFeatures(pojoFeatures);
@@ -147,6 +149,7 @@ public class UserSettingsConfig {
         api.setBaiduNlpSecretKey(userSettingsPojo.getApi().getBaiduNlpSecretKey());
         api.setHanlpApiKey(userSettingsPojo.getApi().getHanlpApiKey());
         api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
+        api.setBaiduMapApiHost(userSettingsPojo.getApi().getBaiduMapApiHost());
         api.setQweatherApiKey(userSettingsPojo.getApi().getQweatherApiKey());
         api.setQweatherApiHost(userSettingsPojo.getApi().getQweatherApiHost());
         api.setEmojiApiKey(userSettingsPojo.getApi().getEmojiApiKey());
@@ -216,6 +219,7 @@ public class UserSettingsConfig {
         pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
         pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
+        pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
         pojoApi.setQweatherApiKey(api.getQweatherApiKey());
         pojoApi.setQweatherApiHost(api.getQweatherApiHost());
         pojoApi.setEmojiApiKey(api.getEmojiApiKey());
@@ -385,6 +389,12 @@ public class UserSettingsConfig {
         private String baiduMapApiKey;
 
         /**
+         * 百度地图API主机地址
+         * 用于访问百度地图服务的API主机地址
+         */
+        private String baiduMapApiHost;
+
+        /**
          * QWeather API密钥
          * 用于访问QWeather天气服务的API密钥
          */
@@ -401,6 +411,5 @@ public class UserSettingsConfig {
          * 用于访问Emoji服务的API密钥
          */
         private String emojiApiKey;
-
     }
 }

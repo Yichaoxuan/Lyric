@@ -223,6 +223,12 @@ public class UserSettingsPojo {
         private String baiduMapApiKey;
 
         /**
+         * 百度地图API主机地址
+         * 用于访问百度地图服务的API主机地址
+         */
+        private String baiduMapApiHost;
+
+        /**
          * QWeather API密钥
          * 用于访问QWeather天气服务的API密钥
          */
@@ -239,7 +245,6 @@ public class UserSettingsPojo {
          * 用于访问Emoji服务的API密钥
          */
         private String emojiApiKey;
-
     }
 
 }
