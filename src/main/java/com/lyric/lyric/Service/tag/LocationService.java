@@ -400,9 +400,11 @@ public class LocationService {
         String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8);
         
         // 构建完整的请求 URL
-        String url = baiduMapApiHost + "/geocoding/v3/"
+        String url = baiduMapApiHost
+                + "/geocoding/v3/"
                 + "?address=" + encodedAddress
                 + "&ak=" + baiduMapApiKey
+                + "&ret_coordtype=" + "gcj02ll"
                 + "&output=json";
 
         // 如果有城市信息，添加到请求中
@@ -429,7 +431,8 @@ public class LocationService {
                     log.error("百度地图 API 返回空响应，地址：{}", address);
                     return null;
                 }
-                
+
+                // 获取响应内容
                 String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                 
                 // 解析 JSON 响应

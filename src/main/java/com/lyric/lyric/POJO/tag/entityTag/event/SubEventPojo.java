@@ -6,8 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 子事件实体类
@@ -15,6 +16,7 @@ import java.time.LocalDate;
  *
  * @author Yichaoxuan
  */
+@Slf4j
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,7 +40,7 @@ public class SubEventPojo {
     /**
      * 子事件发生日期
      */
-    private LocalDate eventDate;
+    private LocalDateTime eventDate;
 
     /**
      * 子事件描述
@@ -58,7 +60,7 @@ public class SubEventPojo {
     /**
      * 数据库映射构造
      */
-    public SubEventPojo(Integer id, String name, LocalDate eventDate, String description, ImportanceLevel importance, String color) {
+    public SubEventPojo(Integer id, String name, LocalDateTime eventDate, String description, ImportanceLevel importance, String color) {
         this.id = id;
         this.name = name;
         this.eventDate = eventDate;
@@ -77,7 +79,8 @@ public class SubEventPojo {
     public SubEventPojo(Integer togEventId, String name, AITagJson.SubEventInfo event) {
         this.togEventId = togEventId;
         this.name = name;
-        this.eventDate = DateTimeUtils.parseDate(event.getDate());
+        this.eventDate = DateTimeUtils.parseDateTime(event.getDate());
+        log.info("转换前: {}， 转换后: {}", event.getDate(), this.eventDate);
         this.description = event.getDescription();
         this.importance = ImportanceLevel.MEDIUM;
         this.color = event.getColor();

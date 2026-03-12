@@ -402,7 +402,7 @@ public class AITagJson {
         private Map<String, String> location;
 
         /**
-         * 事件发生日期 (格式: YYYY-MM-DD)
+         * 事件发生日期 (格式: YYYY-MM-DD HH-MM-SS)
          */
         private String date;
 

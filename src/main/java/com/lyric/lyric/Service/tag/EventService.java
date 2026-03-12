@@ -147,15 +147,14 @@ public class EventService {
     private void addNewEventPersonRelation(Integer subEventId, AITagJson.SubEventInfo newSubEventInfo,
             Map<Integer, Integer> integerIntegerMap) {
         if (newSubEventInfo.getPersons() != null) {
-            for (Map.Entry<String, String> person : newSubEventInfo.getPersons().entrySet()) {
-                String personIndex = person.getKey();
-                String role = person.getValue();
+            for (Map.Entry<String, String> personMap : newSubEventInfo.getPersons().entrySet()) {
+                String personIndex = personMap.getKey();
+                String role = personMap.getValue();
                 for (Map.Entry<Integer, Integer> entry : integerIntegerMap.entrySet()) {
                     if (entry.getValue().equals(Integer.parseInt(personIndex))) {
-                        com.lyric.lyric.POJO.tag.entityTag.PersonPojo personEntity = personMapper
-                                .selectById(entry.getKey());
-                        if (personEntity != null && personEntity.getId() != null) {
-                            subEventPersonMapper.insert(new SubEventPersonPojo(subEventId, personEntity.getId(), role));
+                        com.lyric.lyric.POJO.tag.entityTag.PersonPojo person = personMapper.selectById(entry.getKey());
+                        if (person != null && person.getId() != null) {
+                            subEventPersonMapper.insert(new SubEventPersonPojo(subEventId, person.getId(), role));
                             log.info("添加子事件和人物关联成功：人物索引={}, 角色={}", personIndex, role);
                         }
                     }
@@ -179,10 +178,10 @@ public class EventService {
                 String locationName = location.getValue();
                 for (Map.Entry<Integer, Integer> entry : integerIntegerMap.entrySet()) {
                     if (entry.getValue().equals(Integer.parseInt(locationIndex))) {
-                        com.lyric.lyric.POJO.tag.entityTag.LocationPojo locationEntity = locationMapper
+                        com.lyric.lyric.POJO.tag.entityTag.LocationPojo locationPojo = locationMapper
                                 .selectById(entry.getKey());
-                        if (locationEntity != null && locationEntity.getId() != null) {
-                            subEventLocationMapper.insert(new SubEventLocationPojo(subEventId, locationEntity.getId()));
+                        if (locationPojo != null && locationPojo.getId() != null) {
+                            subEventLocationMapper.insert(new SubEventLocationPojo(subEventId, locationPojo.getId()));
                             log.info("添加子事件和地点关联成功：地点索引={}, 地点名称={}", locationIndex, locationName);
                         }
                     }

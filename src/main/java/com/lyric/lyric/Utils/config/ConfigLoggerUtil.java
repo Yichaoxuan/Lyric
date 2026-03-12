@@ -616,8 +616,8 @@ public class ConfigLoggerUtil {
             logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
             logConfigStatus(logger, "  - 百度地图API密钥", value.getBaiduMapApiHost());
-            logConfigStatus(logger, "  - QWeather API密钥", value.getQweatherApiKey());
-            logConfigStatus(logger, "  - QWeather API主机地址", value.getQweatherApiHost());
+            logConfigStatus(logger, "  - QWeather API密钥", value.getWeatherApiKey());
+            logConfigStatus(logger, "  - QWeather API主机地址", value.getWeatherApiHost());
             logConfigStatus(logger, "  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
@@ -639,8 +639,8 @@ public class ConfigLoggerUtil {
             logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
             logConfigStatus(logger, "  - 百度地图API密钥", value.getBaiduMapApiHost());
-            logConfigStatus(logger, "  - QWeather API密钥", value.getQweatherApiKey());
-            logConfigStatus(logger, "  - QWeather API主机地址", value.getQweatherApiHost());
+            logConfigStatus(logger, "  - QWeather API密钥", value.getWeatherApiKey());
+            logConfigStatus(logger, "  - QWeather API主机地址", value.getWeatherApiHost());
             logConfigStatus(logger, "  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
@@ -661,8 +661,8 @@ public class ConfigLoggerUtil {
             logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());
             logConfigStatus("  - 百度地图API密钥", value.getBaiduMapApiHost());
-            logConfigStatus("  - QWeather API密钥", value.getQweatherApiKey());
-            logConfigStatus("  - QWeather API主机地址", value.getQweatherApiHost());
+            logConfigStatus("  - QWeather API密钥", value.getWeatherApiKey());
+            logConfigStatus("  - QWeather API主机地址", value.getWeatherApiHost());
             logConfigStatus("  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
@@ -683,8 +683,8 @@ public class ConfigLoggerUtil {
             logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
             logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());
             logConfigStatus("  - 百度地图API密钥", value.getBaiduMapApiHost());
-            logConfigStatus("  - QWeather API密钥", value.getQweatherApiKey());
-            logConfigStatus("  - QWeather API主机地址", value.getQweatherApiHost());
+            logConfigStatus("  - QWeather API密钥", value.getWeatherApiKey());
+            logConfigStatus("  - QWeather API主机地址", value.getWeatherApiHost());
             logConfigStatus("  - Emoji API密钥", value.getEmojiApiKey());
         }
     }

@@ -4,6 +4,7 @@ import com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo;
 import com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,6 +15,24 @@ import java.util.List;
  */
 @Mapper
 public interface EventMapper {
+
+    /**
+     * 根据日记ID查询最小的父事件下最小的子事件的日期
+     * @param diaryId 日记ID
+     * @return 子事件的 event_date（格式：yyyy-MM-dd），若无则返回null
+     */
+    @Select("SELECT se.event_date " +
+            "FROM sub_event se " +
+            "WHERE se.tog_event_id = ( " +
+            "    SELECT te.id " +
+            "    FROM tog_event te " +
+            "    WHERE te.diary_id = #{diaryId} " +
+            "    ORDER BY te.id " +
+            "    LIMIT 1 " +
+            ") " +
+            "ORDER BY se.id " +
+            "LIMIT 1")
+    LocalDateTime selectMinSubEventDateByDiaryId(Integer diaryId);
     
     // ==================== 父事件(tog_event)相关操作 ====================
     

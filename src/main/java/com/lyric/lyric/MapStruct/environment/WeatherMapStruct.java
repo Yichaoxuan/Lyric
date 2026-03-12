@@ -23,7 +23,6 @@ public interface WeatherMapStruct {
      * @return POJO对象
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     WeatherPojo toPojo(Weather weather);
     
     /**

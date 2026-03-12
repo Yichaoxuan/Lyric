@@ -1,20 +1,20 @@
 package com.lyric.lyric.POJO.weather;
 
-import lombok.Getter;
+import com.lyric.lyric.Service.weather.WeatherService;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * 天气信息实体类
  * 对应数据库表: weather
  *
- * @author Lyric
- * @since 2025-11-21
+ * @author Yichaoxuan
+ * @since 2026-03-09
  */
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeatherPojo {
@@ -45,30 +45,34 @@ public class WeatherPojo {
     private String weatherCondition;
 
     /**
-     * 温度
+     * 最高温度
      */
-    private Double temperature;
+    private Double tempMax;
 
     /**
-     * 创建时间
+     * 最低温度
      */
-    private LocalDateTime createdAt;
+    private Double tempMin;
 
     /**
-     * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
+     * 天气图标
+     */
+    private String weatherIcon;
+
+    /**
+     * 创建一个 WeatherPojo 对象
      * @param diaryId 关联的日记ID
-     * @param city 城市
+     * @param city  城市
      * @param weatherDate 天气日期
-     * @param weatherCondition 天气状况
-     * @param temperature 温度
+     * @param weatherInformation 天气信息
      */
-    public WeatherPojo(Integer id, Integer diaryId, String city, LocalDate weatherDate, String weatherCondition, Double temperature) {
-        this.id = id;
+    public WeatherPojo(Integer diaryId, String city, LocalDate weatherDate, WeatherService.WeatherInformation weatherInformation) {
         this.diaryId = diaryId;
         this.city = city;
         this.weatherDate = weatherDate;
-        this.weatherCondition = weatherCondition;
-        this.temperature = temperature;
+        this.weatherCondition = weatherInformation.getWeatherCondition();
+        this.tempMax = weatherInformation.getTempMax();
+        this.tempMin = weatherInformation.getTempMin();
+        this.weatherIcon = weatherInformation.getWeatherIcon();
     }
 }

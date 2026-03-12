@@ -10,6 +10,7 @@ import java.util.List;
  * 对应数据库表: weather
  *
  * @author Yichaoxuan
+ * @since 2026-03-09
  */
 @Mapper
 public interface WeatherMapper {
@@ -19,8 +20,8 @@ public interface WeatherMapper {
      * @param weather 天气实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO weather(diary_id, city, weather_date, weather_condition, temperature) " +
-            "VALUES(#{diaryId}, #{city}, #{weatherDate}, #{weatherCondition}, #{temperature})")
+    @Insert("INSERT INTO weather(diary_id, city, weather_date, weather_condition, temp_max, temp_min, weather_icon) " +
+            "VALUES(#{diaryId}, #{city}, #{weatherDate}, #{weatherCondition}, #{tempMax}, #{tempMin}, #{weatherIcon})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(WeatherPojo weather);
     
@@ -77,7 +78,7 @@ public interface WeatherMapper {
      * @return 影响的行数
      */
     @Update("UPDATE weather SET diary_id=#{diaryId}, city=#{city}, weather_date=#{weatherDate}, " +
-            "weather_condition=#{weatherCondition}, temperature=#{temperature} WHERE id=#{id}")
+            "weather_condition=#{weatherCondition}, temp_max=#{tempMax}, temp_min=#{tempMin}, weather_icon=#{weatherIcon} WHERE id=#{id}")
     int update(WeatherPojo weather);
     
     /**

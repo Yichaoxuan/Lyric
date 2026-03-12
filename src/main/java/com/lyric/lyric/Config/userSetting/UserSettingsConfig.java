@@ -97,8 +97,8 @@ public class UserSettingsConfig {
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
         api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
         pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
-        pojoApi.setQweatherApiKey(api.getQweatherApiKey());
-        pojoApi.setQweatherApiHost(api.getQweatherApiHost());
+        pojoApi.setWeatherApiKey(api.getWeatherApiKey());
+        pojoApi.setWeatherApiHost(api.getWeatherApiHost());
         pojoApi.setEmojiApiKey(api.getEmojiApiKey());
 
 
@@ -150,8 +150,8 @@ public class UserSettingsConfig {
         api.setHanlpApiKey(userSettingsPojo.getApi().getHanlpApiKey());
         api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
         api.setBaiduMapApiHost(userSettingsPojo.getApi().getBaiduMapApiHost());
-        api.setQweatherApiKey(userSettingsPojo.getApi().getQweatherApiKey());
-        api.setQweatherApiHost(userSettingsPojo.getApi().getQweatherApiHost());
+        api.setWeatherApiKey(userSettingsPojo.getApi().getWeatherApiKey());
+        api.setWeatherApiHost(userSettingsPojo.getApi().getWeatherApiHost());
         api.setEmojiApiKey(userSettingsPojo.getApi().getEmojiApiKey());
 
         log.info("完成用户设置配置更新");
@@ -220,8 +220,8 @@ public class UserSettingsConfig {
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
         pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
         pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
-        pojoApi.setQweatherApiKey(api.getQweatherApiKey());
-        pojoApi.setQweatherApiHost(api.getQweatherApiHost());
+        pojoApi.setWeatherApiKey(api.getWeatherApiKey());
+        pojoApi.setWeatherApiHost(api.getWeatherApiHost());
         pojoApi.setEmojiApiKey(api.getEmojiApiKey());
         return pojoApi;
     }
@@ -398,13 +398,13 @@ public class UserSettingsConfig {
          * QWeather API密钥
          * 用于访问QWeather天气服务的API密钥
          */
-        private String qweatherApiKey;
+        private String weatherApiKey;
 
         /**
          * QWeather API主机地址
          * QWeather天气服务的API主机地址
          */
-        private String qweatherApiHost;
+        private String weatherApiHost;
 
         /**
          * Emoji API密钥

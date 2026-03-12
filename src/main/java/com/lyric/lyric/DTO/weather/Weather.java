@@ -1,8 +1,7 @@
 package com.lyric.lyric.DTO.weather;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,10 +9,10 @@ import java.time.LocalDateTime;
  * 天气请求DTO类
  * 只包含前端可信字段
  *
- * @author Lyric
+ * @author Yichaoxuan
+ * @since 2026-03-09
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class Weather {
 
@@ -43,25 +42,17 @@ public class Weather {
     private String weatherCondition;
 
     /**
-     * 温度
+     * 最高温度
      */
-    private Double temperature;
-    
+    private Double temp_max;
+
     /**
-     * 有参构造方法
-     * @param id 主键ID
-     * @param diaryId 日记ID
-     * @param city 城市
-     * @param weatherDate 天气日期
-     * @param weatherCondition 天气状况
-     * @param temperature 温度
+     * 最低温度
      */
-    public Weather(Integer id, Integer diaryId, String city, LocalDateTime weatherDate, String weatherCondition, Double temperature) {
-        this.id = id;
-        this.diaryId = diaryId;
-        this.city = city;
-        this.weatherDate = weatherDate;
-        this.weatherCondition = weatherCondition;
-        this.temperature = temperature;
-    }
+    private Double temp_min;
+
+    /**
+     * 天气图标
+     */
+    private String weatherIcon;
 }

@@ -232,13 +232,13 @@ public class UserSettingsPojo {
          * QWeather API密钥
          * 用于访问QWeather天气服务的API密钥
          */
-        private String qweatherApiKey;
+        private String weatherApiKey;
 
         /**
          * QWeather API主机地址
          * QWeather天气服务的API主机地址
          */
-        private String qweatherApiHost;
+        private String weatherApiHost;
 
         /**
          * Emoji API密钥
