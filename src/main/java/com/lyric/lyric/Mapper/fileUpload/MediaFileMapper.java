@@ -1,12 +1,12 @@
-package com.lyric.lyric.Mapper.content;
+package com.lyric.lyric.Mapper.fileUpload;
 
-import com.lyric.lyric.POJO.content.MediaFilePojo;
+import com.lyric.lyric.POJO.fileUpload.MediaFilePojo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 /**
- * 文件数据访问层接口（对应数据库表: file）
+ * 文件数据访问层接口（对应数据库表: fileStorageConfig）
  */
 @Mapper
 public interface MediaFileMapper {
@@ -14,7 +14,7 @@ public interface MediaFileMapper {
         /**
          * 插入一条文件记录
          * 
-         * @param mediaFile 文件实体（对应数据库表: file）
+         * @param mediaFile 文件实体（对应数据库表: fileStorageConfig）
          * @return 影响的行数
          */
         @Insert("INSERT INTO file(diary_id, file_name, file_path, file_type, file_size, upload_time) " +
@@ -26,7 +26,7 @@ public interface MediaFileMapper {
          * 根据ID查询文件
          * 
          * @param id 文件ID
-         * @return 文件实体（对应数据库表: file）
+         * @return 文件实体（对应数据库表: fileStorageConfig）
          */
         @Select("SELECT * FROM file WHERE id = #{id}")
         MediaFilePojo selectById(Integer id);
@@ -51,7 +51,7 @@ public interface MediaFileMapper {
         /**
          * 更新文件
          * 
-         * @param mediaFile 文件实体（对应数据库表: file）
+         * @param mediaFile 文件实体（对应数据库表: fileStorageConfig）
          * @return 影响的行数
          */
         @Update("UPDATE file SET diary_id=#{diaryId}, file_name=#{fileName}, file_path=#{filePath}, " +

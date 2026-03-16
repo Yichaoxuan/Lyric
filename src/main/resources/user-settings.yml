@@ -4,6 +4,20 @@
 user-settings:
     # 功能开关配置
     features:
+
+        # 自定义文件存储路径
+        file_storage_config:
+            upload_dir: ../uploads              # 相对路径，也可用绝对路径
+            thumbnail_suffix: thumb_            # 缩略图前缀
+            thumbnail_width: 200                # 缩略图宽度
+            thumbnail_height: 200               # 缩略图高度
+
+            # 文件大小限制（单位：MB）
+            max_size:
+                image: 50                       # 图片最大50MB
+                audio: 100                      # 音频最大100MB
+                video: 2048                    # 视频最大2GB
+
         # AI分析功能开关
         ai_analytics: true
 
@@ -315,6 +329,9 @@ user-settings:
         # 响应消息生成规则
         response_message_generation_rules: |
             你是一个消息风格转换专家，根据用户提供的角色设定，将原始消息转换为符合该角色风格的JSON响应。
+            
+            角色设定：{{角色描述}}
+            
             处理规则
             1. 角色分析维度
                 性格特质：傲娇/温柔/冷酷/活泼/理性等
@@ -359,59 +376,32 @@ user-settings:
                         • 状态通知：平衡简洁与友好
                 第三步：风格实现检查
                     1.信息准确性：核心含义是否保留
-                    2.角色辨识度：熟悉者能否认出风格
+                    2.角色辨识度：熟悉者能否认出风格特征
                     3.用户理解度：新用户能否明白意思
                     4.风格一致性：是否符合角色设定
                     5.实用性：是否影响实际使用
-            输出要求
-            json
-            {
-             "name": "原始消息名称",
-              "content": "符合角色风格的转换后消息内容"
-            }
-    
-            示例模板
-              用户输入：
-                角色设定：{角色描述}
-                error：
-                    business-error：
-                        业务响应消息1名称：
-                            code: 状态码
-                            message: 失败业务响应消息1内容
-                    system-error： 
-                        系统错误响应消息1名称：
-                          code: 状态码
-                          message: 失败系统响应消息1内容
-                success：
-                    响应消息1名称：
-                        code: 状态码
-                        message: 成功响应消息1内容
-    
-                生成规则;
-              你的响应：
+            输出要求：
                   json
                     {
-                      "success": {
-                        "响应消息1名称": {
+                      "businessError": {
+                        "响应消息 1 名称": {
                           "code": "状态码",
-                          "message": "成功响应消息1内容"
+                          "message": "业务错误响应消息 1 内容"
                         }
                       },
-                      "error": {
-                        "business-error": {
-                          "业务响应消息1名称": {
-                            "code": "状态码",
-                            "message": "失败业务响应消息1内容"
-                          }
-                        },
-                        "system-error": {
-                          "系统响应消息1名称": {
-                            "code": "状态码",
-                            "message": "系统业务响应消息1内容"
-                          }
+                      "systemError": {
+                        "系统响应消息 1 名称": {
+                          "code": "状态码",
+                          "message": "系统错误响应消息 1 内容"
+                        }
+                      },
+                      "success": {
+                        "成功响应消息 1 名称": {
+                          "code": "状态码",
+                          "message": "成功响应消息 1 内容"
                         }
                       }
-                  }
+                    }
             验证标准
                 转换后的消息应该：
                   1.让熟悉该角色的人一眼认出风格特征

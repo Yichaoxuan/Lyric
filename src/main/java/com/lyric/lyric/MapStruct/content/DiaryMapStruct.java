@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.content;
 
-import com.lyric.lyric.DTO.content.Diary;
-import com.lyric.lyric.POJO.content.DiaryPojo;
+import com.lyric.lyric.DTO.diary.Diary;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

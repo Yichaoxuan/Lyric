@@ -46,6 +46,13 @@ public class UserSettingsPojo {
     @Setter
     @Getter
     public static class Features {
+
+        /**
+         * 自定义文件存储路径
+         *
+         */
+        private FileStorageConfig fileStorageConfig;
+
         /**
          * AI分析功能开关
          * 控制是否启用AI分析功能
@@ -75,6 +82,26 @@ public class UserSettingsPojo {
          * 控制是否启用天气识别功能
          */
         private boolean weatherIdentification = true;
+
+        /**
+         * 自定义文件存储路径内部类
+         * 用于存储用户自定义的文件存储路径
+         */
+        @Setter
+        @Getter
+        @AllArgsConstructor
+        public static class FileStorageConfig {
+            /**
+             * 文件存储路径
+             * 用户自定义的文件存储路径
+             */
+            private String uploadDir;
+
+            /**
+             * 缩略图前缀
+             */
+            private String thumbnailSuffix;
+        }
 
     }
 

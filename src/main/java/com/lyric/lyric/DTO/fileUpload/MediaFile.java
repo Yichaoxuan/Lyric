@@ -1,5 +1,6 @@
-package com.lyric.lyric.DTO.content;
+package com.lyric.lyric.DTO.fileUpload;
 
+import com.lyric.lyric.Enums.mediaFile.FileType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -70,25 +71,5 @@ public class MediaFile {
         this.fileType = fileType;
         this.fileSize = fileSize;
         this.uploadTime = uploadTime;
-    }
-
-    /**
-     * 文件类型枚举
-     */
-    public enum FileType {
-        /**
-         * 图片文件
-         */
-        IMAGE,
-
-        /**
-         * 音频文件
-         */
-        AUDIO,
-
-        /**
-         * 视频文件
-         */
-        VIDEO
     }
 }

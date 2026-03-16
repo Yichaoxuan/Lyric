@@ -40,8 +40,15 @@ public class UserSettingsConfig {
     public void printConfigurations() {
         log.info("用户设置配置加载状态检查:");
 
-        // 检查功能开关配置
-        ConfigLoggerUtil.logConfigStatusSafely("功能开关配置", features);
+        // 检查功能配置
+        ConfigLoggerUtil.logConfigStatusSafely("功能配置", features);
+        log.info("  - 文件存储配置:");
+        if (features.getFileStorageConfig() != null) {
+            log.info("    * 上传目录：{}", features.getFileStorageConfig().getUploadDir());
+            log.info("    * 缩略图后缀：{}", features.getFileStorageConfig().getThumbnailSuffix());
+        } else {
+            log.warn("    * 文件存储配置未设置");
+        }
 
         // 检查用户信息配置
         ConfigLoggerUtil.logConfigStatusSafely("用户信息配置", userInfo);
@@ -67,7 +74,11 @@ public class UserSettingsConfig {
         UserSettingsPojo.Rules pojoRules = new UserSettingsPojo.Rules();
         UserSettingsPojo.Api pojoApi = new UserSettingsPojo.Api();
 
-        // 设置功能开关
+        // 设置功能
+        pojoFeatures.setFileStorageConfig(new UserSettingsPojo.Features.FileStorageConfig(
+            features.getFileStorageConfig().getUploadDir(), 
+            features.getFileStorageConfig().getThumbnailSuffix()
+        ));
         pojoFeatures.setAiAnalytics(features.isAiAnalytics());
         pojoFeatures.setSmartLabelGeneration(features.isSmartLabelGeneration());
         pojoFeatures.setEntityLabelGeneration(features.isEntityLabelGeneration());
@@ -90,12 +101,12 @@ public class UserSettingsConfig {
         pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
-        // 设置API配置
+        // 设置 API 配置
         pojoApi.setAiLLMApiKey(api.getAiLLMApiKey());
         pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
         pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
-        api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
+        pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
         pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
         pojoApi.setWeatherApiKey(api.getWeatherApiKey());
         pojoApi.setWeatherApiHost(api.getWeatherApiHost());
@@ -136,7 +147,11 @@ public class UserSettingsConfig {
         rules.setPlaceLabelDeduplicationRules(userSettingsPojo.getRules().getPlaceLabelDeduplicationRules());
         rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
 
-        // 更新功能开关配置
+        // 更新功能配置
+        Features.FileStorageConfig fileStorageConfig = new Features.FileStorageConfig();
+        fileStorageConfig.setUploadDir(userSettingsPojo.getFeatures().getFileStorageConfig().getUploadDir());
+        fileStorageConfig.setThumbnailSuffix(userSettingsPojo.getFeatures().getFileStorageConfig().getThumbnailSuffix());
+        features.setFileStorageConfig(fileStorageConfig);
         features.setAiAnalytics(userSettingsPojo.getFeatures().isAiAnalytics());
         features.setSmartLabelGeneration(userSettingsPojo.getFeatures().isSmartLabelGeneration());
         features.setEntityLabelGeneration(userSettingsPojo.getFeatures().isEntityLabelGeneration());
@@ -166,11 +181,15 @@ public class UserSettingsConfig {
     }
 
     /**
-     * 获取最新的功能开关配置
+     * 获取最新的功能配置
      * @return UserSettingsPojo对象，包含功能开关配置
      */
     public UserSettingsPojo.Features getLatestFeatureConfig() {
         UserSettingsPojo.Features pojoFeatures = new UserSettingsPojo.Features();
+        pojoFeatures.setFileStorageConfig(new UserSettingsPojo.Features.FileStorageConfig(
+            features.getFileStorageConfig().getUploadDir(), 
+            features.getFileStorageConfig().getThumbnailSuffix()
+        ));
         pojoFeatures.setAiAnalytics(features.isAiAnalytics());
         pojoFeatures.setSmartLabelGeneration(features.isSmartLabelGeneration());
         pojoFeatures.setEntityLabelGeneration(features.isEntityLabelGeneration());
@@ -227,12 +246,19 @@ public class UserSettingsConfig {
     }
 
     /**
-     * 功能开关配置内部类
-     * 包含所有功能开关的配置项
+     * 功能配置内部类
+     * 包含所有功能的配置项
      */
     @Setter
     @Getter
     public static class Features {
+
+        /**
+         * 自定义文件存储路径
+         *
+         */
+        private FileStorageConfig fileStorageConfig = new FileStorageConfig();
+
         /**
          * AI分析功能开关
          * 控制是否启用AI分析功能
@@ -263,6 +289,24 @@ public class UserSettingsConfig {
          */
         private boolean weatherIdentification = true;
 
+        /**
+         * 自定义文件存储路径内部类
+         * 用于存储用户自定义的文件存储路径
+         */
+        @Setter
+        @Getter
+        public static class FileStorageConfig {
+            /**
+             * 文件存储路径
+             * 用户自定义的文件存储路径
+             */
+            private String uploadDir;
+
+            /**
+             * 缩略图前缀
+             */
+            private String thumbnailSuffix;
+        }
     }
 
     /**

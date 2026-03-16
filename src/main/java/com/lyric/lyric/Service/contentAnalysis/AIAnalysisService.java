@@ -2,9 +2,11 @@ package com.lyric.lyric.Service.contentAnalysis;
 
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
 import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
+import com.lyric.lyric.Utils.json.JsonConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
@@ -112,27 +114,26 @@ public class AIAnalysisService {
     /**
      * 生成指定类型的响应消息
      *
-     * @param newMessageConfigInstructions 新地响应消息配置指令
+     * @param responseStyleInstructions 响应消息的角色设定
      * @return 生成的响应消息配置指令
      */
-//    public MessageConfigPojo generateResponseMessage(String newMessageConfigInstructions) {
-//        // 获取生成规则
-//        String rules = userSettingsService.getResponseMessageGenerationRules();
-//        // 将规则和消息类型组合成消息
-//        String message = newMessageConfigInstructions + "\n" + rules;
-//        // 调用AI生成消息
-//        String result = callAiAnalysis.analyzeContent(message);
-//
-//        // 清理AI返回的结果，去除可能的额外字符
-//        result = JsonConversionUtils.removeExtraCharacters(result);
-//
-//        // 验证结果是否为有效的JSON
-//        if (result == null || !JsonConversionUtils.isValidJson(result)) {
-//            log.error("AI返回的结果不是有效的JSON格式: {}", result);
-//            return null;
-//        }
-//
-//        //将生成的消息解析为MessageConfigPojo
-//        return JsonConversionUtils.fromJson(result, MessageConfigPojo.class);
-//    }
+    public MessageConfigPojo generateResponseMessage(String responseStyleInstructions) {
+        // 构建提示词
+        Prompt prompt = promptConstructionService.buildResponseMessagePrompt(responseStyleInstructions);
+
+        // 调用AI生成消息
+        String result = callAiAnalysis.analyze(prompt);
+
+        // 清理AI返回的结果，去除可能的额外字符
+        result = JsonConversionUtils.removeExtraCharacters(result);
+
+        // 验证结果是否为有效的JSON
+        if (result == null || !JsonConversionUtils.isValidJson(result)) {
+            log.error("AI返回的结果不是有效的JSON格式: {}", result);
+            return null;
+        }
+
+        //将生成的消息解析为MessageConfigPojo
+        return JsonConversionUtils.fromJson(result, MessageConfigPojo.class);
+    }
 }

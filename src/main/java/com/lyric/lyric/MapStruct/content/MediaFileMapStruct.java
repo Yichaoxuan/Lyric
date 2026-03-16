@@ -1,7 +1,7 @@
 package com.lyric.lyric.MapStruct.content;
 
-import com.lyric.lyric.DTO.content.MediaFile;
-import com.lyric.lyric.POJO.content.MediaFilePojo;
+import com.lyric.lyric.DTO.fileUpload.MediaFile;
+import com.lyric.lyric.POJO.fileUpload.MediaFilePojo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -23,7 +23,6 @@ public interface MediaFileMapStruct {
      * @return POJO对象
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "fileType", ignore = true)
     MediaFilePojo toPojo(MediaFile mediaFile);
     

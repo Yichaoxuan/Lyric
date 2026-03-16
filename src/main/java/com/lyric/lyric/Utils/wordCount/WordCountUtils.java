@@ -1,6 +1,6 @@
 package com.lyric.lyric.Utils.wordCount;
 
-import com.lyric.lyric.DTO.content.Diary;
+import com.lyric.lyric.DTO.diary.Diary;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -37,17 +37,17 @@ public class WordCountUtils {
     private static final Pattern MARKDOWN_INLINE_CODE = Pattern.compile("`[^`]*`");
     
     /**
-     * Markdown链接正则表达式，匹配[文本](链接)格式
+     * Markdown 链接正则表达式，匹配 [文本](链接) 格式
      */
-    private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^\\]]*)\\]\\([^)]*\\)");
-    
+    private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^]]*)]\\([^)]*\\)");
+        
     /**
-     * Markdown图片正则表达式，匹配![文本](链接)格式
+     * Markdown 图片正则表达式，匹配![文本](链接) 格式
      */
-    private static final Pattern MARKDOWN_IMAGE = Pattern.compile("!\\[([^\\]]*)\\]\\([^)]*\\)");
-    
+    private static final Pattern MARKDOWN_IMAGE = Pattern.compile("!\\[([^]]*)]\\([^)]*\\)");
+        
     /**
-     * Markdown列表正则表达式，匹配以-、*或+开头的列表项
+     * Markdown 列表正则表达式，匹配以 -、*或 + 开头的列表项
      */
     private static final Pattern MARKDOWN_LIST = Pattern.compile("^[\\s]*[-*+]\\s+", Pattern.MULTILINE);
     
@@ -75,14 +75,10 @@ public class WordCountUtils {
         if(content ==  null || content.trim().isEmpty()) return 0;
 
         // 根据编辑器类型计算字数
-        switch (format) {
-            case RICH_TEXT:
-                return calculateRichTextWordCount(content);
-            case MARKDOWN:
-                return calculateMarkdownWordCount(content);
-            default:
-                return calculatePlainTextWordCount(content);
-        }
+        return switch (format) {
+            case RICH_TEXT -> calculateRichTextWordCount(content);
+            case MARKDOWN -> calculateMarkdownWordCount(content);
+        };
     }
 
     /**

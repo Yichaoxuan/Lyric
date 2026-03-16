@@ -4,8 +4,11 @@ import com.lyric.lyric.Config.message.MsgConfig;
 import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
+import com.lyric.lyric.Exception.BusinessException;
+import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
+import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
 import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,40 +37,50 @@ public class MessageService {
 
     /**
      * 更新响应消息配置并保存到配置文件
-     * @param newMessageConfigInstructions 新地响应消息配置
+     * @param responseStyleInstructions 响应消息的角色设定
      */
-//    public Result<Void> updateMessageConfigAndSaveToFile(String newMessageConfigInstructions) {
-//
-//        //判断新响应消息配置命令是否为空
-//        if (newMessageConfigInstructions == null || newMessageConfigInstructions.isEmpty()) {
-//            logger.info("新响应消息配置命令为空，更新操作取消");
-//            return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
-//        }
-//
-//        //拼接新响应消息配置命令与旧响应消息配置
-//        newMessageConfigInstructions = newMessageConfigInstructions + "\n" + JsonConversionUtils.toJson(getLatestMessageConfig());
-//
-//        System.out.println(newMessageConfigInstructions);
-//
-//        try {
-//            logger.info("开始更新响应消息配置并保存到文件");
-//
-//            //调用AI 模型更新响应消息配置
-//            MessageConfigPojo messageConfigPojo = aiAnalysisService.generateResponseMessage(newMessageConfigInstructions);
-//
-//            // 更新配置并保存到文件
-//            msgConfig.updateConfigAndSaveToFile(messageConfigPojo);
-//
-//            // 重新初始化枚举
-//            reinitializeEnums();
-//
-//            logger.info("响应消息配置更新并保存到文件完成");
-//
-//            return ResultBuilder.success(SuccessMsgEnums.MESSAGE_CONFIG_SUCCESS);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public com.lyric.lyric.Utils.resultUtils.Result<Void> updateMessageConfigAndSaveToFile(String responseStyleInstructions) {
+
+        //判断新响应消息配置命令是否为空
+        if (responseStyleInstructions == null || responseStyleInstructions.isEmpty()) {
+            logger.info("新响应消息配置命令为空，更新操作取消");
+            return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
+        }
+
+        //拼接新响应消息配置命令与旧响应消息配置
+        responseStyleInstructions = responseStyleInstructions + "\n" + com.lyric.lyric.Utils.json.JsonConversionUtils.toJson(getLatestMessageConfig());
+
+        System.out.println(responseStyleInstructions);
+
+        try {
+            logger.info("开始更新响应消息配置并保存到文件");
+        
+            //调用 AI 模型更新响应消息配置
+            MessageConfigPojo messageConfigPojo = aiAnalysisService.generateResponseMessage(responseStyleInstructions);
+        
+            // 检查 AI 返回的配置是否为 null
+            if (messageConfigPojo == null) {
+                logger.error("AI 生成的消息配置为空，可能是 AI 返回的结果不是有效的 JSON 格式");
+                return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
+            }
+        
+            // 更新配置并保存到文件
+            msgConfig.updateConfigAndSaveToFile(messageConfigPojo);
+        
+            // 重新初始化枚举
+            reinitializeEnums();
+        
+            logger.info("响应消息配置更新并保存到文件完成");
+        
+            return ResultBuilder.success(SuccessMsgEnums.MESSAGE_CONFIG_SUCCESS);
+        } catch (IllegalArgumentException e) {
+            logger.error("配置参数无效：{}", e.getMessage());
+            throw new BusinessException(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT, e);
+        } catch (java.io.IOException e) {
+            logger.error("配置文件保存失败：{}", e.getMessage());
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
+    }
 
 
     /**
@@ -116,9 +129,7 @@ public class MessageService {
         for(BusinessErrorMsgEnums businessErrorMsgEnums : BusinessErrorMsgEnums.values()) {
             String configKey = EnumUtils.toSnakeCase(businessErrorMsgEnums.name());
             MessageConfigPojo.Message message = msgConfig.getBusinessError().get(configKey);
-            if (message != null) {
-                // 注意：BusinessErrorMsgEnums 中没有 code 和 message 字段，这里保持原逻辑结构但实际不会执行
-            } else {
+            if (message == null) {
                 notBusinessErrorFound.add(businessErrorMsgEnums.name());
             }
         }
@@ -127,9 +138,7 @@ public class MessageService {
         for(SystemErrorMsgEnums systemErrorMsgEnums : SystemErrorMsgEnums.values()) {
             String configKey = EnumUtils.toSnakeCase(systemErrorMsgEnums.name());
             MessageConfigPojo.Message message = msgConfig.getSystemError().get(configKey);
-            if (message != null) {
-                // 注意：SystemErrorMsgEnums 中没有 code 和 message 字段，这里保持原逻辑结构但实际不会执行
-            } else {
+            if (message == null) {
                 notSystemErrorFound.add(systemErrorMsgEnums.name());
             }
         }

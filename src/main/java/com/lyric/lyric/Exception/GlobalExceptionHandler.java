@@ -32,8 +32,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleBusinessException(BusinessException e) {
-        log.error("业务异常，错误枚举：{}，错误信息：{}", e.getBusinessErrorMsgEnums().name(), e.getBusinessErrorMsgEnums().getName(), e);
-        return ResultBuilder.error(e.getBusinessErrorMsgEnums());
+        if (e.getBusinessErrorMsgEnums() != null) {
+            log.error("业务异常，错误枚举：{}，错误信息：{}", e.getBusinessErrorMsgEnums().name(), e.getBusinessErrorMsgEnums().getName(), e);
+            return ResultBuilder.error(e.getBusinessErrorMsgEnums());
+        } else {
+            log.error("业务异常，错误信息：{}", e.getMessage(), e);
+            return Result.error("BUSINESS_ERROR", e.getMessage());
+        }
     }
 
     /**

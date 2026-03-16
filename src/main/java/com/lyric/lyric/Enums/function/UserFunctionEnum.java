@@ -6,7 +6,8 @@ import lombok.Getter;
  * 用户功能枚举类
  * 包含系统中所有可用的功能及其对应的中文名称
  *
- * @author Lyric
+ * @author Yichaoxuan
+ * @since 2026/03/12
  */
 public enum UserFunctionEnum {
 

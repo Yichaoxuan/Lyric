@@ -1,15 +1,14 @@
-package com.lyric.lyric.Service.content;
+package com.lyric.lyric.Service.diary;
 
-
-import com.lyric.lyric.DTO.content.Diary;
+import com.lyric.lyric.DTO.diary.Diary;
 import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
 import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
 import com.lyric.lyric.Exception.BusinessException;
 import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.MapStruct.content.DiaryMapStruct;
-import com.lyric.lyric.Mapper.content.DiaryMapper;
-import com.lyric.lyric.POJO.content.DiaryPojo;
+import com.lyric.lyric.Mapper.diary.DiaryMapper;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import com.lyric.lyric.Service.tag.TagParsingService;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import com.lyric.lyric.Utils.resultUtils.Result;
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 提供日记相关处理方法
  *
  * @author Yichaoxuan
- * @serial 2025/12/12
+ * @serial 2026/03/16
  */
 @Slf4j
 @Service
@@ -78,7 +77,8 @@ public class DiaryService {
 
         try {
             // 判断内容类型，如果是文章或笔记，直接保存
-            if (diary.getContentType() == Diary.ContentType.ARTICLE || diary.getContentType() == Diary.ContentType.NOTE) {
+            if (diary.getContentType() == Diary.ContentType.ARTICLE
+                    || diary.getContentType() == Diary.ContentType.NOTE) {
                 diaryMapper.insert(diaryPojo);
                 return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
             }
@@ -90,8 +90,48 @@ public class DiaryService {
             // 异步调用标签分析进行内容分析，生成标签
             tagParsingService.tagAnalysis(diary);
 
-
             return ResultBuilder.success(SuccessMsgEnums.SAVE_SUCCESS);
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
+    }
+
+    /**
+     * 创建日记草稿
+     * 用于用户开始编辑时创建一个空的草稿记录，返回日记ID供文件上传使用
+     *
+     * @param contentType   内容类型，默认为DIARY
+     * @param contentFormat 内容格式，默认为RICH_TEXT
+     * @return 包含日记ID的创建结果
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Integer> createDraft(Diary.ContentType contentType, Diary.ContentFormat contentFormat) {
+        try {
+            // 创建DiaryPojo对象
+            DiaryPojo diaryPojo = new DiaryPojo();
+
+            // 设置默认值
+            diaryPojo.setTitle(""); // 空标题
+            diaryPojo.setContent(""); // 空内容
+            // 将 DTO 的枚举转换为 POJO 的枚举
+            diaryPojo.setContentType(contentType != null 
+                    ? DiaryPojo.ContentType.valueOf(contentType.name()) 
+                    : DiaryPojo.ContentType.DIARY);
+            diaryPojo.setContentFormat(
+                    contentFormat != null 
+                            ? DiaryPojo.ContentFormat.valueOf(contentFormat.name()) 
+                            : DiaryPojo.ContentFormat.RICH_TEXT);
+            diaryPojo.setIsDeleted(0); // 未删除
+            diaryPojo.setIsDraft(1); // 草稿状态
+            diaryPojo.setEmotionScore(0.0);
+            diaryPojo.setWordCount(0);
+
+            // 保存草稿
+            diaryMapper.insert(diaryPojo);
+
+            // 返回日记ID
+            return ResultBuilder.successWithData(SuccessMsgEnums.SAVE_SUCCESS, diaryPojo.getId());
         } catch (Exception e) {
             // 数据库操作异常，抛出系统异常
             throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
@@ -113,11 +153,11 @@ public class DiaryService {
                 // 抛出业务异常，由全局异常处理器处理
                 throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
             }
-            
+
             // 设置日记为已删除状态
             diary.setIsDeleted(1);
             diaryMapper.update(diary);
-            
+
             return ResultBuilder.success(SuccessMsgEnums.MOVE_TO_TRASH_SUCCESS);
         } catch (BusinessException e) {
             // 直接重新抛出业务异常
@@ -127,7 +167,7 @@ public class DiaryService {
             throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
     }
-    
+
     /**
      * 从回收站彻底删除日记
      *
@@ -143,16 +183,16 @@ public class DiaryService {
                 // 抛出业务异常，由全局异常处理器处理
                 throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
             }
-            
+
             // 检查日记是否已在回收站中（isDeleted=1）
             if (diary.getIsDeleted() != 1) {
                 // 如果日记不在回收站中，不能直接永久删除
                 throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_IN_TRASH);
             }
-            
+
             // 彻底删除日记
             diaryMapper.deleteById(diaryId);
-            
+
             return ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
         } catch (BusinessException e) {
             // 直接重新抛出业务异常
@@ -178,12 +218,12 @@ public class DiaryService {
                 // 抛出业务异常，由全局异常处理器处理
                 throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_FOUND);
             }
-            
+
             // 检查日记是否在回收站中（isDeleted=1）
             if (diary.getIsDeleted() != 1) {
                 throw new BusinessException(BusinessErrorMsgEnums.DIARY_NOT_IN_TRASH);
             }
-            
+
             // 恢复日记（设置为未删除状态）
             diary.setIsDeleted(0);
             diaryMapper.update(diary);
@@ -197,7 +237,6 @@ public class DiaryService {
             throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
     }
-
 
     /**
      * 修改日记

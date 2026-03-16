@@ -1,13 +1,14 @@
 package com.lyric.lyric.Service.contentAnalysis;
 
-
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
+import com.lyric.lyric.Service.message.MessageService;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
@@ -16,21 +17,24 @@ import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
  * 提示词构建类
  *
  * @author Yichaoxuan
- * @since 2026-02-04
+ * @since 2026-03-16
  */
 @Slf4j
 @Service
 public class PromptConstructionService {
 
     private final UserSettingsService userSettingsService;
+    private final MessageService messageService;
 
-    public PromptConstructionService(UserSettingsService userSettingsService) {
+    public PromptConstructionService(UserSettingsService userSettingsService, @Lazy MessageService messageService) {
         this.userSettingsService = userSettingsService;
+        this.messageService = messageService;
     }
 
     /**
      * 日记分析提示词构建
      * 构建分析日记内容并生成标签的提示词
+     * 
      * @param content 日记内容
      *
      * @return 提示词
@@ -39,7 +43,8 @@ public class PromptConstructionService {
         // 构建用户提示词
         Message userMessage = new UserMessage(content);
         // 获取用户设置的分析规则，构建系统提示词
-        String systemMessageGender = replacePlaceholder(userSettingsService.getLatestAnalysisRulesConfig(), "基本信息", userSettingsService.getLatestUserInfoConfig().getUserInfoStr(true));
+        String systemMessageGender = replacePlaceholder(userSettingsService.getLatestAnalysisRulesConfig(), "基本信息",
+                userSettingsService.getLatestUserInfoConfig().getUserInfoStr(true));
         Message systemMessage = new SystemMessage(systemMessageGender);
         return new Prompt(List.of(userMessage, systemMessage));
     }
@@ -47,14 +52,16 @@ public class PromptConstructionService {
     /**
      * 人物标签去重提示词构建
      * 构建人物标签去重的提示词
-     * @param newPersonName 新人物名称
-     * @param newPersonInfo 新人物信息
+     * 
+     * @param newPersonName    新人物名称
+     * @param newPersonInfo    新人物信息
      * @param candidatePersons 候选人物列表
      *
      * @return 提示词
      */
-    public Prompt buildPersonTagDeduplicationPrompt(String newPersonName, AITagJson.PersonInfo newPersonInfo, List<PersonPojo> candidatePersons) {
-        //构建用户提示词
+    public Prompt buildPersonTagDeduplicationPrompt(String newPersonName, AITagJson.PersonInfo newPersonInfo,
+            List<PersonPojo> candidatePersons) {
+        // 构建用户提示词
         StringBuilder sb = new StringBuilder();
         sb.append("新人物信息：\n");
         sb.append("姓名：").append(newPersonName).append("\n");
@@ -81,14 +88,16 @@ public class PromptConstructionService {
     /**
      * 地点标签去重提示词构建
      * 构建地点标签去重的提示词
-     * @param newLocationName 新地点名称
-     * @param newLocationInfo 新地点信息
+     * 
+     * @param newLocationName    新地点名称
+     * @param newLocationInfo    新地点信息
      * @param candidateLocations 候选地点列表
      *
      * @return 提示词
      */
-    public Prompt buildLocationTagDeduplicationPrompt(String newLocationName, AITagJson.LocationInfo newLocationInfo, List<LocationPojo> candidateLocations) {
-        //构建用户提示词
+    public Prompt buildLocationTagDeduplicationPrompt(String newLocationName, AITagJson.LocationInfo newLocationInfo,
+            List<LocationPojo> candidateLocations) {
+        // 构建用户提示词
         StringBuilder sb = new StringBuilder();
         sb.append("新地点信息：\n");
         sb.append("名称：").append(newLocationName).append("\n");
@@ -106,5 +115,28 @@ public class PromptConstructionService {
         Message systemMessage = new SystemMessage(userSettingsService.getResponseMessageGenerationRules());
 
         return new Prompt(List.of(userMessage, systemMessage));
+    }
+
+    /**
+     * 响应消息生成提示词构建
+     * 构建生成响应消息的提示词
+     * 
+     * @param newMessageConfigInstructions 新地响应消息配置指令
+     *
+     * @return 提示词
+     */
+    public Prompt buildResponseMessagePrompt(String newMessageConfigInstructions) {
+        // 获取用户设置的响应消息生成规则，构建系统提示词
+        String systemMessageContent = userSettingsService.getResponseMessageGenerationRules();
+
+        // 替换角色描述占位符
+        systemMessageContent = replacePlaceholder(systemMessageContent, "角色描述", newMessageConfigInstructions);
+        // 替换当前响应消息配置占位符
+        String currentConfig = messageService.getLatestMessageConfig().getMessageConfigStr( true);
+        systemMessageContent = replacePlaceholder(systemMessageContent, "当前响应消息配置", currentConfig);
+
+        Message systemMessage = new SystemMessage(systemMessageContent);
+
+        return new Prompt(List.of(systemMessage));
     }
 }

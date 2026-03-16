@@ -1,53 +1,5 @@
-# 响应消息配置
-
+---
 response-message:
-  business-error:
-    ai_model_not_available:
-      code: "503"
-      message: "哼~现在AI模型不在服务状态呢，真是的...明明人家都准备好了的说"
-    diary_content_empty:
-      code: "400"
-      message: "喂！日记内容怎么能是空的啊！至少写点什么嘛..."
-    media_upload_failed:
-      code: "500"
-      message: "呜...媒体文件上传失败了啦，都怪服务器不争气"
-    ai_processing_error:
-      code: "500"
-      message: "真是的，AI处理出错了...这种时候就该好好反省一下呢"
-    ai_request_timeout:
-      code: "408"
-      message: "等太久了啦！AI请求超时了，真是让人着急"
-    media_type_not_supported:
-      code: "400"
-      message: "这种媒体文件类型不支持哦，你是在故意为难我吗？"
-    diary_not_found:
-      code: "404"
-      message: "找不到日记啦！你是不是记错了？"
-    diary_not_in_trash:
-      code: "400"
-      message: "日记根本不在回收站里，别乱说嘛"
-    user_setting_update_failed:
-      code: "500"
-      message: "用户设置更新失败了...真是的，系统又在闹脾气"
-    user_preference_invalid:
-      code: "400"
-      message: "你的偏好设置有问题啦，好好检查一下嘛"
-    diary_title_empty:
-      code: "400"
-      message: "标题怎么能是空的！这样一点都不认真哦"
-    response_message_command_not_input:
-      code: "400"
-      message: "响应消息命令都没输入，让人家怎么工作嘛"
-  system-error:
-    system_error:
-      code: "500"
-      message: "系统内部错误，请稍后再试"
-    database_error:
-      code: "500"
-      message: "数据库操作失败，请稍后再试"
-    network_error:
-      code: "500"
-      message: "网络连接异常，请检查网络后重试"
   success:
     save_success:
       code: "200"
@@ -73,3 +25,65 @@ response-message:
     modify_success:
       code: "200"
       message: "修改成功！这次就勉强夸你一下好了"
+  system-error:
+    system_error:
+      code: "500"
+      message: "系统内部错误啦...请稍后再试嘛"
+    network_error:
+      code: "500"
+      message: "网络连接异常啦，快检查一下网络嘛"
+    database_error:
+      code: "500"
+      message: "数据库操作失败了...请稍后再试哦"
+  business-error:
+    diary_content_empty:
+      code: "400"
+      message: "喂！日记内容怎么能是空的啊！至少写点什么嘛..."
+    ai_processing_error:
+      code: "500"
+      message: "真是的，AI 处理出错了...这种时候就该好好反省一下呢"
+    media_type_not_supported:
+      code: "400"
+      message: "这种媒体文件类型不支持哦，你是在故意为难我吗？"
+    file_not_found:
+      code: "404"
+      message: "找不到文件啦！是不是已经被删除了？"
+    diary_not_found:
+      code: "404"
+      message: "找不到日记啦！你是不是记错了？"
+    user_preference_invalid:
+      code: "400"
+      message: "你的偏好设置有问题啦，好好检查一下嘛"
+    diary_title_empty:
+      code: "400"
+      message: "标题怎么能是空的！这样一点都不认真哦"
+    file_empty:
+      code: "400"
+      message: "文件是空的！你是不是想上传空气啊？"
+    ai_model_not_available:
+      code: "503"
+      message: "哼~现在 AI 模型不在服务状态呢，真是的...明明人家都准备好了的说"
+    media_upload_failed:
+      code: "500"
+      message: "呜...媒体文件上传失败了啦，都怪服务器不争气"
+    ai_request_timeout:
+      code: "408"
+      message: "等太久了啦！AI 请求超时了，真是让人着急"
+    file_type_not_supported:
+      code: "415"
+      message: "这种文件类型不支持哦，你是不是搞错了什么？"
+    file_size_exceeded:
+      code: "413"
+      message: "文件太大了啦！超过限制了呢，压缩一下再试试嘛"
+    file_upload_failed:
+      code: "500"
+      message: "呜...文件上传失败了，都怪服务器不争气"
+    diary_not_in_trash:
+      code: "400"
+      message: "日记根本不在回收站里，别乱说嘛"
+    user_setting_update_failed:
+      code: "500"
+      message: "用户设置更新失败了...真是的，系统又在闹脾气"
+    response_message_command_not_input:
+      code: "400"
+      message: "响应消息命令都没输入，让人家怎么工作嘛"

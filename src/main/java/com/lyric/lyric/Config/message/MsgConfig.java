@@ -82,20 +82,36 @@ public class MsgConfig {
 
     /**
      * 更新消息配置并保存到配置文件
-     * @param configPojo 包含新配置的POJO对象
+     * @param configPojo 包含新配置的 POJO 对象
      * @throws IOException 文件操作异常
      */
     public void updateConfigAndSaveToFile(MessageConfigPojo configPojo) throws IOException {
+        // 检查传入的配置对象是否为 null
+        if (configPojo == null) {
+            throw new IllegalArgumentException("配置对象不能为空");
+        }
+            
+        // 检查各个配置项是否为 null
+        if (configPojo.getBusinessError() == null) {
+            throw new IllegalArgumentException("业务错误配置不能为空");
+        }
+        if (configPojo.getSystemError() == null) {
+            throw new IllegalArgumentException("系统错误配置不能为空");
+        }
+        if (configPojo.getSuccess() == null) {
+            throw new IllegalArgumentException("成功配置不能为空");
+        }
+            
         // 先更新内存中的配置
         this.businessError.clear();
         this.businessError.putAll(configPojo.getBusinessError());
-        
+            
         this.systemError.clear();
         this.systemError.putAll(configPojo.getSystemError());
-
+    
         this.success.clear();
         this.success.putAll(configPojo.getSuccess());
-
+    
         // 保存到配置文件
         saveToFile();
     }

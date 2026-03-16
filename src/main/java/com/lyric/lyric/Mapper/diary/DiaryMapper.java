@@ -1,6 +1,6 @@
-package com.lyric.lyric.Mapper.content;
+package com.lyric.lyric.Mapper.diary;
 
-import com.lyric.lyric.POJO.content.DiaryPojo;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import com.lyric.lyric.Service.weather.WeatherService;
 import org.apache.ibatis.annotations.*;
 

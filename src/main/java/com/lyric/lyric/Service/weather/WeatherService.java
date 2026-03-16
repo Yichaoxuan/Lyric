@@ -2,7 +2,7 @@ package com.lyric.lyric.Service.weather;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lyric.lyric.Mapper.content.DiaryMapper;
+import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.Mapper.environment.WeatherMapper;
 import com.lyric.lyric.Mapper.tag.entity.EventMapper;
 import com.lyric.lyric.POJO.weather.WeatherPojo;

@@ -1,9 +1,9 @@
 package com.lyric.lyric.Service.tag;
 
-import com.lyric.lyric.DTO.content.Diary;
-import com.lyric.lyric.Mapper.content.DiaryMapper;
+import com.lyric.lyric.DTO.diary.Diary;
+import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
-import com.lyric.lyric.POJO.content.DiaryPojo;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

@@ -68,10 +68,10 @@
         </dependency>
 
         <!-- Spring AI OpenAI Starter：通过OpenAI兼容接口调用通义千问 -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.ai</groupId>-->
-<!--            <artifactId>spring-ai-starter-model-azure-openai</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.ai</groupId>-->
+        <!--            <artifactId>spring-ai-starter-model-azure-openai</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
@@ -126,11 +126,16 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 工具库：HTML解析、MapStruct等（按需保留） -->
+        <!-- 工具库：HTML解析、图片缩略图处理、MapStruct -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.15.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>

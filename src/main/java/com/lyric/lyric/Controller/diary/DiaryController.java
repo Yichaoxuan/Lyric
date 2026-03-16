@@ -1,12 +1,13 @@
 package com.lyric.lyric.Controller.diary;
 
-import com.lyric.lyric.DTO.content.Diary;
-import com.lyric.lyric.Service.content.DiaryService;
+import com.lyric.lyric.DTO.diary.Diary;
+import com.lyric.lyric.Service.diary.DiaryService;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -32,6 +33,21 @@ public class DiaryController {
     }
 
     /**
+     * 创建日记草稿
+     * 用于用户开始编辑时创建一个空的草稿记录，返回日记ID供文件上传使用
+     *
+     * @param contentType   内容类型，可选，默认为DIARY
+     * @param contentFormat 内容格式，可选，默认为RICH_TEXT
+     * @return 包含日记ID的创建结果
+     */
+    @PostMapping("/createDraft")
+    public Result<Integer> createDraft(
+            @RequestParam(value = "contentType", required = false) Diary.ContentType contentType,
+            @RequestParam(value = "contentFormat", required = false) Diary.ContentFormat contentFormat) {
+        return diaryService.createDraft(contentType, contentFormat);
+    }
+
+    /**
      * 将日记移至回收站
      *
      * @param diaryId 日记ID
@@ -41,7 +57,7 @@ public class DiaryController {
     public Result<Void> moveToTrash(@RequestBody Integer diaryId) {
         return diaryService.moveToTrash(diaryId);
     }
-    
+
     /**
      * 从回收站永久删除日记
      *
@@ -52,7 +68,7 @@ public class DiaryController {
     public Result<Void> permanentlyDelete(@RequestBody Integer diaryId) {
         return diaryService.permanentlyDeleteDiary(diaryId);
     }
-    
+
     /**
      * 从回收站恢复日记
      *
@@ -63,7 +79,6 @@ public class DiaryController {
     public Result<Void> restoreFromTrash(@RequestBody Integer diaryId) {
         return diaryService.restoreFromTrash(diaryId);
     }
-
 
     /**
      * 修改日记

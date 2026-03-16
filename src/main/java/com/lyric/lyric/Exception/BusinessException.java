@@ -35,4 +35,25 @@ public class BusinessException extends RuntimeException {
         super(businessErrorMsgEnums.getName(), cause);
         this.businessErrorMsgEnums = businessErrorMsgEnums;
     }
+
+    /**
+     * 使用错误消息构造业务异常
+     *
+     * @param message 错误消息
+     */
+    public BusinessException(String message) {
+        super(message);
+        this.businessErrorMsgEnums = null;
+    }
+
+    /**
+     * 使用错误消息和原因异常构造业务异常
+     *
+     * @param message 错误消息
+     * @param cause   导致此异常的原因异常
+     */
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+        this.businessErrorMsgEnums = null;
+    }
 }
