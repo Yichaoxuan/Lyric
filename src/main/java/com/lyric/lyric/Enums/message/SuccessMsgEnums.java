@@ -18,6 +18,50 @@ public enum SuccessMsgEnums {
     MOVE_TO_TRASH_SUCCESS("已移入回收站"),
     RESTORE_FROM_TRASH_SUCCESS("已从回收站恢复"),
 
+    // 标签模块相关
+    // BaseTag（基本标签）相关
+    BASE_TAG_CREATE_SUCCESS("基本标签创建成功"),
+    BASE_TAG_QUERY_SUCCESS("基本标签查询成功"),
+    BASE_TAG_QUERY_BY_TYPE_SUCCESS("按类型查询基本标签成功"),
+    BASE_TAG_UPDATE_SUCCESS("基本标签更新成功"),
+    BASE_TAG_DELETE_SUCCESS("基本标签删除成功"),
+    BASE_TAG_USAGE_INCREMENT_SUCCESS("基本标签使用次数增加成功"),
+
+    // PersonTag（人物标签）相关
+    PERSON_TAG_CREATE_SUCCESS("人物标签创建成功"),
+    PERSON_TAG_QUERY_SUCCESS("人物标签查询成功"),
+    PERSON_TAG_QUERY_BY_NAME_SUCCESS("按名称查询人物标签成功"),
+    PERSON_TAG_QUERY_BY_GENDER_SUCCESS("按性别查询人物标签成功"),
+    PERSON_TAG_QUERY_BY_RELATION_SUCCESS("按关系查询人物标签成功"),
+    PERSON_TAG_UPDATE_SUCCESS("人物标签更新成功"),
+    PERSON_TAG_DELETE_SUCCESS("人物标签删除成功"),
+    PERSON_TAG_APPEARANCE_INCREMENT_SUCCESS("人物出现次数增加成功"),
+
+    // LocationTag（地点标签）相关
+    LOCATION_TAG_CREATE_SUCCESS("地点标签创建成功"),
+    LOCATION_TAG_QUERY_SUCCESS("地点标签查询成功"),
+    LOCATION_TAG_QUERY_BY_NAME_SUCCESS("按名称查询地点标签成功"),
+    LOCATION_TAG_QUERY_BY_ALIAS_SUCCESS("按别名查询地点标签成功"),
+    LOCATION_TAG_QUERY_BY_CITY_SUCCESS("按城市查询地点标签成功"),
+    LOCATION_TAG_QUERY_BY_PROVINCE_SUCCESS("按省份查询地点标签成功"),
+    LOCATION_TAG_QUERY_BY_COUNTRY_SUCCESS("按国家查询地点标签成功"),
+    LOCATION_TAG_UPDATE_SUCCESS("地点标签更新成功"),
+    LOCATION_TAG_DELETE_SUCCESS("地点标签删除成功"),
+    LOCATION_TAG_APPEARANCE_INCREMENT_SUCCESS("地点出现次数增加成功"),
+
+    // EventTag（事件标签）相关
+    TOG_EVENT_CREATE_SUCCESS("父事件创建成功"),
+    TOG_EVENT_QUERY_SUCCESS("父事件查询成功"),
+    TOG_EVENT_QUERY_BY_DIARY_SUCCESS("按日记 ID 查询父事件成功"),
+    TOG_EVENT_UPDATE_SUCCESS("父事件更新成功"),
+    TOG_EVENT_DELETE_SUCCESS("父事件删除成功"),
+    SUB_EVENT_CREATE_SUCCESS("子事件创建成功"),
+    SUB_EVENT_QUERY_SUCCESS("子事件查询成功"),
+    SUB_EVENT_QUERY_BY_TOG_EVENT_SUCCESS("按父事件 ID 查询子事件成功"),
+    SUB_EVENT_UPDATE_SUCCESS("子事件更新成功"),
+    SUB_EVENT_DELETE_SUCCESS("子事件删除成功"),
+
+
     //用户设置
     SETTING_SUCCESS("设置成功"),
     MESSAGE_CONFIG_SUCCESS("响应消息更新成功");

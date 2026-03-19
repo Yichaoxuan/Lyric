@@ -25,6 +25,114 @@ response-message:
     modify_success:
       code: "200"
       message: "修改成功！这次就勉强夸你一下好了"
+    
+    # ==================== BaseTag（基本标签）相关 ====================
+    base_tag_create_success:
+      code: "200"
+      message: "基本标签创建成功！新的标签已经添加好了哦"
+    base_tag_query_success:
+      code: "200"
+      message: "基本标签查询完成！结果就在这里呢"
+    base_tag_query_by_type_success:
+      code: "200"
+      message: "按类型查询成功！分类整理可是我的强项呢"
+    base_tag_update_success:
+      code: "200"
+      message: "基本标签更新完成！这次做得还不错嘛"
+    base_tag_delete_success:
+      code: "200"
+      message: "基本标签删除成功！虽然有点可惜，但这是你的选择呢"
+    base_tag_usage_increment_success:
+      code: "200"
+      message: "使用次数已增加！这个标签越来越重要了呢"
+    
+    # ==================== PersonTag（人物标签）相关 ====================
+    person_tag_create_success:
+      code: "200"
+      message: "人物标签创建成功！新的人物已经记录好了哦"
+    person_tag_query_success:
+      code: "200"
+      message: "人物标签查询完成！找到了你想要的人呢"
+    person_tag_query_by_name_success:
+      code: "200"
+      message: "按名称查询成功！这个人我记得很清楚呢"
+    person_tag_query_by_gender_success:
+      code: "200"
+      message: "按性别筛选完成！分类查询对我来说很简单哦"
+    person_tag_query_by_relation_success:
+      code: "200"
+      message: "按关系查询成功！人际关系网已经整理好了呢"
+    person_tag_update_success:
+      code: "200"
+      message: "人物标签更新完成！信息已经最新了哦"
+    person_tag_delete_success:
+      code: "200"
+      message: "人物标签删除成功！希望你不会后悔这个决定呢"
+    person_tag_appearance_increment_success:
+      code: "200"
+      message: "出现次数已增加！这个人物越来越重要了呢"
+    
+    # ==================== LocationTag（地点标签）相关 ====================
+    location_tag_create_success:
+      code: "200"
+      message: "地点标签创建成功！新的地点已经记录在案了哦"
+    location_tag_query_success:
+      code: "200"
+      message: "地点标签查询完成！地理位置信息都在这里呢"
+    location_tag_query_by_name_success:
+      code: "200"
+      message: "按名称查询成功！这个地方我印象很深呢"
+    location_tag_query_by_alias_success:
+      code: "200"
+      message: "按别名查询成功！即使是别称我也能找到哦"
+    location_tag_query_by_city_success:
+      code: "200"
+      message: "按城市筛选完成！这座城市的所有地点都找到了呢"
+    location_tag_query_by_province_success:
+      code: "200"
+      message: "按省份筛选完成！这个省的地点可真不少呢"
+    location_tag_query_by_country_success:
+      code: "200"
+      message: "按国家筛选完成！跨国查询也不是问题哦"
+    location_tag_update_success:
+      code: "200"
+      message: "地点标签更新完成！地理信息已经最新了哦"
+    location_tag_delete_success:
+      code: "200"
+      message: "地点标签删除成功！这个地方已经从记录中移除了呢"
+    location_tag_appearance_increment_success:
+      code: "200"
+      message: "出现次数已增加！这个地点越来越常去了呢"
+    tog_event_create_success:
+      code: "200"
+      message: "父事件创建成功！整个事件的时间线已经开始记录了哦"
+    tog_event_query_success:
+      code: "200"
+      message: "父事件查询完成！事件的来龙去脉都很清楚呢"
+    tog_event_query_by_diary_success:
+      code: "200"
+      message: "按日记查询父事件成功！这篇日记的故事背景找到了呢"
+    tog_event_update_success:
+      code: "200"
+      message: "父事件更新完成！事件信息已经同步了哦"
+    tog_event_delete_success:
+      code: "200"
+      message: "父事件删除成功！整个事件及其子事件都已清除干净了哦"
+    sub_event_create_success:
+      code: "200"
+      message: "子事件创建成功！事件的细节已经补充完整了哦"
+    sub_event_query_success:
+      code: "200"
+      message: "子事件查询完成！这些细节我都记得很清楚呢"
+    sub_event_query_by_tog_event_success:
+      code: "200"
+      message: "按父事件查询子事件成功！所有分支事件都整理好了哦"
+    sub_event_update_success:
+      code: "200"
+      message: "子事件更新完成！事件的细节已经修正了哦"
+    sub_event_delete_success:
+      code: "200"
+      message: "子事件删除成功！这个事件的片段已经移除了呢"
   system-error:
     system_error:
       code: "500"
@@ -87,3 +195,126 @@ response-message:
     response_message_command_not_input:
       code: "400"
       message: "响应消息命令都没输入，让人家怎么工作嘛"
+    base_tag_not_found:
+      code: "404"
+      message: "基本标签不存在啦！你是不是记错了？"
+    base_tag_create_failed:
+      code: "500"
+      message: "呜...基本标签创建失败了，都怪系统不争气呢"
+    base_tag_update_failed:
+      code: "500"
+      message: "基本标签更新失败了呢...请稍后再试哦"
+    base_tag_delete_failed:
+      code: "500"
+      message: "基本标签删除失败了...真是的，系统在闹脾气吗？"
+    base_tag_type_invalid:
+      code: "400"
+      message: "标签类型无效哦！好好检查一下输入吧"
+    base_tag_name_empty:
+      code: "400"
+      message: "标签名称怎么能是空的！这样一点都不认真哦"
+    base_tag_already_exists:
+      code: "409"
+      message: "这个标签已经存在了啦！别重复添加嘛"
+    
+    # ==================== PersonTag（人物标签）相关 ====================
+    person_tag_not_found:
+      code: "404"
+      message: "人物标签找不到啦！可能你记错名字了哦"
+    person_tag_create_failed:
+      code: "500"
+      message: "呜...人物标签创建失败了，人家也很无奈呢"
+    person_tag_update_failed:
+      code: "500"
+      message: "人物标签更新失败了呢...系统又在闹脾气了"
+    person_tag_delete_failed:
+      code: "500"
+      message: "人物标签删除失败了...请稍后再试一次吧"
+    person_tag_name_empty:
+      code: "400"
+      message: "人物名称不能为空啦！至少告诉我是谁嘛"
+    person_tag_name_already_exists:
+      code: "409"
+      message: "这个名字的人物已经存在了哦！不要重复添加同一个人呢"
+    person_tag_gender_invalid:
+      code: "400"
+      message: "性别信息无效哦！只能选择男或女呢"
+    person_tag_relation_invalid:
+      code: "400"
+      message: "关系描述有问题啦！好好想想是什么关系嘛"
+    
+    # ==================== LocationTag（地点标签）相关 ====================
+    location_tag_not_found:
+      code: "404"
+      message: "地点标签找不到啦！可能这个地方不存在呢"
+    location_tag_create_failed:
+      code: "500"
+      message: "呜...地点标签创建失败了，地理信息系统出问题了啦"
+    location_tag_update_failed:
+      code: "500"
+      message: "地点标签更新失败了呢...坐标数据无法保存哦"
+    location_tag_delete_failed:
+      code: "500"
+      message: "地点标签删除失败了...这个地方好像被使用了呢"
+    location_tag_name_empty:
+      code: "400"
+      message: "地点名称不能为空啦！总得有个名字吧？"
+    location_tag_already_exists:
+      code: "409"
+      message: "这个地点已经存在了！同一个地方不需要重复添加哦"
+    location_tag_coordinates_invalid:
+      code: "400"
+      message: "经纬度坐标无效哦！地理位置可不是随便写的呢"
+    location_tag_province_invalid:
+      code: "400"
+      message: "省份信息不对哦！请确认是正确的行政区划呢"
+    location_tag_city_invalid:
+      code: "400"
+      message: "城市信息有误啦！这个城市真的存在吗？"
+    location_tag_country_invalid:
+      code: "400"
+      message: "国家信息无效哦！请不要乱写国家名称呢"
+    
+    # ==================== EventTag（事件标签）相关 ====================
+    tog_event_not_found:
+      code: "404"
+      message: "父事件找不到啦！这个事件可能已经被删除了哦"
+    tog_event_create_failed:
+      code: "500"
+      message: "呜...父事件创建失败了，时间线记录出现问题了呢"
+    tog_event_update_failed:
+      code: "500"
+      message: "父事件更新失败了呢...事件信息无法同步哦"
+    tog_event_delete_failed:
+      code: "500"
+      message: "父事件删除失败了...还有子事件关联着呢，先处理一下嘛"
+    tog_event_date_invalid:
+      code: "400"
+      message: "事件日期无效哦！开始和结束时间要合理才行呢"
+    tog_event_name_empty:
+      code: "400"
+      message: "父事件名称不能为空啦！总得有个事件名称吧？"
+    sub_event_not_found:
+      code: "404"
+      message: "子事件找不到啦！这个事件片段可能不存在哦"
+    sub_event_create_failed:
+      code: "500"
+      message: "呜...子事件创建失败了，事件细节无法补充了呢"
+    sub_event_update_failed:
+      code: "500"
+      message: "子事件更新失败了呢...细节信息无法修改哦"
+    sub_event_delete_failed:
+      code: "500"
+      message: "子事件删除失败了...可能还有其他关联数据呢"
+    sub_event_date_invalid:
+      code: "400"
+      message: "子事件日期有问题哦！要在整个事件的时间范围内呢"
+    sub_event_name_empty:
+      code: "400"
+      message: "子事件名称不能为空啦！事件的每个细节都很重要哦"
+    sub_event_tog_event_not_found:
+      code: "404"
+      message: "所属的父事件不存在哦！子事件不能单独存在呢"
+    cascade_delete_failed:
+      code: "500"
+      message: "级联删除失败了...关联数据太多了，清理起来很麻烦呢"

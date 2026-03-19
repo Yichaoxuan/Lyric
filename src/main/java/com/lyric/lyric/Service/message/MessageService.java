@@ -10,8 +10,7 @@ import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
 import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +23,9 @@ import java.util.ArrayList;
  * @author Yichaoxuan
  * @since 2026/03/19
  */
+@Slf4j
 @Service
 public class MessageService {
-    
-    private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
     
     private final MsgConfig msgConfig;
 
@@ -46,7 +44,7 @@ public class MessageService {
 
         //判断新响应消息配置命令是否为空
         if (responseStyleInstructions == null || responseStyleInstructions.isEmpty()) {
-            logger.info("新响应消息配置命令为空，更新操作取消");
+            log.info("新响应消息配置命令为空，更新操作取消");
             return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
         }
 
@@ -56,14 +54,14 @@ public class MessageService {
         System.out.println(responseStyleInstructions);
 
         try {
-            logger.info("开始更新响应消息配置并保存到文件");
+            log.info("开始更新响应消息配置并保存到文件");
         
             //调用 AI 模型更新响应消息配置
             MessageConfigPojo messageConfigPojo = aiAnalysisService.generateResponseMessage(responseStyleInstructions);
         
             // 检查 AI 返回的配置是否为 null
             if (messageConfigPojo == null) {
-                logger.error("AI 生成的消息配置为空，可能是 AI 返回的结果不是有效的 JSON 格式");
+                log.error("AI 生成的消息配置为空，可能是 AI 返回的结果不是有效的 JSON 格式");
                 return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
             }
         
@@ -73,14 +71,14 @@ public class MessageService {
             // 重新初始化枚举
             reinitializeEnums();
         
-            logger.info("响应消息配置更新并保存到文件完成");
+            log.info("响应消息配置更新并保存到文件完成");
         
             return ResultBuilder.success(SuccessMsgEnums.MESSAGE_CONFIG_SUCCESS);
         } catch (IllegalArgumentException e) {
-            logger.error("配置参数无效：{}", e.getMessage());
+            log.error("配置参数无效：{}", e.getMessage());
             throw new BusinessException(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT, e);
         } catch (java.io.IOException e) {
-            logger.error("配置文件保存失败：{}", e.getMessage());
+            log.error("配置文件保存失败：{}", e.getMessage());
             throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
     }
@@ -121,7 +119,7 @@ public class MessageService {
      * 重新初始化枚举值
      */
     private void reinitializeEnums() {
-        logger.info("重新初始化响应消息枚举");
+        log.info("重新初始化响应消息枚举");
         
         //定义一个数列存储未找到的枚举实例响应消息的名字
         List<String> notBusinessErrorFound = new ArrayList<>();
@@ -164,17 +162,17 @@ public class MessageService {
           否则输出警告信息
          */
         if (notBusinessErrorFound.isEmpty() && notSystemErrorFound.isEmpty() && notSuccessFound.isEmpty()) {
-            logger.info("=== 枚举实例响应消息重新加载成功！===");
+            log.info("=== 枚举实例响应消息重新加载成功！===");
             printLoadedMessages(); // 调用方法打印详细信息
         } else {
             if (!notBusinessErrorFound.isEmpty()) {
-                logger.warn("未找到的 业务失败响应消息 枚举实例响应消息：{}", notBusinessErrorFound);
+                log.warn("未找到的 业务失败响应消息 枚举实例响应消息：{}", notBusinessErrorFound);
             }
             if (!notSystemErrorFound.isEmpty()) {
-                logger.warn("未找到的 系统失败响应消息 枚举实例响应消息：{}", notSystemErrorFound);
+                log.warn("未找到的 系统失败响应消息 枚举实例响应消息：{}", notSystemErrorFound);
             }
             if (!notSuccessFound.isEmpty()) {
-                logger.warn("未找到的 成功响应消息 枚举实例响应消息：{}", notSuccessFound);
+                log.warn("未找到的 成功响应消息 枚举实例响应消息：{}", notSuccessFound);
             }
         }
     }
@@ -185,21 +183,21 @@ public class MessageService {
      * <p>分别打印已加载的错误响应消息和成功响应消息的详细信息</p>
      */
     private void printLoadedMessages() {
-        logger.info("=== 已加载的业务错误响应消息 ===");
+        log.info("=== 已加载的业务错误响应消息 ===");
         for (BusinessErrorMsgEnums businessErrorMsgEnum : BusinessErrorMsgEnums.values()) {
             // BusinessErrorMsgEnums 没有 getCode() 和 getMessage() 方法，仅记录枚举名称
-            logger.info("业务错误枚举: {}", businessErrorMsgEnum.name());
+            log.info("业务错误枚举: {}", businessErrorMsgEnum.name());
         }
         
-        logger.info("=== 已加载的系统错误响应消息 ===");
+        log.info("=== 已加载的系统错误响应消息 ===");
         for (SystemErrorMsgEnums systemErrorMsgEnum : SystemErrorMsgEnums.values()) {
             // SystemErrorMsgEnums 没有 getCode() 和 getMessage() 方法，仅记录枚举名称
-            logger.info("系统错误枚举: {}", systemErrorMsgEnum.name());
+            log.info("系统错误枚举: {}", systemErrorMsgEnum.name());
         }
         
-        logger.info("=== 已加载的成功响应消息 ===");
+        log.info("=== 已加载的成功响应消息 ===");
         for (SuccessMsgEnums successMsgEnum : SuccessMsgEnums.values()) {
-            logger.info("成功码: {}, 响应消息: {}, 枚举: {}",
+            log.info("成功码: {}, 响应消息: {}, 枚举: {}",
                     successMsgEnum.getCode(), successMsgEnum.getMessage(), successMsgEnum.name());
         }
     }

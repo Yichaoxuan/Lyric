@@ -1,4 +1,4 @@
-package com.lyric.lyric.Service.tag;
+package com.lyric.lyric.Service.tag.parsing;
 
 import com.lyric.lyric.Mapper.relation.DiaryPersonMapper;
 import com.lyric.lyric.Mapper.tag.entity.PersonMapper;
@@ -28,13 +28,13 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
  */
 @Slf4j
 @Service
-public class PersonsService {
+public class PersonsParsingService {
 
     private final PersonMapper personMapper;
     private final AIAnalysisService aiAnalysisService;
     private final DiaryPersonMapper diaryPersonMapper;
 
-    public PersonsService(PersonMapper personMapper, AIAnalysisService aiAnalysisService, DiaryPersonMapper diaryPersonMapper) {
+    public PersonsParsingService(PersonMapper personMapper, AIAnalysisService aiAnalysisService, DiaryPersonMapper diaryPersonMapper) {
         this.personMapper = personMapper;
         this.aiAnalysisService = aiAnalysisService;
         this.diaryPersonMapper = diaryPersonMapper;

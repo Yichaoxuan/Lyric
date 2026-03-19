@@ -1,4 +1,4 @@
-package com.lyric.lyric.Service.tag;
+package com.lyric.lyric.Service.tag.parsing;
 
 import com.lyric.lyric.DTO.diary.Diary;
 import com.lyric.lyric.Mapper.diary.DiaryMapper;
@@ -27,22 +27,22 @@ public class TagParsingService {
 
     private final AIAnalysisService aiAnalysisService;
 
-    private final PersonsService personsService;
+    private final PersonsParsingService personsParsingService;
 
-    private final LocationService locationService;
+    private final LocationParsingService locationParsingService;
 
-    private final EventService eventService;
+    private final EventParsingService eventParsingService;
 
-    private final BaseTagService baseTagService;
+    private final BaseTagParsingService baseTagParsingService;
 
-    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper, PersonsService personsService,
-                             LocationService locationService, EventService eventService, BaseTagService baseTagService) {
+    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper, PersonsParsingService personsParsingService,
+                             LocationParsingService locationParsingService, EventParsingService eventParsingService, BaseTagParsingService baseTagParsingService) {
         this.aiAnalysisService = aiAnalysisService;
         this.diaryMapper = diaryMapper;
-        this.personsService = personsService;
-        this.locationService = locationService;
-        this.eventService = eventService;
-        this.baseTagService = baseTagService;
+        this.personsParsingService = personsParsingService;
+        this.locationParsingService = locationParsingService;
+        this.eventParsingService = eventParsingService;
+        this.baseTagParsingService = baseTagParsingService;
                              }
 
     /**
@@ -151,7 +151,7 @@ public class TagParsingService {
                         continue;
                     }
                     // 去重并插入数据库
-                    baseTagService.themeTagDeduplication(diaryId, theme);
+                    baseTagParsingService.themeTagDeduplication(diaryId, theme);
                 }
 
                 log.info("---主题标签处理结束---");
@@ -169,7 +169,7 @@ public class TagParsingService {
                     }
 
                     // 去重并插入数据库
-                    baseTagService.moodTagDeduplication(diaryId, mood);
+                    baseTagParsingService.moodTagDeduplication(diaryId, mood);
                 }
 
                 log.info("---情绪标签处理结束---");
@@ -183,7 +183,7 @@ public class TagParsingService {
                 log.info("---开始进行人物实体处理---");
 
                 // 调用人物去重处理器
-                integerIntegerMap = personsService.personDeduplication(diaryId, personInfoMapMap);
+                integerIntegerMap = personsParsingService.personDeduplication(diaryId, personInfoMapMap);
 
                 log.info("---人物实体标签处理结束---");
             } else {
@@ -195,7 +195,7 @@ public class TagParsingService {
 
                 log.info("---开始进行地点实体处理---");
 
-                locationService.locationDeduplication(diaryId, locationInfoMap);
+                locationParsingService.locationDeduplication(diaryId, locationInfoMap);
 
                 log.info("---地点实体标签处理结束---");
             }
@@ -205,7 +205,7 @@ public class TagParsingService {
 
                 log.info("---开始进行事件实体标签处理---");
 
-                eventService.eventDeduplication(diaryId, TogEventInfoMap,integerIntegerMap);
+                eventParsingService.eventDeduplication(diaryId, TogEventInfoMap,integerIntegerMap);
 
                 log.info("---事件实体标签处理结束---");
             }

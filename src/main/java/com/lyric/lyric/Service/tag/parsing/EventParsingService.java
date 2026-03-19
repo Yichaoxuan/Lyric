@@ -1,4 +1,4 @@
-package com.lyric.lyric.Service.tag;
+package com.lyric.lyric.Service.tag.parsing;
 
 import com.lyric.lyric.Mapper.relation.*;
 import com.lyric.lyric.Mapper.tag.entity.EventMapper;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class EventService {
+public class EventParsingService {
 
     public final SubEventLocationMapper subEventLocationMapper;
     private final EventMapper eventMapper;
@@ -30,8 +30,8 @@ public class EventService {
     private final PersonMapper personMapper;
     private final LocationMapper locationMapper;
 
-    public EventService(EventMapper eventMapper, SubEventPersonMapper subEventPersonMapper, PersonMapper personMapper,
-            LocationMapper locationMapper, SubEventLocationMapper subEventLocationMapper) {
+    public EventParsingService(EventMapper eventMapper, SubEventPersonMapper subEventPersonMapper, PersonMapper personMapper,
+                               LocationMapper locationMapper, SubEventLocationMapper subEventLocationMapper) {
         this.eventMapper = eventMapper;
         this.subEventPersonMapper = subEventPersonMapper;
         this.personMapper = personMapper;

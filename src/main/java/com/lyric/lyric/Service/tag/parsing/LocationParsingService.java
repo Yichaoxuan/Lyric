@@ -1,4 +1,4 @@
-package com.lyric.lyric.Service.tag;
+package com.lyric.lyric.Service.tag.parsing;
 
 import ch.hsr.geohash.GeoHash;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +38,7 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
  */
 @Slf4j
 @Service
-public class LocationService {
+public class LocationParsingService {
 
     private final LocationMapper locationMapper;
     private final DiaryLocationMapper diaryLocationMapper;
@@ -46,10 +46,10 @@ public class LocationService {
     private final UserSettingsService userSettingsService;
     private final ObjectMapper objectMapper;
 
-    public LocationService(LocationMapper locationMapper,
-                           DiaryLocationMapper diaryLocationMapper,
-                           AIAnalysisService aiAnalysisService,
-                           UserSettingsService userSettingsService) {
+    public LocationParsingService(LocationMapper locationMapper,
+                                  DiaryLocationMapper diaryLocationMapper,
+                                  AIAnalysisService aiAnalysisService,
+                                  UserSettingsService userSettingsService) {
         this.locationMapper = locationMapper;
         this.diaryLocationMapper = diaryLocationMapper;
         this.aiAnalysisService = aiAnalysisService;

@@ -1,4 +1,4 @@
-package com.lyric.lyric.Service.tag;
+package com.lyric.lyric.Service.tag.parsing;
 
 import com.lyric.lyric.Mapper.relation.DiaryTagMapper;
 import com.lyric.lyric.Mapper.tag.TagMapper;
@@ -19,13 +19,13 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class BaseTagService {
+public class BaseTagParsingService {
 
     private final TagMapper tagMapper;
 
     private final DiaryTagMapper diaryTagMapper;
 
-    public BaseTagService(TagMapper tagMapper, DiaryTagMapper diaryTagMapper) {
+    public BaseTagParsingService(TagMapper tagMapper, DiaryTagMapper diaryTagMapper) {
         this.tagMapper = tagMapper;
         this.diaryTagMapper = diaryTagMapper;
     }

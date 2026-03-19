@@ -9,7 +9,7 @@ import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.MapStruct.content.DiaryMapStruct;
 import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.POJO.diary.DiaryPojo;
-import com.lyric.lyric.Service.tag.TagParsingService;
+import com.lyric.lyric.Service.tag.parsing.TagParsingService;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
