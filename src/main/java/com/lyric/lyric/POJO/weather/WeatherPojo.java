@@ -1,6 +1,6 @@
 package com.lyric.lyric.POJO.weather;
 
-import com.lyric.lyric.Service.weather.WeatherService;
+import com.lyric.lyric.Service.weather.GetWeatherService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -66,7 +66,7 @@ public class WeatherPojo {
      * @param weatherDate 天气日期
      * @param weatherInformation 天气信息
      */
-    public WeatherPojo(Integer diaryId, String city, LocalDate weatherDate, WeatherService.WeatherInformation weatherInformation) {
+    public WeatherPojo(Integer diaryId, String city, LocalDate weatherDate, GetWeatherService.WeatherInformation weatherInformation) {
         this.diaryId = diaryId;
         this.city = city;
         this.weatherDate = weatherDate;

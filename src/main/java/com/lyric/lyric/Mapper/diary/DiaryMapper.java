@@ -1,7 +1,7 @@
 package com.lyric.lyric.Mapper.diary;
 
 import com.lyric.lyric.POJO.diary.DiaryPojo;
-import com.lyric.lyric.Service.weather.WeatherService;
+import com.lyric.lyric.Service.weather.GetWeatherService;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface DiaryMapper {
             "FROM diary_location GROUP BY diary_id) first_loc ON d.id = first_loc.diary_id " +
             "LEFT JOIN location l ON first_loc.location_id = l.id " +
             "WHERE w.id IS NULL AND first_loc.diary_id IS NOT NULL")
-    List<WeatherService.DiaryWeatherPending> selectDiariesWithoutWeather();
+    List<GetWeatherService.DiaryWeatherPending> selectDiariesWithoutWeather();
     
     /**
      * 更新日记

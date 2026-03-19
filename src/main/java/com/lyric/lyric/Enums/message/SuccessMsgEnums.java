@@ -61,6 +61,16 @@ public enum SuccessMsgEnums {
     SUB_EVENT_UPDATE_SUCCESS("子事件更新成功"),
     SUB_EVENT_DELETE_SUCCESS("子事件删除成功"),
 
+    // Weather（天气）相关
+    WEATHER_CREATE_SUCCESS("天气记录创建成功"),
+    WEATHER_QUERY_SUCCESS("天气记录查询成功"),
+    WEATHER_QUERY_BY_DIARY_SUCCESS("按日记 ID 查询天气成功"),
+    WEATHER_QUERY_BY_CITY_SUCCESS("按城市查询天气成功"),
+    WEATHER_QUERY_BY_DATE_SUCCESS("按日期查询天气成功"),
+    WEATHER_QUERY_BY_CONDITION_SUCCESS("按天气状况查询天气成功"),
+    WEATHER_UPDATE_SUCCESS("天气记录更新成功"),
+    WEATHER_DELETE_SUCCESS("天气记录删除成功"),
+
 
     //用户设置
     SETTING_SUCCESS("设置成功"),

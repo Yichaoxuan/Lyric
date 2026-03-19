@@ -44,12 +44,12 @@ public class Weather {
     /**
      * 最高温度
      */
-    private Double temp_max;
+    private Double tempMax;
 
     /**
      * 最低温度
      */
-    private Double temp_min;
+    private Double tempMin;
 
     /**
      * 天气图标
