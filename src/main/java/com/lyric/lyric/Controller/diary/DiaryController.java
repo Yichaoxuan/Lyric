@@ -10,6 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 日记控制器
+ * 提供创建、修改、查询、删除日记的REST API接口
+ *
+ * @author Yichaoxuan
+ * @since 2026-3-18
+ */
 @Slf4j
 @RestController
 @RequestMapping("/diary")

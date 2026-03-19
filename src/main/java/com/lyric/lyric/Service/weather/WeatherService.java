@@ -78,7 +78,7 @@ public class WeatherService {
     private final ObjectMapper objectMapper;
 
     public WeatherService(DiaryMapper diaryMapper, WeatherMapper weatherMapper, UserSettingsService userSettingsService,
-            EventMapper eventMapper, ObjectMapper objectMapper) {
+                          EventMapper eventMapper, ObjectMapper objectMapper) {
         this.diaryMapper = diaryMapper;
         this.weatherMapper = weatherMapper;
         this.userSettingsService = userSettingsService;
@@ -194,7 +194,7 @@ public class WeatherService {
      * @param weatherInfo 天气信息对象，包含温度、天气状况等详细数据
      */
     private void saveWeatherToDatabase(Integer diaryId, String city, LocalDateTime date,
-            WeatherInformation weatherInfo) {
+                                       WeatherInformation weatherInfo) {
         // 将 LocalDateTime 转换为 LocalDate，适配数据库字段类型
         LocalDate localDate = DateTimeUtils.toLocalDate(date);
         // 创建 WeatherPojo 对象，封装天气数据
@@ -217,7 +217,7 @@ public class WeatherService {
         HttpGet httpGet = new HttpGet(url);
         // 使用 try-with-resources 自动关闭资源
         try (CloseableHttpClient httpClient = HttpClients.createSystem();
-                ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
+             ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
 
             // 检查 HTTP 响应状态码，如果不在 200-299 范围内表示失败
             if (isHttpFailure(response)) {
@@ -302,7 +302,7 @@ public class WeatherService {
         HttpGet httpGet = new HttpGet(url);
         // 使用 try-with-resources 自动关闭资源
         try (CloseableHttpClient httpClient = HttpClients.createSystem();
-                ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
+             ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
 
             // 检查 HTTP 响应状态码，如果不在 200-299 范围内表示失败
             if (isHttpFailure(response)) {
@@ -330,7 +330,7 @@ public class WeatherService {
      * @throws Exception 当读取响应实体或解析 JSON 失败时抛出
      */
     private WeatherInformation parseWeatherResponseWrapper(ClassicHttpResponse response, String locationId,
-            LocalDateTime date) throws Exception {
+                                                           LocalDateTime date) throws Exception {
         // 提取 HTTP 响应实体内容
         String result = extractResponseEntity(response);
         if (result == null) {
@@ -430,7 +430,7 @@ public class WeatherService {
         // 遍历小时数据，查找匹配的小时记录
         for (JsonNode hour : hourlyNode) {
             LocalDateTime time = DateTimeUtils.parseDateTimeWithOffset(hour.path("time").asText()); // 格式如 "2020-07-25
-                                                                                                    // 00:00"
+            // 00:00"
             // 改进：使用前缀匹配确保日期格式正确（避免 "2020-07-25" 匹配到 "2020-07-250"）
             if (DateTimeUtils.isSameTime(time, date)) {
                 weatherCondition = hour.path("text").asText();

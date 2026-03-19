@@ -19,8 +19,9 @@ import java.util.Map;
 
 /**
  * 消息枚举类的配置类
- * 
- * @since 2026-01-31
+ *
+ * @author Yichaoxuan
+ * @since 2026/03/19
  */
 @Data
 @Getter

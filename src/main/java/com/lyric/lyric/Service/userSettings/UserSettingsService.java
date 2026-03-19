@@ -95,8 +95,13 @@ public class UserSettingsService {
      */
     public void updateUserSettings(UserSettingsPojo userSettings) {
         logger.info("开始更新用户设置");
-        userSettingsConfig.updateFromUserSettingsPojo(userSettings);
-        logger.info("用户设置更新完成");
+        try {
+            userSettingsConfig.updateFromUserSettingsPojo(userSettings);
+            logger.info("用户设置更新完成并保存到文件");
+        } catch (Exception e) {
+            logger.error("更新用户设置失败：{}", e.getMessage(), e);
+            throw new RuntimeException("更新用户设置失败：" + e.getMessage(), e);
+        }
     }
     
     /**
