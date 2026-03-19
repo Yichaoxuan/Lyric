@@ -136,6 +136,11 @@ public class AITagJson {
         private String name;
 
         /**
+         *  心情等级
+         */
+        private String level;
+
+        /**
          * 颜色代码
          */
         private String color;
@@ -149,6 +154,7 @@ public class AITagJson {
         public String toString() {
             return "{" +
                     "名称:'" + name + "\n" +
+                    ", 等级:'" + level + "\n" +
                     ", 颜色代码:'" + color + "\n" +
                     ", Emoji表情:'" + icon + "\n" +
                     "}" + "\n";

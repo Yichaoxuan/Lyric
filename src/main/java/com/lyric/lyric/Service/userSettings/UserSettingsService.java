@@ -2,21 +2,24 @@ package com.lyric.lyric.Service.userSettings;
 
 import com.lyric.lyric.Config.userSetting.UserSettingsConfig;
 import com.lyric.lyric.Enums.function.UserFunctionEnum;
+import com.lyric.lyric.Enums.message.SuccessMsgEnums;
+import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
+import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.POJO.usersettings.UserSettingsPojo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.lyric.lyric.Utils.resultUtils.Result;
+import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 /**
  * 用户设置服务类
  * 提供获取和更新用户设置的功能
  *
  * @author Yichaoxun
- * @since 2026-02-04
+ * @since 2026-03-19
  */
+@Slf4j
 @Service
 public class UserSettingsService {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserSettingsService.class);
     
     private final UserSettingsConfig userSettingsConfig;
 
@@ -29,19 +32,44 @@ public class UserSettingsService {
      *
      * @return UserSettingsPojo对象
      */
-    public UserSettingsPojo getLatestConfig() {
-        logger.debug("正在获取用户设置");
-        UserSettingsPojo settings = userSettingsConfig.getLatestUserSettingsConfig();
-        logger.debug("成功获取用户设置");
-        return settings;
+    public Result<UserSettingsPojo> getLatestConfig() {
+        try {
+            UserSettingsPojo settings = userSettingsConfig.getLatestUserSettingsConfig();
+            log.debug("获取用户设置");
+            return ResultBuilder.successWithData(SuccessMsgEnums.SETTING_SUCCESS, settings);
+        } catch (Exception e) {
+            throw new SystemException(SystemErrorMsgEnums.SYSTEM_ERROR, e);
+        }
     }
 
     /**
      * 获取最新功能配置
      * @return UserSettingsPojo对象，包含当前功能配置
      */
-    public UserSettingsPojo.Features getLatestFeatureConfig() {
-        return userSettingsConfig.getLatestFeatureConfig();
+    public Result<UserSettingsPojo.Features> getLatestFeatureConfig() {
+        try {
+            UserSettingsPojo.Features latestFeatureConfigs = userSettingsConfig.getLatestFeatureConfig();
+            log.debug("获取功能配置");
+            return ResultBuilder.successWithDataAndMessage(SuccessMsgEnums.SETTING_SUCCESS, latestFeatureConfigs);
+        } catch (Exception e) {
+            throw new SystemException(SystemErrorMsgEnums.SYSTEM_ERROR, e);
+        }
+    }
+
+    /**
+     * 更新用户设置
+     *
+     * @param userSettings 新的用户设置
+     */
+    public Result<Void> updateUserSettings(UserSettingsPojo userSettings) {
+        try {
+            userSettingsConfig.updateFromUserSettingsPojo(userSettings);
+            log.info("用户设置更新完成并保存到文件");
+            return ResultBuilder.success(SuccessMsgEnums.SETTING_SUCCESS);
+        } catch (Exception e) {
+            log.error("更新用户设置失败：{}", e.getMessage(), e);
+            throw new SystemException(SystemErrorMsgEnums.SYSTEM_ERROR, e);
+        }
     }
 
     /**
@@ -87,22 +115,6 @@ public class UserSettingsService {
     public String getResponseMessageGenerationRules() {
         return userSettingsConfig.getLatestRulesConfig().getResponseMessageGenerationRules();
     }
-
-    /**
-     * 更新用户设置
-     *
-     * @param userSettings 新的用户设置
-     */
-    public void updateUserSettings(UserSettingsPojo userSettings) {
-        logger.info("开始更新用户设置");
-        try {
-            userSettingsConfig.updateFromUserSettingsPojo(userSettings);
-            logger.info("用户设置更新完成并保存到文件");
-        } catch (Exception e) {
-            logger.error("更新用户设置失败：{}", e.getMessage(), e);
-            throw new RuntimeException("更新用户设置失败：" + e.getMessage(), e);
-        }
-    }
     
     /**
      * 检查特定功能是否启用（通过枚举）
@@ -111,11 +123,11 @@ public class UserSettingsService {
      * @return 如果功能启用返回true，否则返回false
      */
     public boolean isFeatureEnabled(UserFunctionEnum function) {
-        logger.debug("检查功能是否启用: {}", function.getDisplayName());
+        log.debug("检查功能是否启用: {}", function.getDisplayName());
 
         // 检查AI分析功能总开关是否启用
         if(!userSettingsConfig.getFeatures().isAiAnalytics()){
-            logger.warn("AI分析功能已禁用，请启用后再试");
+            log.warn("AI分析功能已禁用，请启用后再试");
             return false;
         }
         
@@ -128,57 +140,57 @@ public class UserSettingsService {
             default -> false;
         };
 
-        logger.debug("功能 {}({}) 启用状态: {}", function.getDisplayName(), function.getCode(), isEnabled);
+        log.debug("功能 {}({}) 启用状态: {}", function.getDisplayName(), function.getCode(), isEnabled);
         return isEnabled;
     }
-    
+
     /**
      * 手动验证并打印用户设置配置
      */
     public void validateAndPrintSettings() {
-        logger.info("=== 手动验证用户设置配置 ===");
+        log.info("=== 手动验证用户设置配置 ===");
         
         try {
             // 打印功能开关配置
-            logger.info("功能开关配置:");
-            logger.info("  AI分析功能: {}", userSettingsConfig.getFeatures().isAiAnalytics());
-            logger.info("  智能标签生成功能: {}", userSettingsConfig.getFeatures().isSmartLabelGeneration());
-            logger.info("  实体标签生成功能: {}", userSettingsConfig.getFeatures().isEntityLabelGeneration());
-            logger.info("  位置标记功能: {}", userSettingsConfig.getFeatures().isLocationMarking());
-            logger.info("  天气识别功能: {}", userSettingsConfig.getFeatures().isWeatherIdentification());
+            log.info("功能开关配置:");
+            log.info("  AI分析功能: {}", userSettingsConfig.getFeatures().isAiAnalytics());
+            log.info("  智能标签生成功能: {}", userSettingsConfig.getFeatures().isSmartLabelGeneration());
+            log.info("  实体标签生成功能: {}", userSettingsConfig.getFeatures().isEntityLabelGeneration());
+            log.info("  位置标记功能: {}", userSettingsConfig.getFeatures().isLocationMarking());
+            log.info("  天气识别功能: {}", userSettingsConfig.getFeatures().isWeatherIdentification());
             
             // 打印用户信息配置
-            logger.info("用户信息配置:");
-            logger.info("  首次使用日期: {}", userSettingsConfig.getUserInfo().getFirstUseDate());
-            logger.info("  默认城市: {}", userSettingsConfig.getUserInfo().getDefaultCity());
-            logger.info("  默认国家: {}", userSettingsConfig.getUserInfo().getDefaultCountry());
-            logger.info("  性别: {}", userSettingsConfig.getUserInfo().getGender());
-            logger.info("  年龄: {}", userSettingsConfig.getUserInfo().getAge());
-            logger.info("  职业: {}", userSettingsConfig.getUserInfo().getOccupation());
-            logger.info("  ");
+            log.info("用户信息配置:");
+            log.info("  首次使用日期: {}", userSettingsConfig.getUserInfo().getFirstUseDate());
+            log.info("  默认城市: {}", userSettingsConfig.getUserInfo().getDefaultCity());
+            log.info("  默认国家: {}", userSettingsConfig.getUserInfo().getDefaultCountry());
+            log.info("  性别: {}", userSettingsConfig.getUserInfo().getGender());
+            log.info("  年龄: {}", userSettingsConfig.getUserInfo().getAge());
+            log.info("  职业: {}", userSettingsConfig.getUserInfo().getOccupation());
+            log.info("  ");
 
             // 打印分析规则配置
-            logger.info("分析规则配置:");
-            logger.info("  标签分析规则: {}", userSettingsConfig.getRules().getTagAnalysisRules());
-            logger.info("  人物标签去重规则: {}", userSettingsConfig.getRules().getCharacterTagDeduplicationRules());
-            logger.info("  地点标签生成规则: {}", userSettingsConfig.getRules().getPlaceLabelDeduplicationRules());
-            logger.info("  响应消息生成规则: {}", userSettingsConfig.getRules().getResponseMessageGenerationRules());
+            log.info("分析规则配置:");
+            log.info("  标签分析规则: {}", userSettingsConfig.getRules().getTagAnalysisRules());
+            log.info("  人物标签去重规则: {}", userSettingsConfig.getRules().getCharacterTagDeduplicationRules());
+            log.info("  地点标签生成规则: {}", userSettingsConfig.getRules().getPlaceLabelDeduplicationRules());
+            log.info("  响应消息生成规则: {}", userSettingsConfig.getRules().getResponseMessageGenerationRules());
 
             // 打印API配置状态（不显示具体密钥）
-            logger.info("API配置状态:");
-            logger.info("  AI大模型 API密钥已设置: {}",
+            log.info("API配置状态:");
+            log.info("  AI大模型 API密钥已设置: {}",
                 userSettingsConfig.getApi().getAiLLMApiKey() != null &&
                 !userSettingsConfig.getApi().getAiLLMApiKey().isEmpty());
-            logger.info("  百度NLP API密钥已设置: {}", 
+            log.info("  百度NLP API密钥已设置: {}",
                 userSettingsConfig.getApi().getBaiduNlpApiKey() != null && 
                 !userSettingsConfig.getApi().getBaiduNlpApiKey().isEmpty());
-            logger.info("  百度地图API密钥已设置: {}", 
+            log.info("  百度地图API密钥已设置: {}",
                 userSettingsConfig.getApi().getBaiduMapApiHost() != null &&
                 !userSettingsConfig.getApi().getBaiduMapApiHost().isEmpty());
             
-            logger.info("=== 验证完成 ===");
+            log.info("=== 验证完成 ===");
         } catch (Exception e) {
-            logger.error("验证用户设置配置时发生错误", e);
+            log.error("验证用户设置配置时发生错误", e);
         }
     }
 }

@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 日记服务类
  * 提供日记相关处理方法
@@ -279,4 +281,19 @@ public class DiaryService {
         }
     }
 
+    /**
+     * 获取所有日记列表
+     *
+     * @return 所有日记列表
+     */
+    public Result<List<Diary>> getAllDiaryList() {
+        try {
+            log.info("查询全部日记");
+            List<DiaryPojo> diaryPojoList = diaryMapper.selectAll();
+            return ResultBuilder.successWithData(SuccessMsgEnums.QUERY_SUCCESS, diaryMapStruct.toDtoList(diaryPojoList));
+        } catch (Exception e) {
+            // 数据库操作异常，抛出系统异常
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
+    }
 }

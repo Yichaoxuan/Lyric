@@ -28,7 +28,7 @@ public class MessageController {
      * @return 更新结果
      */
     @PutMapping("/updateMessageConfig")
-    public Result<Void> updateMessageConfigAndSave(String responseStyleInstructions) {
+    public Result<Void> updateMessageConfigAndSave(@RequestParam String responseStyleInstructions) {
         logger.info("收到更新消息配置并保存到文件的请求");
         return messageService.updateMessageConfigAndSaveToFile(responseStyleInstructions);
     }

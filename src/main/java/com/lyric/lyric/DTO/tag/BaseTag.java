@@ -31,6 +31,11 @@ public class BaseTag {
     private TagType tagType;
 
     /**
+     * 等级
+     */
+    private Integer level;
+
+    /**
      * 标签颜色 (十六进制)
      */
     private String color;
@@ -48,10 +53,11 @@ public class BaseTag {
      * @param color 颜色
      * @param icon 图标
      */
-    public BaseTag(Integer id, String name, TagType tagType, String color, String icon) {
+    public BaseTag(Integer id, String name, TagType tagType, String level, String color, String icon) {
         this.id = id;
         this.name = name;
         this.tagType = tagType;
+        this.level = Integer.parseInt(level);
         this.color = color;
         this.icon = icon;
     }
