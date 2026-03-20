@@ -72,6 +72,17 @@ public class TagService {
     }
 
     /**
+     * 根据日记 ID 查询基本标签
+     * @param diaryId 日记 ID
+     * @return Result<List<BaseTagPojo>> 列表包含标签实体对象
+     */
+    public Result<List<BaseTagPojo>> getBaseTagsByDiaryId(Integer diaryId) {
+        log.debug("查询基本标签：diaryId={}", diaryId);
+        List<BaseTagPojo> tags = baseTagService.getTagsByDiaryId(diaryId);
+        return ResultBuilder.successWithData(SuccessMsgEnums.BASE_TAG_QUERY_SUCCESS, tags);
+    }
+
+    /**
      * 查询所有基本标签
      * @return Result<List<BaseTagPojo>> 包含标签列表
      */
@@ -281,6 +292,17 @@ public class TagService {
         return ResultBuilder.success(SuccessMsgEnums.PERSON_TAG_APPEARANCE_INCREMENT_SUCCESS);
     }
 
+    /**
+     * 根据日记ID 查询对应的人物标签列表
+     * @param diaryId 日记 ID
+     * @return Result<List<PersonPojo>> 包含人物列表
+     */
+    public Result<List<PersonPojo>> getPersonTagsByDiaryId(Integer diaryId) {
+        log.debug("根据日记 ID 查询人物标签：diaryId={}", diaryId);
+        List<PersonPojo> persons = personTagService.getPersonsByDiaryId(diaryId);
+        return ResultBuilder.successWithData(SuccessMsgEnums.PERSON_TAG_QUERY_SUCCESS, persons);
+    }
+
     // ==================== LocationTag 相关方法 ====================
 
     /**
@@ -433,6 +455,17 @@ public class TagService {
         }
         
         return ResultBuilder.success(SuccessMsgEnums.LOCATION_TAG_APPEARANCE_INCREMENT_SUCCESS);
+    }
+
+    /**
+     * 根据日记ID 查询对应的地点标签列表
+     * @param diaryId 日记ID
+     * @return Result<List<LocationPojo>> 包含地点列表
+     */
+    public Result<List<LocationPojo>> getLocationTagsByDiaryId(Integer diaryId) {
+        log.debug("根据日记ID 查询地点标签：diaryId={}", diaryId);
+        List<LocationPojo> locations = locationTagService.getLocationsByDiaryId(diaryId);
+        return ResultBuilder.successWithData(SuccessMsgEnums.LOCATION_TAG_QUERY_SUCCESS, locations);
     }
 
     // ==================== EventTag 相关方法 ====================

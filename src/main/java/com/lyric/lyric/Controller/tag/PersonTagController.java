@@ -60,6 +60,17 @@ public class PersonTagController {
     }
 
     /**
+     * 根据日记 ID 查询人物标签列表
+     *
+     * @param diaryId 日记 ID
+     * @return 查询结果
+     */
+    @GetMapping("/queryByDiaryId")
+    public Result<List<PersonPojo>> queryPersonTagsByDiaryId(@RequestParam Integer diaryId) {
+        return tagService.getPersonTagsByDiaryId(diaryId);
+    }
+
+    /**
      * 查询所有人物标签
      *
      * @return 查询结果

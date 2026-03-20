@@ -2,11 +2,13 @@ package com.lyric.lyric.Service.tag.tagCRUD;
 
 import com.lyric.lyric.Mapper.relation.DiaryTagMapper;
 import com.lyric.lyric.Mapper.tag.TagMapper;
+import com.lyric.lyric.POJO.relation.DiaryTagPojo;
 import com.lyric.lyric.POJO.tag.BaseTagPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +55,43 @@ public class BaseTagService {
         }
         return tag;
     }
+
+    /**
+     * 根据日记 ID 查询对应的标签列表
+     * @param diaryId 日记 ID
+     * @return 标签实体列表，若日记没有关联标签则返回空列表
+     */
+    public List<BaseTagPojo> getTagsByDiaryId(Integer diaryId) {
+        log.debug("根据日记 ID 查询标签：diaryId={}", diaryId);
+
+        // 步骤 1: 查询该日记关联的所有标签 ID
+        List<DiaryTagPojo> relations = diaryTagMapper.selectByDiaryId(diaryId);
+        if (relations == null || relations.isEmpty()) {
+            log.debug("日记未关联任何标签：diaryId={}", diaryId);
+            return new ArrayList<>();
+        }
+
+        // 步骤 2: 提取所有标签 ID
+        List<Integer> tagIds = new ArrayList<>();
+        for (DiaryTagPojo relation : relations) {
+            tagIds.add(relation.getTagId());
+        }
+
+        // 步骤 3: 批量查询标签详情
+        List<BaseTagPojo> tags = new ArrayList<>();
+        for (Integer tagId : tagIds) {
+            BaseTagPojo tag = tagMapper.selectById(tagId);
+            if (tag != null) {
+                tags.add(tag);
+            } else {
+                log.warn("标签不存在，跳过：tagId={}", tagId);
+            }
+        }
+
+        log.info("根据日记 ID 查询到 {} 个标签：diaryId={}", tags.size(), diaryId);
+        return tags;
+    }
+
 
     /**
      * 查询所有标签

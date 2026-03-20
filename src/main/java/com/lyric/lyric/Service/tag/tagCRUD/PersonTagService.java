@@ -75,6 +75,42 @@ public class PersonTagService {
     }
 
     /**
+     * 根据日记ID 查询对应的人物标签列表
+     * @param diaryId 日记ID
+     * @return 人物实体列表，若日记没有关联人物则返回空列表
+     */
+    public List<PersonPojo> getPersonsByDiaryId(Integer diaryId) {
+        log.debug("根据日记ID 查询人物标签：diaryId={}", diaryId);
+
+        // 步骤 1: 查询该日记关联的所有人物 ID
+        List<DiaryPersonPojo> relations = diaryPersonMapper.selectByDiaryId(diaryId);
+        if (relations == null || relations.isEmpty()) {
+            log.debug("日记未关联任何人物：diaryId={}", diaryId);
+            return new java.util.ArrayList<>();
+        }
+
+        // 步骤 2: 提取所有人物 ID
+        java.util.List<Integer> personIds = new java.util.ArrayList<>();
+        for (DiaryPersonPojo relation : relations) {
+            personIds.add(relation.getPersonId());
+        }
+
+        // 步骤 3: 批量查询人物详情
+        List<PersonPojo> persons = new java.util.ArrayList<>();
+        for (Integer personId : personIds) {
+            PersonPojo person = personMapper.selectById(personId);
+            if (person != null) {
+                persons.add(person);
+            } else {
+                log.warn("人物不存在，跳过：personId={}", personId);
+            }
+        }
+
+        log.info("根据日记ID 查询到 {} 个人物：diaryId={}", persons.size(), diaryId);
+        return persons;
+    }
+
+    /**
      * 查询所有人物标签
      * @return 人物列表
      */

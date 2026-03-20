@@ -59,6 +59,17 @@ public class LocationTagController {
         return tagService.getLocationTagsByName(name);
     }
 
+    /**
+     * 根据日记ID 查询地点标签列表
+     *
+     * @param diaryId 日记ID
+     * @return 查询结果
+     */
+    @GetMapping("/queryByDiaryId")
+    public Result<List<LocationPojo>> queryLocationTagsByDiaryId(@RequestParam Integer diaryId) {
+        return tagService.getLocationTagsByDiaryId(diaryId);
+    }
+
 
 
     /**

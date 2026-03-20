@@ -112,6 +112,42 @@ public class LocationTagService {
     }
 
     /**
+     * 根据日记ID 查询对应的地点标签列表
+     * @param diaryId 日记ID
+     * @return 地点实体列表，若日记没有关联地点则返回空列表
+     */
+    public List<LocationPojo> getLocationsByDiaryId(Integer diaryId) {
+        log.debug("根据日记ID 查询地点标签：diaryId={}", diaryId);
+
+        // 步骤 1: 查询该日记关联的所有地点 ID
+        List<DiaryLocationPojo> relations = diaryLocationMapper.selectByDiaryId(diaryId);
+        if (relations == null || relations.isEmpty()) {
+            log.debug("日记未关联任何地点：diaryId={}", diaryId);
+            return new java.util.ArrayList<>();
+        }
+
+        // 步骤 2: 提取所有地点 ID
+        java.util.List<Integer> locationIds = new java.util.ArrayList<>();
+        for (DiaryLocationPojo relation : relations) {
+            locationIds.add(relation.getLocationId());
+        }
+
+        // 步骤 3: 批量查询地点详情
+        List<LocationPojo> locations = new java.util.ArrayList<>();
+        for (Integer locationId : locationIds) {
+            LocationPojo location = locationMapper.selectById(locationId);
+            if (location != null) {
+                locations.add(location);
+            } else {
+                log.warn("地点不存在，跳过：locationId={}", locationId);
+            }
+        }
+
+        log.info("根据日记ID 查询到 {} 个地点：diaryId={}", locations.size(), diaryId);
+        return locations;
+    }
+
+    /**
      * 查询所有地点标签
      * @return 地点列表
      */

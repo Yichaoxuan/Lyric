@@ -178,7 +178,7 @@ public class GetWeatherService {
         // 构造完整的 API 请求 URL
         String url = apiHost + WEATHER_NOW_PATH + "?location=" + locationId + "&date=" + formattedDate + "&key="
                 + apiKey;
-
+        log.info(url);
         // 执行 HTTP 请求并获取天气信息
         return executeWeatherRequest(url, locationId, date);
     }

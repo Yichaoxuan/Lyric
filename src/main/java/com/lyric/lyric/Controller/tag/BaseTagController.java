@@ -49,6 +49,17 @@ public class BaseTagController {
     }
 
     /**
+     * 根据日记ID 查询基本标签
+     *
+     * @param diaryId 日记ID
+     * @return 查询结果
+     */
+    @GetMapping("/queryByDiaryId")
+    public Result<List<BaseTagPojo>> queryBaseTagsByDiaryId(@RequestParam Integer diaryId) {
+        return tagService.getBaseTagsByDiaryId(diaryId);
+    }
+
+    /**
      * 查询所有基本标签
      *
      * @return 查询结果
