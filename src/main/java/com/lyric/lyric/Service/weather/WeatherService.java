@@ -87,7 +87,6 @@ public class WeatherService {
         WeatherPojo weatherPojo = weatherMapper.selectByDiaryId(diaryId);
         if (weatherPojo == null) {
             log.warn("日记的天气记录不存在，diaryId={}", diaryId);
-            throw new IllegalArgumentException("该日记的天气记录不存在");
         }
 
         return ResultBuilder.successWithData(SuccessMsgEnums.WEATHER_QUERY_BY_DIARY_SUCCESS, weatherMapStruct.toDto(weatherPojo));

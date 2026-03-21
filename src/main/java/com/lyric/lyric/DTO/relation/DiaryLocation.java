@@ -34,32 +34,7 @@ public class DiaryLocation {
     private Integer locationId;
 
     /**
-     * 日记日期
-     */
-    private LocalDateTime appearanceDate;
-
-    /**
      * 类型：ACTUAL(实际到达)、MENTION(提及)、MEMORY(回忆)
      */
     private DiaryLocationPojo.MentionType mentionType;
-
-    /**
-     * 提及类型枚举
-     */
-    public enum MentionType {
-        /**
-         * 实际到达
-         */
-        ACTUAL,
-
-        /**
-         * 提及
-         */
-        MENTION,
-
-        /**
-         * 回忆
-         */
-        MEMORY
-    }
 }

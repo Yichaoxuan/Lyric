@@ -55,9 +55,9 @@ public class Diary {
     private Integer isDraft;
 
     /**
-     * 情感得分 (-2.0 到 2.0)
+     * 情感级别
      */
-    private Double emotionScore;
+    private String emotionalLevel;
 
     /**
      * 字数统计
@@ -95,7 +95,7 @@ public class Diary {
      * @param contentType 内容类型
      * @param contentFormat 编辑器格式
      * @param isDraft 是否为草稿
-     * @param emotionScore 情感得分
+     * @param emotionalLevel 情感级别
      * @param wordCount 字数统计
      * @param writingStartTime 写作开始时间
      * @param writingEndTime 写作结束时间
@@ -113,7 +113,7 @@ public class Diary {
         this.contentType = contentType;
         this.contentFormat = contentFormat;
         this.isDraft = isDraft;
-        this.emotionScore = emotionScore;
+        this.emotionalLevel = emotionalLevel;
         this.wordCount = wordCount;
         this.writingStartTime = writingStartTime;
         this.writingEndTime = writingEndTime;

@@ -53,6 +53,18 @@ public class DiaryController {
     }
 
     /**
+     * 更新日记（从草稿状态）
+     * 将草稿状态的日记更新为正式日记
+     *
+     * @param diary 日记DTO对象，包含要更新的内容
+     * @return 更新结果
+     */
+    @PostMapping("/updateDiaryFromDraft")
+    public Result<Void> updateDiaryFromDraft(@RequestBody Diary diary) {
+        return diaryService.updateDiaryFromDraft(diary);
+    }
+
+    /**
      * 将日记移至回收站
      *
      * @param diaryId 日记 ID
@@ -115,5 +127,25 @@ public class DiaryController {
     @GetMapping("/queryAllDiary")
     public Result<List<Diary>> queryAllDiary() {
         return diaryService.getAllDiaryList();
+    }
+
+    /**
+     * 查询所有非草稿日记
+     *
+     * @return 查询结果
+     */
+    @GetMapping("/queryNonDraftDiaries")
+    public Result<List<Diary>> queryNonDraftDiaries() {
+        return diaryService.getNonDraftDiaries();
+    }
+
+    /**
+     * 查询所有草稿
+     *
+     * @return 查询结果
+     */
+    @GetMapping("/queryDrafts")
+    public Result<List<Diary>> queryDrafts() {
+        return diaryService.getDrafts();
     }
 }

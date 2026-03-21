@@ -18,8 +18,8 @@ public interface TagMapper {
      * @param tag 标签实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO tag(name, tag_type, level, color, icon, usage_count) " +
-            "VALUES(#{name}, #{tagType}, #{level}, #{color}, #{icon}, #{usageCount})")
+    @Insert("INSERT INTO tag(name, tag_type, color, icon, usage_count) " +
+            "VALUES(#{name}, #{tagType}, #{color}, #{icon}, #{usageCount})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(BaseTagPojo tag);
     
@@ -51,7 +51,7 @@ public interface TagMapper {
      * @param tag 标签实体
      * @return 影响的行数
      */
-    @Update("UPDATE tag SET name=#{name}, tag_type=#{tagType}, level=#{level}, color=#{color}, icon=#{icon}, " +
+    @Update("UPDATE tag SET name=#{name}, tag_type=#{tagType}, color=#{color}, icon=#{icon}, " +
             "usage_count=#{usageCount} WHERE id=#{id}")
     int update(BaseTagPojo tag);
     

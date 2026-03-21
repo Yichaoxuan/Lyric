@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/file")
+@RequestMapping("/file")
 public class FileUploadController {
 
     private final MediaFileService mediaFileService;

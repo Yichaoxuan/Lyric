@@ -46,15 +46,15 @@ public class DiaryPojo {
     /**
      * 是否删除 (0:否, 1:是)
      */
-    private Integer isDeleted;
+    private Integer isDeleted = 0;
     /**
      * 是否为草稿 (0:否, 1:是)
      */
-    private Integer isDraft;
+    private Integer isDraft = 0;
     /**
-     * 情感得分 (-2.0 到 2.0)
+     * 情感级别
      */
-    private Double emotionScore;
+    private Double emotionalLevel = 0.0;
     /**
      * 字数统计
      */
@@ -94,7 +94,7 @@ public class DiaryPojo {
      * @param contentFormat 编辑器格式
      * @param isDeleted 是否删除
      * @param isDraft 是否为草稿
-     * @param emotionScore 情感得分
+     * @param emotionalLevel 情感级别
      * @param wordCount 字数统计
      * @param writingStartTime 写作开始时间
      * @param writingEndTime 写作结束时间
@@ -102,7 +102,7 @@ public class DiaryPojo {
      * @param diaryDate 日记日期
      */
     public DiaryPojo(Integer id, String title, String content, String summary, ContentType contentType, ContentFormat contentFormat,
-                 Integer isDeleted, Integer isDraft, Double emotionScore, Integer wordCount,
+                 Integer isDeleted, Integer isDraft, Double emotionalLevel, Integer wordCount,
                  LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
                  LocalDate diaryDate) {
         this.id = id;
@@ -113,7 +113,7 @@ public class DiaryPojo {
         this.contentFormat = contentFormat;
         this.isDeleted = isDeleted;
         this.isDraft = isDraft;
-        this.emotionScore = emotionScore;
+        this.emotionalLevel = emotionalLevel;
         this.wordCount = wordCount;
         this.writingStartTime = writingStartTime;
         this.writingEndTime = writingEndTime;

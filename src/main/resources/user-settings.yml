@@ -7,7 +7,7 @@ user-settings:
 
     # 自定义文件存储路径
     file_storage_config:
-      upload_dir: ../uploads              # 相对路径，也可用绝对路径
+      upload_dir: D:/Lyric/backend/uploads              # 使用绝对路径
       thumbnail_suffix: thumb_            # 缩略图前缀
       thumbnail_width: 200                # 缩略图宽度
       thumbnail_height: 200               # 缩略图高度

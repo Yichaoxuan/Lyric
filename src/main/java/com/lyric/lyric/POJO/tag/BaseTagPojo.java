@@ -34,11 +34,6 @@ public class BaseTagPojo {
     private TagType tagType;
 
     /**
-     * 等级
-     */
-    private Integer level;
-
-    /**
      * 标签颜色 (十六进制)
      */
     private String color;
@@ -65,7 +60,6 @@ public class BaseTagPojo {
     public BaseTagPojo(AITagJson.ThemeTag themeTag) {
         this.name = themeTag.getName();
         this.tagType = TagType.THEME;
-        this.level = 0;
         this.color = themeTag.getColor();
         this.icon = null;
         this.usageCount = 1;
@@ -79,7 +73,6 @@ public class BaseTagPojo {
     public BaseTagPojo(AITagJson.MoodTag moodTag) {
         this.name = moodTag.getName();
         this.tagType = TagType.MOOD;
-        this.level = Integer.valueOf(moodTag.getLevel());
         this.color = moodTag.getColor();
         this.icon = moodTag.getIcon();
         this.usageCount = 1;

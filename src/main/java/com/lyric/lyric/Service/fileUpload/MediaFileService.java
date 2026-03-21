@@ -93,7 +93,8 @@ public class MediaFileService {
             MediaFilePojo mediaFilePojo = new MediaFilePojo();
             mediaFilePojo.setDiaryId(diaryId);
             mediaFilePojo.setFileName(originalFilename);
-            mediaFilePojo.setFilePath(targetFile.getAbsolutePath());
+            // 存储相对路径，便于前端访问
+            mediaFilePojo.setFilePath("/uploads/" + newFileName);
             mediaFilePojo.setFileType(actualType);
             mediaFilePojo.setFileSize(file.getSize());
             mediaFilePojo.setUploadTime(LocalDateTime.now());
@@ -183,7 +184,9 @@ public class MediaFileService {
                 throw new BusinessException(BusinessErrorMsgEnums.FILE_NOT_FOUND);
             }
 
-            File physicalFile = new File(file.getFilePath());
+            // 构建完整的物理文件路径
+            String fileName = file.getFilePath().substring(file.getFilePath().lastIndexOf('/') + 1);
+            File physicalFile = new File(uploadProperties.getUploadDir(), fileName);
             if (physicalFile.exists()) {
                 boolean deleted = physicalFile.delete();
                 if (!deleted) {

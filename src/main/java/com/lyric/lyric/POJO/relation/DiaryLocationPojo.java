@@ -40,7 +40,8 @@ public class DiaryLocationPojo {
 
     /**
      * 有参构造方法（不包含自动生成的字段）
-     * @param diaryId 日记ID
+     * 
+     * @param diaryId    日记ID
      * @param locationId 地点ID
      */
     public DiaryLocationPojo(Integer diaryId, Integer locationId) {

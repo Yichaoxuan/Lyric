@@ -1,5 +1,6 @@
 package com.lyric.lyric.Service.tag.parsing;
 
+import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.Mapper.relation.DiaryTagMapper;
 import com.lyric.lyric.Mapper.tag.TagMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
@@ -24,10 +25,12 @@ public class BaseTagParsingService {
     private final TagMapper tagMapper;
 
     private final DiaryTagMapper diaryTagMapper;
+    private final DiaryMapper diaryMapper;
 
-    public BaseTagParsingService(TagMapper tagMapper, DiaryTagMapper diaryTagMapper) {
+    public BaseTagParsingService(TagMapper tagMapper, DiaryTagMapper diaryTagMapper, DiaryMapper diaryMapper) {
         this.tagMapper = tagMapper;
         this.diaryTagMapper = diaryTagMapper;
+        this.diaryMapper = diaryMapper;
     }
     /**
      * 主题标签去重器
@@ -111,6 +114,9 @@ public class BaseTagParsingService {
             BaseTagPojo baseTagPojo = new BaseTagPojo(moodTag);
             tagMapper.insert(baseTagPojo);
             int moodTagId = baseTagPojo.getId();
+
+            //将情绪等级添加到日记表中
+            diaryMapper.updateEmotionalLevel(diaryId, moodTag.getLevel());
 
             //关联日记与情绪标签
             diaryTagMapper.insert(new DiaryTagPojo(diaryId, moodTagId));
