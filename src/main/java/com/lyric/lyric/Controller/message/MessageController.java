@@ -23,7 +23,7 @@ public class MessageController {
     }
 
     /**
-     * 更新消息配置并保存到配置文件
+     * 更新消息配置并保存到数据库
      * @param responseStyleInstructions 响应消息的角色设定
      * @return 更新结果
      */

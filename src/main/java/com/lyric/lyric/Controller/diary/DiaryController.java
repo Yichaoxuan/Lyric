@@ -10,10 +10,11 @@ import java.util.List;
 
 /**
  * 日记控制器
- * 提供创建、修改、查询、删除日记的REST API接口
+ * 提供创建、修改、查询、删除日记的 REST API 接口
  *
  * @author Yichaoxuan
  * @since 2026-3-18
+ * @lastModified 2026-03-24
  */
 @Slf4j
 @RestController
@@ -65,6 +66,18 @@ public class DiaryController {
     }
 
     /**
+     * 更新草稿
+     * 用于用户编辑中保存草稿
+     *
+     * @param diary 日记DTO对象，包含要更新的内容
+     * @return 更新结果
+     */
+    @PostMapping("/updateDraft")
+    public Result<Void> updateDraft(@RequestBody Diary diary) {
+        return diaryService.updateDraft(diary);
+    }
+
+    /**
      * 将日记移至回收站
      *
      * @param diaryId 日记 ID
@@ -76,14 +89,36 @@ public class DiaryController {
     }
 
     /**
-     * 从回收站永久删除日记
+     * 批量删除草稿
+     *
+     * @param diaryIds 草稿ID列表
+     * @return 删除结果
+     */
+    @PostMapping("/batchDeleteDrafts")
+    public Result<Void> batchDeleteDrafts(@RequestBody List<Integer> diaryIds) {
+        return diaryService.batchDeleteDrafts(diaryIds);
+    }
+
+    /**
+     * 批量删除回收站中的日记
+     *
+     * @param diaryIds 回收站日记ID列表
+     * @return 删除结果
+     */
+    @PostMapping("/batchDeleteTrashedDiaries")
+    public Result<Void> batchDeleteTrashedDiaries(@RequestBody List<Integer> diaryIds) {
+        return diaryService.batchDeleteTrashedDiaries(diaryIds);
+    }
+
+    /**
+     * 从草稿箱回收站彻底删除日记（包括关联的媒体文件）
      *
      * @param diaryId 日记 ID
      * @return 删除结果
      */
-    @DeleteMapping("/permanentlyDelete")
-    public Result<Void> permanentlyDelete(@RequestParam Integer diaryId) {
-        return diaryService.permanentlyDeleteDiary(diaryId);
+    @DeleteMapping("/deleteFromDraftTrash")
+    public Result<Void> deleteFromDraftTrash(@RequestParam Integer diaryId) {
+        return diaryService.deleteFromDraftTrash(diaryId);
     }
 
     /**
@@ -147,5 +182,105 @@ public class DiaryController {
     @GetMapping("/queryDrafts")
     public Result<List<Diary>> queryDrafts() {
         return diaryService.getDrafts();
+    }
+
+    /**
+     * 查询所有回收站日记
+     *
+     * @return 查询结果
+     */
+    @GetMapping("/queryTrashedDiaries")
+    public Result<List<Diary>> queryTrashedDiaries() {
+        return diaryService.getTrashedDiaries();
+    }
+
+    /**
+     * 根据标签 ID 查询日记列表
+     *
+     * @param tagId 标签 ID
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByTagId")
+    public Result<List<Diary>> queryDiariesByTagId(@RequestParam Integer tagId) {
+        return diaryService.getDiariesByTagId(tagId);
+    }
+
+    /**
+     * 根据人物 ID 查询日记列表
+     *
+     * @param personId 人物 ID
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByPersonId")
+    public Result<List<Diary>> queryDiariesByPersonId(@RequestParam Integer personId) {
+        return diaryService.getDiariesByPersonId(personId);
+    }
+
+    /**
+     * 根据地点 ID 查询日记列表
+     *
+     * @param locationId 地点 ID
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByLocationId")
+    public Result<List<Diary>> queryDiariesByLocationId(@RequestParam Integer locationId) {
+        return diaryService.getDiariesByLocationId(locationId);
+    }
+
+    /**
+     * 根据事件 ID 查询日记列表
+     *
+     * @param eventId 事件 ID
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByEventId")
+    public Result<List<Diary>> queryDiariesByEventId(@RequestParam Integer eventId) {
+        return diaryService.getDiariesByEventId(eventId);
+    }
+
+    /**
+     * 根据月份查询日记列表
+     *
+     * @param year  年份
+     * @param month 月份（1-12）
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByMonth")
+    public Result<List<Diary>> queryDiariesByMonth(
+            @RequestParam Integer year,
+            @RequestParam Integer month) {
+        return diaryService.getDiariesByMonth(year, month);
+    }
+
+    /**
+     * 获取最早的日记日期
+     *
+     * @return 最早的日记日期
+     */
+    @GetMapping("/getEarliestDiaryDate")
+    public Result<String> getEarliestDiaryDate() {
+        return diaryService.getEarliestDiaryDate();
+    }
+
+    /**
+     * 批量 AI 标签分析
+     *
+     * @param diaryIds 日记 ID 列表
+     * @return 处理结果
+     */
+    @PostMapping("/batchAiTagAnalysis")
+    public Result<Void> batchAiTagAnalysis(@RequestBody List<Integer> diaryIds) {
+        return diaryService.batchAiTagAnalysis(diaryIds);
+    }
+
+    /**
+     * 根据日期查询日记列表
+     *
+     * @param date 日记日期（格式：YYYY-MM-DD）
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByDate")
+    public Result<List<Diary>> queryDiariesByDate(@RequestParam String date) {
+        return diaryService.getDiariesByDate(date);
     }
 }

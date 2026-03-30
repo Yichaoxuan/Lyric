@@ -17,9 +17,9 @@ import java.util.List;
 public interface EventMapper {
 
     /**
-     * 根据日记ID查询最小的父事件下最小的子事件的日期
-     * @param diaryId 日记ID
-     * @return 子事件的 event_date（格式：yyyy-MM-dd），若无则返回null
+     * 根据日记 ID 查询最小的父事件下最小的子事件的日期
+     * @param diaryId 日记 ID
+     * @return 子事件的 event_date（格式：yyyy-MM-dd），若无则返回 null
      */
     @Select("SELECT se.event_date " +
             "FROM sub_event se " +
@@ -33,6 +33,14 @@ public interface EventMapper {
             "ORDER BY se.id " +
             "LIMIT 1")
     LocalDateTime selectMinSubEventDateByDiaryId(Integer diaryId);
+
+    /**
+     * 根据父事件 ID 查询关联的日记 ID
+     * @param togEventId 父事件 ID
+     * @return 日记 ID，若无则返回 null
+     */
+    @Select("SELECT diary_id FROM tog_event WHERE id = #{togEventId}")
+    Integer selectDiaryIdByTogEventId(Integer togEventId);
     
     // ==================== 父事件(tog_event)相关操作 ====================
     

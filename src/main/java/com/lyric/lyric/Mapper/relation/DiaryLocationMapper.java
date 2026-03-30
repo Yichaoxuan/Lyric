@@ -26,13 +26,22 @@ public interface DiaryLocationMapper {
     int insert(DiaryLocationPojo diaryLocation);
     
     /**
-     * 根据日记ID查询所有关联的地点
+     * 根据日记 ID 查询所有关联的地点
      *
-     * @param diaryId 日记ID
-     * @return 日记-地点关联列表
+     * @param diaryId 日记 ID
+     * @return 日记 - 地点关联列表
      */
     @Select("SELECT * FROM diary_location WHERE diary_id = #{diaryId}")
     List<DiaryLocationPojo> selectByDiaryId(Integer diaryId);
+
+    /**
+     * 根据地点 ID 查询所有关联的日记
+     *
+     * @param locationId 地点 ID
+     * @return 日记 - 地点关联列表
+     */
+    @Select("SELECT * FROM diary_location WHERE location_id = #{locationId}")
+    List<DiaryLocationPojo> selectByLocationId(Integer locationId);
 
     /**
      * 根据日记ID和地点ID查询关联记录

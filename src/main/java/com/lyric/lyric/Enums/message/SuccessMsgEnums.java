@@ -74,7 +74,10 @@ public enum SuccessMsgEnums {
 
     //用户设置
     SETTING_SUCCESS("设置成功"),
-    MESSAGE_CONFIG_SUCCESS("响应消息更新成功");
+    MESSAGE_CONFIG_SUCCESS("响应消息更新成功"),
+
+    // AI 分析
+    ANALYSIS_STARTED("AI 分析已启动");
 
     /**
      * 成功消息名称

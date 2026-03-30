@@ -1,5 +1,7 @@
 package com.lyric.lyric.Service.message;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.lyric.lyric.Config.message.MsgConfig;
 import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
@@ -11,10 +13,12 @@ import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
 import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * 响应消息服务类
@@ -37,7 +41,7 @@ public class MessageService {
     }
 
     /**
-     * 更新响应消息配置并保存到配置文件
+     * 更新响应消息配置并保存到数据库
      * @param responseStyleInstructions 响应消息的角色设定
      */
     public com.lyric.lyric.Utils.resultUtils.Result<Void> updateMessageConfigAndSaveToFile(String responseStyleInstructions) {
@@ -54,7 +58,7 @@ public class MessageService {
         System.out.println(responseStyleInstructions);
 
         try {
-            log.info("开始更新响应消息配置并保存到文件");
+            log.info("开始更新响应消息配置并保存到数据库");
         
             //调用 AI 模型更新响应消息配置
             MessageConfigPojo messageConfigPojo = aiAnalysisService.generateResponseMessage(responseStyleInstructions);
@@ -65,21 +69,18 @@ public class MessageService {
                 return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
             }
         
-            // 更新配置并保存到文件
-            msgConfig.updateConfigAndSaveToFile(messageConfigPojo);
+            // 更新配置并保存到数据库
+            msgConfig.updateConfigAndSaveToDatabase(messageConfigPojo);
         
             // 重新初始化枚举
             reinitializeEnums();
         
-            log.info("响应消息配置更新并保存到文件完成");
+            log.info("响应消息配置更新并保存到数据库完成");
         
             return ResultBuilder.success(SuccessMsgEnums.MESSAGE_CONFIG_SUCCESS);
         } catch (IllegalArgumentException e) {
             log.error("配置参数无效：{}", e.getMessage());
             throw new BusinessException(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT, e);
-        } catch (java.io.IOException e) {
-            log.error("配置文件保存失败：{}", e.getMessage());
-            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
         }
     }
 
@@ -113,6 +114,37 @@ public class MessageService {
     public MessageConfigPojo.Message getLatestSuccessMessageConfig(SuccessMsgEnums successMsgEnums) {
         String configKey = EnumUtils.toSnakeCase(successMsgEnums.name());
         return msgConfig.getLatestSuccessConfig().getSuccessMessage(configKey);
+    }
+
+    /**
+     * 读取 YAML 配置文件内容
+     * @return YAML 文件的原始字符串内容
+     */
+    public String getYamlConfigContent() {
+        try {
+            ClassPathResource resource = new ClassPathResource("message-config.yml");
+            byte[] bytes = resource.getInputStream().readAllBytes();
+            return new String(bytes);
+        } catch (Exception e) {
+            log.error("读取 YAML 配置文件失败：{}", e.getMessage());
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
+    }
+
+    /**
+     * 解析 YAML 配置文件并返回结构化的 Map
+     * @return 解析后的 Map 对象
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> parseYamlConfig() {
+        try {
+            String yamlContent = getYamlConfigContent();
+            ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+            return yamlMapper.readValue(yamlContent, Map.class);
+        } catch (Exception e) {
+            log.error("解析 YAML 配置文件失败：{}", e.getMessage());
+            throw new SystemException(SystemErrorMsgEnums.DATABASE_ERROR, e);
+        }
     }
 
     /**

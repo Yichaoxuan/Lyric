@@ -21,14 +21,17 @@ public class DiaryPojo {
      * 主键ID
      */
     private Integer id;
+
     /**
      * 日记标题
      */
     private String title;
+
     /**
      * 日记内容
      */
     private String content;
+
 
     /**
      * 总结描述
@@ -39,50 +42,57 @@ public class DiaryPojo {
      * 内容类型
      */
     private ContentType contentType;
+
     /**
      * 编辑器格式
      */
     private ContentFormat contentFormat;
+
     /**
      * 是否删除 (0:否, 1:是)
      */
     private Integer isDeleted = 0;
+
     /**
      * 是否为草稿 (0:否, 1:是)
      */
     private Integer isDraft = 0;
+
+    /**
+     * 是否已交由AI分析 (0:否, 1:是)
+     */
+    private Integer isAnalyzed = 0;
+
     /**
      * 情感级别
      */
     private Double emotionalLevel = 0.0;
+
     /**
      * 字数统计
      */
-    private Integer wordCount;
+    private Integer wordCount = 0;
+
     /**
-     * 写作开始时间
+     * 写作时长(秒)
      */
-    private LocalDateTime writingStartTime;
-    /**
-     * 写作结束时间
-     */
-    private LocalDateTime writingEndTime;
-    /**
-     * 写作时长(分钟)
-     */
-    private Integer writingDuration;
+    private Integer writingDuration = 0;
+
     /**
      * 日记日期
      */
     private LocalDate diaryDate;
+
     /**
      * 创建时间
      */
     private LocalDateTime createdAt;
+
     /**
      * 更新时间
      */
     private LocalDateTime updatedAt;
+
 
     /**
      * 有参构造方法（不包含自动生成的字段）
@@ -96,15 +106,12 @@ public class DiaryPojo {
      * @param isDraft 是否为草稿
      * @param emotionalLevel 情感级别
      * @param wordCount 字数统计
-     * @param writingStartTime 写作开始时间
-     * @param writingEndTime 写作结束时间
-     * @param writingDuration 写作时长
+     * @param writingDuration 写作时长（秒）
      * @param diaryDate 日记日期
      */
     public DiaryPojo(Integer id, String title, String content, String summary, ContentType contentType, ContentFormat contentFormat,
-                 Integer isDeleted, Integer isDraft, Double emotionalLevel, Integer wordCount,
-                 LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
-                 LocalDate diaryDate) {
+                 Integer isDeleted, Integer isDraft,Integer isAnalyzed, Double emotionalLevel, Integer wordCount,
+                  Integer writingDuration, LocalDate diaryDate) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -113,10 +120,9 @@ public class DiaryPojo {
         this.contentFormat = contentFormat;
         this.isDeleted = isDeleted;
         this.isDraft = isDraft;
+        this.isAnalyzed = isAnalyzed;
         this.emotionalLevel = emotionalLevel;
         this.wordCount = wordCount;
-        this.writingStartTime = writingStartTime;
-        this.writingEndTime = writingEndTime;
         this.writingDuration = writingDuration;
         this.diaryDate = diaryDate;
     }

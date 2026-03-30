@@ -50,14 +50,24 @@ public class Diary {
     private ContentFormat contentFormat;
 
     /**
+     * 是否删除 (0:否, 1:是)
+     */
+    private Integer isDeleted;
+
+    /**
      * 是否为草稿 (0:否, 1:是)
      */
     private Integer isDraft;
 
     /**
+     * 是否已交由AI分析 (0:否, 1:是)
+     */
+    private Integer isAnalyzed;
+
+    /**
      * 情感级别
      */
-    private String emotionalLevel;
+    private Double emotionalLevel = null;
 
     /**
      * 字数统计
@@ -65,19 +75,7 @@ public class Diary {
     private Integer wordCount;
 
     /**
-     * 写作开始时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime writingStartTime;
-
-    /**
-     * 写作结束时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime writingEndTime;
-
-    /**
-     * 写作时长(分钟)
+     * 写作时长(秒)
      */
     private Integer writingDuration;
 
@@ -95,28 +93,26 @@ public class Diary {
      * @param contentType 内容类型
      * @param contentFormat 编辑器格式
      * @param isDraft 是否为草稿
+     * @param isAnalyzed 是否已交由AI分析
      * @param emotionalLevel 情感级别
      * @param wordCount 字数统计
-     * @param writingStartTime 写作开始时间
-     * @param writingEndTime 写作结束时间
-     * @param writingDuration 写作时长
+     * @param writingDuration 写作时长（秒）
      * @param diaryDate 日记日期
      */
     public Diary(Integer id, String title, String content, String summary, ContentType contentType, ContentFormat contentFormat,
-                 Integer isDraft, Double emotionScore, Integer wordCount,
-                 LocalDateTime writingStartTime, LocalDateTime writingEndTime, Integer writingDuration,
-                 LocalDate diaryDate) {
+                 Integer isDeleted, Integer isDraft, Integer isAnalyzed, Double emotionalLevel, Integer wordCount,
+                  Integer writingDuration, LocalDate diaryDate) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.summary = summary;
         this.contentType = contentType;
         this.contentFormat = contentFormat;
+        this.isDeleted = isDeleted;
         this.isDraft = isDraft;
+        this.isAnalyzed = isAnalyzed;
         this.emotionalLevel = emotionalLevel;
         this.wordCount = wordCount;
-        this.writingStartTime = writingStartTime;
-        this.writingEndTime = writingEndTime;
         this.writingDuration = writingDuration;
         this.diaryDate = diaryDate;
     }

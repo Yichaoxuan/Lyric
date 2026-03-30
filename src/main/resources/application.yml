@@ -10,7 +10,7 @@ spring:
       base-url: https://dashscope.aliyuncs.com/compatible-mode
       chat:
           options:
-              model: qwen3.5-plus
+              model: qwen3.5-plus-2026-02-15
 
   #    deepseek:
 #      api-key: ${user-settings.api.deepseek_api_key}
@@ -32,7 +32,7 @@ spring:
       
   # 配置额外的配置文件
   config:
-    import: classpath:message-config.yml,classpath:user-settings.yml
+    import: classpath:user-settings.yml
 
   # 配置Jackson日期时间格式
   Jackson:
