@@ -16,6 +16,7 @@ public enum BusinessErrorMsgEnums {
     MEDIA_UPLOAD_FAILED("媒体文件上传失败"),
     MEDIA_TYPE_NOT_SUPPORTED("不支持的媒体文件类型"),
     DIARY_NOT_IN_TRASH("日记不在回收站中"),
+    MONTHS_OUT_OF_RANGE("月份范围超出限制"),
 
     // 标签模块相关
     // BaseTag（基本标签）相关
@@ -80,7 +81,17 @@ public enum BusinessErrorMsgEnums {
     // 用户设置
     USER_SETTING_UPDATE_FAILED("用户设置更新失败"),
     USER_PREFERENCE_INVALID("用户偏好设置无效"),
-    RESPONSE_MESSAGE_COMMAND_NOT_INPUT("响应消息命令未输入");
+    RESPONSE_MESSAGE_COMMAND_NOT_INPUT("响应消息命令未输入"),
+
+    // 通用业务错误
+    COMMON_PARAM_INVALID("参数无效"),
+    COMMON_PARAM_MISSING("缺少必要参数"),
+    COMMON_PARAM_FORMAT_ERROR("参数格式错误"),
+    COMMON_DATA_NOT_EXIST("数据不存在"),
+    COMMON_DATA_ALREADY_EXIST("数据已存在"),
+    COMMON_OPERATION_FAILED("操作失败"),
+    COMMON_STATUS_INVALID("状态无效"),
+    COMMON_TIMEOUT("请求超时");
 
     /**
      * 错误消息名称

@@ -18,9 +18,13 @@ public interface DiaryMapper {
          * @param diary 日记实体
          * @return 影响的行数
          */
-        @Insert("INSERT INTO diary(title, content, summary, content_type, content_format, is_deleted, is_draft, emotional_level, word_count, writing_start_time, writing_end_time, writing_duration, diary_date) "
+        @Insert("INSERT INTO diary(title, content, summary, content_type, " +
+                        "content_format, is_deleted, is_draft, is_analyzed, emotional_level, " +
+                        "word_count, writing_duration, diary_date) "
                         +
-                        "VALUES(#{title}, #{content}, #{summary}, #{contentType}, #{contentFormat}, #{isDeleted}, #{isDraft}, #{emotionalLevel}, #{wordCount}, #{writingStartTime}, #{writingEndTime}, #{writingDuration}, #{diaryDate})")
+                        "VALUES(#{title}, #{content}, #{summary}, #{contentType}, " +
+                        "#{contentFormat}, #{isDeleted}, #{isDraft}, #{isAnalyzed}, #{emotionalLevel}, " +
+                        "#{wordCount}, #{writingDuration}, #{diaryDate})")
         @Options(useGeneratedKeys = true, keyProperty = "id")
         int insert(DiaryPojo diary);
 
@@ -58,6 +62,14 @@ public interface DiaryMapper {
         List<DiaryPojo> selectDrafts();
 
         /**
+         * 查询所有回收站日记
+         * 
+         * @return 回收站日记列表
+         */
+        @Select("SELECT * FROM diary WHERE is_deleted = 1")
+        List<DiaryPojo> selectTrashedDiaries();
+
+        /**
          * 查询所有日记中没有天气数据的日记
          * 
          * @return 日记列表
@@ -79,10 +91,9 @@ public interface DiaryMapper {
          */
         @Update("UPDATE diary SET title=#{title}, content=#{content}, summary=#{summary}, " +
                         "content_type=#{contentType}, content_format=#{contentFormat}, " +
-                        "is_deleted=#{isDeleted}, is_draft=#{isDraft}, emotional_level=#{emotionalLevel}, " +
-                        "word_count=#{wordCount}, writing_start_time=#{writingStartTime}, writing_end_time=#{writingEndTime}, "
+                        "is_deleted=#{isDeleted}, is_draft=#{isDraft}, is_analyzed=#{isAnalyzed}, emotional_level=#{emotionalLevel}, "
                         +
-                        "writing_duration=#{writingDuration}, " +
+                        "word_count=#{wordCount}, writing_duration=#{writingDuration}, " +
                         "diary_date=#{diaryDate}, updated_at=CURRENT_TIMESTAMP WHERE id=#{id}")
         int update(DiaryPojo diary);
 
@@ -96,11 +107,68 @@ public interface DiaryMapper {
         int deleteById(Integer id);
 
         /**
-         * 根据ID更新日记的emosent_level字段
+         * 批量删除草稿
+         *
+         * @param diaryIds 草稿ID列表
+         * @return 影响的行数
+         */
+        @Delete("<script>DELETE FROM diary WHERE is_draft = 1 AND is_deleted = 0 AND id IN <foreach collection='diaryIds' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
+        int batchDeleteDrafts(List<Integer> diaryIds);
+
+        /**
+         * 批量删除回收站中的日记
+         *
+         * @param diaryIds 回收站日记ID列表
+         * @return 影响的行数
+         */
+        @Delete("<script>DELETE FROM diary WHERE is_deleted = 1 AND id IN <foreach collection='diaryIds' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
+        int batchDeleteTrashedDiaries(List<Integer> diaryIds);
+
+        /**
+         * 根据 ID 更新日记的 emotional_level 字段
          * 
-         * @param diaryId 日记ID
+         * @param diaryId 日记 ID
          * @param level   情绪等级
          */
         @Update("UPDATE diary SET emotional_level = #{level} WHERE id = #{diaryId}")
         void updateEmotionalLevel(Integer diaryId, String level);
+
+        /**
+         * 根据月份查询日记
+         * 
+         * @param year  年份
+         * @param month 月份（1-12）
+         * @return 日记列表
+         */
+        @Select("SELECT * FROM diary WHERE is_draft = 0 AND is_deleted = 0 " +
+                        "AND strftime('%Y', diary_date) = CAST(#{year} AS TEXT) " +
+                        "AND strftime('%m', diary_date) = printf('%02d', #{month}) " +
+                        "ORDER BY diary_date DESC")
+        List<DiaryPojo> selectByMonth(@Param("year") Integer year, @Param("month") Integer month);
+
+        /**
+         * 查询最早的日记日期
+         * 
+         * @return 最早的日记日期
+         */
+        @Select("SELECT MIN(diary_date) FROM diary WHERE is_draft = 0 AND is_deleted = 0")
+        String selectEarliestDiaryDate();
+
+        /**
+         * 标记日记为已分析
+         * 
+         * @param diaryId 日记 ID
+         * @param i       1 表示已分析，0 表示未分析
+         */
+        @Update("UPDATE diary SET is_analyzed = #{i} WHERE id = #{diaryId}")
+        void updateIsAnalyzed(Integer diaryId, int i);
+
+        /**
+         * 根据日期查询日记
+         * 
+         * @param date 日记日期（格式：YYYY-MM-DD）
+         * @return 日记列表
+         */
+        @Select("SELECT * FROM diary WHERE diary_date = #{date} AND is_draft = 0 AND is_deleted = 0")
+        List<com.lyric.lyric.POJO.diary.DiaryPojo> selectByDate(String date);
 }

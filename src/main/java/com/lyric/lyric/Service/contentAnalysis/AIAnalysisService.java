@@ -10,6 +10,7 @@ import com.lyric.lyric.Utils.json.JsonConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class AIAnalysisService {
      *
      * @param content 需要分析的内容
      */
-    public AITagJson  tagAnalysis(String content) {
+    public AITagJson  tagAnalysis(String content, String  diaryDate) {
         log.info("开始对日记进行标签分析");
 
         // 判断是否开启了AI分析功能与标签生成功能
@@ -58,7 +59,7 @@ public class AIAnalysisService {
         }
 
         // 构建提示词
-        Prompt prompt = promptConstructionService.buildPrompt(content);
+        Prompt prompt = promptConstructionService.buildPrompt(diaryDate + " " +content, diaryDate);
 
         // 调用AI分析内容
         AITagJson AITag = callAiAnalysis.analyzeContent(prompt);
@@ -132,6 +133,8 @@ public class AIAnalysisService {
             log.error("AI返回的结果不是有效的JSON格式: {}", result);
             return null;
         }
+
+        log.info("AI返回的结果为：{}", result);
 
         //将生成的消息解析为MessageConfigPojo
         return JsonConversionUtils.fromJson(result, MessageConfigPojo.class);

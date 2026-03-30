@@ -416,7 +416,7 @@ user-settings:
   # API配置
   api:
     # AI大模型 API密钥
-    ai_llm_api_key: "sk-c2336cbabb9f427ca296d5e6ec68a450"
+    ai_llm_api_key: "sk-c5f4e5bd3d7c4571805035f701109e0b"
 
     # 百度自然语言处理API
     baidu_nlp_api_key: "4kyWjZUUoIHGHj69bFFDEQ5A"
@@ -427,8 +427,9 @@ user-settings:
     # HanLP（汉语处理平台）API
     hanlp_api_key: "OTM4MkBiYnMuaGFubHAuY29tOmhCeTNncVJUQng1Nnl3Ync="
 
-    # 百度地图API
+    # 百度地图 API
     baidu_map_api_key: "1SFjwHuPWi8G6EaI00FrP3URitmOCsQA"
+    baidu_map_frontend_key: "RHiP4K23NHYuTEYOvRs7CGsYCqS2qufr"  # 百度地图前端渲染密钥（用于 Web 端地图展示）
     baidu_map_api_host: "https://api.map.baidu.com"
 
     # 和风天气API

@@ -185,7 +185,7 @@ public class UserSettingsPojo {
      */
     @Setter
     @Getter
-    public  static class Rules {
+    public static class Rules {
 
         /**
          * 分析规则
@@ -248,6 +248,12 @@ public class UserSettingsPojo {
          * 用于访问百度地图服务的API密钥
          */
         private String baiduMapApiKey;
+
+        /**
+         * 百度地图前端渲染密钥
+         * 用于访问百度地图前端渲染服务的API密钥
+         */
+        private String baiduMapFrontendKey;
 
         /**
          * 百度地图API主机地址

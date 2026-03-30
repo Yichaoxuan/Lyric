@@ -59,11 +59,20 @@ public interface MediaFileMapper {
         int update(MediaFilePojo mediaFile);
 
         /**
-         * 根据ID删除文件
+         * 根据 ID 删除文件
          * 
-         * @param id 文件ID
+         * @param id 文件 ID
          * @return 影响的行数
          */
         @Delete("DELETE FROM file WHERE id = #{id}")
         int deleteById(Integer id);
+
+        /**
+         * 根据日记 ID 批量删除文件
+         * 
+         * @param diaryId 日记 ID
+         * @return 影响的行数
+         */
+        @Delete("DELETE FROM file WHERE diary_id = #{diaryId}")
+        int deleteByDiaryId(Integer diaryId);
 }

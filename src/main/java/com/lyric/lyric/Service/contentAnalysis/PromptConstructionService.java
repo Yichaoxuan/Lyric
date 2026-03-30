@@ -39,7 +39,7 @@ public class PromptConstructionService {
      *
      * @return 提示词
      */
-    public Prompt buildPrompt(String content) {
+    public Prompt buildPrompt(String content, String diaryDate) {
         // 构建用户提示词
         Message userMessage = new UserMessage(content);
         // 获取用户设置的分析规则，构建系统提示词
@@ -131,11 +131,14 @@ public class PromptConstructionService {
 
         // 替换角色描述占位符
         systemMessageContent = replacePlaceholder(systemMessageContent, "角色描述", newMessageConfigInstructions);
-        // 替换当前响应消息配置占位符
-        String currentConfig = messageService.getLatestMessageConfig().getMessageConfigStr( true);
-        systemMessageContent = replacePlaceholder(systemMessageContent, "当前响应消息配置", currentConfig);
+        
+        // 获取 YAML 配置文件内容作为模板发送给 AI
+        String yamlConfigContent = messageService.getYamlConfigContent();
+        systemMessageContent = replacePlaceholder(systemMessageContent, "当前响应消息配置", yamlConfigContent);
 
         Message systemMessage = new SystemMessage(systemMessageContent);
+
+        log.info("系统提示词：{}", systemMessageContent);
 
         return new Prompt(List.of(systemMessage));
     }

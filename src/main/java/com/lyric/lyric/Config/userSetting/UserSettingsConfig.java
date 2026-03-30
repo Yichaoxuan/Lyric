@@ -31,8 +31,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "user-settings")
 public class UserSettingsConfig {
 
-
-
     private Features features = new Features();
     private UserInfo userInfo = new UserInfo();
     private Rules rules = new Rules();
@@ -58,7 +56,7 @@ public class UserSettingsConfig {
 
         // 检查用户信息配置
         ConfigLoggerUtil.logConfigStatusSafely("用户信息配置", userInfo);
-        
+
         // 检查分析规则配置
         ConfigLoggerUtil.logConfigStatusSafely("分析规则配置", rules);
 
@@ -69,6 +67,7 @@ public class UserSettingsConfig {
     /**
      * 转换为UserSettingsPojo对象
      * 将当前配置信息转换为UserSettingsPojo对象，便于在业务逻辑中使用
+     * 
      * @return UserSettingsPojo对象，包含所有用户设置信息
      */
     public UserSettingsPojo toUserSettingsPojo() {
@@ -82,9 +81,8 @@ public class UserSettingsConfig {
 
         // 设置功能
         pojoFeatures.setFileStorageConfig(new UserSettingsPojo.Features.FileStorageConfig(
-            features.getFileStorageConfig().getUploadDir(), 
-            features.getFileStorageConfig().getThumbnailSuffix()
-        ));
+                features.getFileStorageConfig().getUploadDir(),
+                features.getFileStorageConfig().getThumbnailSuffix()));
         pojoFeatures.setAiAnalytics(features.isAiAnalytics());
         pojoFeatures.setSmartLabelGeneration(features.isSmartLabelGeneration());
         pojoFeatures.setEntityLabelGeneration(features.isEntityLabelGeneration());
@@ -114,10 +112,10 @@ public class UserSettingsConfig {
         pojoApi.setHanlpApiKey(api.getHanlpApiKey());
         pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
         pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
+        pojoApi.setBaiduMapFrontendKey(api.getBaiduMapFrontendKey());
         pojoApi.setWeatherApiKey(api.getWeatherApiKey());
         pojoApi.setWeatherApiHost(api.getWeatherApiHost());
         pojoApi.setEmojiApiKey(api.getEmojiApiKey());
-
 
         // 将内部类实例设置到UserSettingsPojo中
         userSettingsPojo.setFeatures(pojoFeatures);
@@ -131,12 +129,13 @@ public class UserSettingsConfig {
     /**
      * 从 UserSettingsPojo 对象更新配置
      * 使用 UserSettingsPojo 对象中的数据更新当前配置信息
+     * 
      * @param userSettingsPojo UserSettingsPojo 对象，包含要更新的用户设置信息
      * @throws IOException 文件操作异常
      */
     public void updateFromUserSettingsPojo(UserSettingsPojo userSettingsPojo) throws IOException {
         log.info("开始更新用户设置配置");
-    
+
         // 更新用户偏好配置
         userInfo.setFirstUseDate(userSettingsPojo.getUserInfo().getFirstUseDate());
         userInfo.setDefaultDistrict(userSettingsPojo.getUserInfo().getDefaultDistrict());
@@ -146,24 +145,25 @@ public class UserSettingsConfig {
         userInfo.setGender(userSettingsPojo.getUserInfo().getGender());
         userInfo.setAge(userSettingsPojo.getUserInfo().getAge());
         userInfo.setOccupation(userSettingsPojo.getUserInfo().getOccupation());
-    
+
         // 更新规则配置
         rules.setTagAnalysisRules(userSettingsPojo.getRules().getTagAnalysisRules());
         rules.setCharacterTagDeduplicationRules(userSettingsPojo.getRules().getCharacterTagDeduplicationRules());
         rules.setPlaceLabelDeduplicationRules(userSettingsPojo.getRules().getPlaceLabelDeduplicationRules());
         rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
-    
+
         // 更新功能配置
         Features.FileStorageConfig fileStorageConfig = new Features.FileStorageConfig();
         fileStorageConfig.setUploadDir(userSettingsPojo.getFeatures().getFileStorageConfig().getUploadDir());
-        fileStorageConfig.setThumbnailSuffix(userSettingsPojo.getFeatures().getFileStorageConfig().getThumbnailSuffix());
+        fileStorageConfig
+                .setThumbnailSuffix(userSettingsPojo.getFeatures().getFileStorageConfig().getThumbnailSuffix());
         features.setFileStorageConfig(fileStorageConfig);
         features.setAiAnalytics(userSettingsPojo.getFeatures().isAiAnalytics());
         features.setSmartLabelGeneration(userSettingsPojo.getFeatures().isSmartLabelGeneration());
         features.setEntityLabelGeneration(userSettingsPojo.getFeatures().isEntityLabelGeneration());
         features.setLocationMarking(userSettingsPojo.getFeatures().isLocationMarking());
         features.setWeatherIdentification(userSettingsPojo.getFeatures().isWeatherIdentification());
-    
+
         // 更新 API 配置
         api.setAiLLMApiKey(userSettingsPojo.getApi().getAiLLMApiKey());
         api.setBaiduNlpApiKey(userSettingsPojo.getApi().getBaiduNlpApiKey());
@@ -171,30 +171,32 @@ public class UserSettingsConfig {
         api.setHanlpApiKey(userSettingsPojo.getApi().getHanlpApiKey());
         api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
         api.setBaiduMapApiHost(userSettingsPojo.getApi().getBaiduMapApiHost());
+        api.setBaiduMapFrontendKey(userSettingsPojo.getApi().getBaiduMapFrontendKey());
         api.setWeatherApiKey(userSettingsPojo.getApi().getWeatherApiKey());
         api.setWeatherApiHost(userSettingsPojo.getApi().getWeatherApiHost());
         api.setEmojiApiKey(userSettingsPojo.getApi().getEmojiApiKey());
-    
+
         log.info("完成用户设置配置更新");
-            
+
         // 保存到配置文件
         saveToFile();
     }
 
     /**
      * 将当前配置保存到 YAML 文件
+     * 
      * @throws IOException 文件操作异常
      */
     public void saveToFile() throws IOException {
         log.info("开始保存用户设置配置到文件");
-            
+
         // 创建 YAML 映射器
         YAMLMapper yamlMapper = new YAMLMapper();
-            
+
         // 构造要保存的数据结构，匹配 YAML 文件格式
         Map<String, Object> yamlData = new HashMap<>();
         Map<String, Object> userSettings = new HashMap<>();
-            
+
         // 添加功能配置
         Map<String, Object> featuresMap = new HashMap<>();
         featuresMap.put("ai-analytics", features.isAiAnalytics());
@@ -202,15 +204,15 @@ public class UserSettingsConfig {
         featuresMap.put("entity-label-generation", features.isEntityLabelGeneration());
         featuresMap.put("location-marking", features.isLocationMarking());
         featuresMap.put("weather-identification", features.isWeatherIdentification());
-            
+
         // 添加文件存储配置
         Map<String, Object> fileStorageConfigMap = new HashMap<>();
         fileStorageConfigMap.put("upload-dir", features.getFileStorageConfig().getUploadDir());
         fileStorageConfigMap.put("thumbnail-suffix", features.getFileStorageConfig().getThumbnailSuffix());
         featuresMap.put("file-storage-config", fileStorageConfigMap);
-            
+
         userSettings.put("features", featuresMap);
-            
+
         // 添加用户信息配置
         Map<String, Object> userInfoMap = new HashMap<>();
         userInfoMap.put("first-use-date", DateTimeUtils.format(userInfo.getFirstUseDate()));
@@ -222,7 +224,7 @@ public class UserSettingsConfig {
         userInfoMap.put("age", userInfo.getAge());
         userInfoMap.put("occupation", userInfo.getOccupation());
         userSettings.put("user-info", userInfoMap);
-            
+
         // 添加规则配置
         Map<String, Object> rulesMap = new HashMap<>();
         rulesMap.put("tag-analysis-rules", rules.getTagAnalysisRules());
@@ -230,7 +232,7 @@ public class UserSettingsConfig {
         rulesMap.put("place-label-deduplication-rules", rules.getPlaceLabelDeduplicationRules());
         rulesMap.put("response-message-generation-rules", rules.getResponseMessageGenerationRules());
         userSettings.put("rules", rulesMap);
-            
+
         // 添加 API 配置
         Map<String, Object> apiMap = new HashMap<>();
         apiMap.put("ai-llm-api-key", api.getAiLLMApiKey());
@@ -239,22 +241,24 @@ public class UserSettingsConfig {
         apiMap.put("hanlp-api-key", api.getHanlpApiKey());
         apiMap.put("baidu-map-api-key", api.getBaiduMapApiKey());
         apiMap.put("baidu-map-api-host", api.getBaiduMapApiHost());
+        apiMap.put("baidu-map-frontend-key", api.getBaiduMapFrontendKey());
         apiMap.put("weather-api-key", api.getWeatherApiKey());
         apiMap.put("weather-api-host", api.getWeatherApiHost());
         apiMap.put("emoji-api-key", api.getEmojiApiKey());
         userSettings.put("api", apiMap);
-            
+
         yamlData.put("user-settings", userSettings);
-            
+
         // 写入文件
         File configFile = new File("src/main/resources/user-settings.yml");
         yamlMapper.writeValue(configFile, yamlData);
-            
+
         log.info("用户设置配置已保存到文件：{}", configFile.getAbsolutePath());
     }
-    
+
     /**
      * 获取最新的用户设置配置
+     * 
      * @return UserSettingsPojo 对象，包含所有用户设置信息
      */
     public UserSettingsPojo getLatestUserSettingsConfig() {
@@ -263,14 +267,14 @@ public class UserSettingsConfig {
 
     /**
      * 获取最新的功能配置
+     * 
      * @return UserSettingsPojo对象，包含功能开关配置
      */
     public UserSettingsPojo.Features getLatestFeatureConfig() {
         UserSettingsPojo.Features pojoFeatures = new UserSettingsPojo.Features();
         pojoFeatures.setFileStorageConfig(new UserSettingsPojo.Features.FileStorageConfig(
-            features.getFileStorageConfig().getUploadDir(), 
-            features.getFileStorageConfig().getThumbnailSuffix()
-        ));
+                features.getFileStorageConfig().getUploadDir(),
+                features.getFileStorageConfig().getThumbnailSuffix()));
         pojoFeatures.setAiAnalytics(features.isAiAnalytics());
         pojoFeatures.setSmartLabelGeneration(features.isSmartLabelGeneration());
         pojoFeatures.setEntityLabelGeneration(features.isEntityLabelGeneration());
@@ -281,6 +285,7 @@ public class UserSettingsConfig {
 
     /**
      * 获取最新的用户信息配置
+     * 
      * @return UserSettingsPojo对象，包含用户信息配置
      */
     public UserSettingsPojo.UserInfo getLatestUserInfoConfig() {
@@ -297,6 +302,7 @@ public class UserSettingsConfig {
 
     /**
      * 获取最新的分析规则配置
+     * 
      * @return UserSettingsPojo对象，包含分析规则配置
      */
     public UserSettingsPojo.Rules getLatestRulesConfig() {
@@ -310,6 +316,7 @@ public class UserSettingsConfig {
 
     /**
      * 获取最新的API配置
+     * 
      * @return UserSettingsPojo对象，包含API配置
      */
     public UserSettingsPojo.Api getLatestApiConfig() {
@@ -408,7 +415,6 @@ public class UserSettingsConfig {
          */
         private String defaultDistrict;
 
-
         /**
          * 默认城市
          */
@@ -449,7 +455,7 @@ public class UserSettingsConfig {
      */
     @Setter
     @Getter
-    public  static class Rules {
+    public static class Rules {
 
         /**
          * 标签分析规则
@@ -520,8 +526,14 @@ public class UserSettingsConfig {
         private String baiduMapApiHost;
 
         /**
-         * QWeather API密钥
-         * 用于访问QWeather天气服务的API密钥
+         * 百度地图前端渲染密钥
+         * 用于 Web 端地图展示的 AK
+         */
+        private String baiduMapFrontendKey;
+
+        /**
+         * QWeather API 密钥
+         * 用于访问 QWeather 天气服务的 API 密钥
          */
         private String weatherApiKey;
 

@@ -4,7 +4,9 @@ import com.lyric.lyric.Config.fileUpload.UploadProperties;
 import com.lyric.lyric.Enums.mediaFile.FileType;
 import com.lyric.lyric.Enums.message.BusinessErrorMsgEnums;
 import com.lyric.lyric.Enums.message.SuccessMsgEnums;
+import com.lyric.lyric.Enums.message.SystemErrorMsgEnums;
 import com.lyric.lyric.Exception.BusinessException;
+import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.Mapper.fileUpload.MediaFileMapper;
 import com.lyric.lyric.POJO.fileUpload.MediaFilePojo;
 import com.lyric.lyric.Utils.resultUtils.Result;
@@ -170,6 +172,45 @@ public class MediaFileService {
     }
 
     /**
+     * 根据日记 ID 批量删除关联的所有媒体文件，同时删除物理文件和对应的缩略图
+     * 该方法会从事务中删除数据库记录，并清理服务器上的物理文件
+     *
+     * @param diaryId 待删除媒体文件所属的日记 ID
+     */
+    @Transactional
+    public void deleteFilesByDiaryId(Integer diaryId) {
+        try {
+            // 验证 diaryId 不为空
+            if (diaryId == null) {
+                throw new BusinessException("日记 ID 不能为空");
+            }
+
+            // 查询该日记关联的所有媒体文件
+            List<MediaFilePojo> files = mediaFileMapper.selectByDiaryId(diaryId);
+            if (files == null || files.isEmpty()) {
+                log.info("日记 ID: {} 没有找到关联的媒体文件", diaryId);
+                ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
+                return;
+            }
+
+            // 遍历并删除每个文件
+            for (MediaFilePojo file : files) {
+                deletePhysicalFile(file);
+            }
+
+            // 批量删除数据库记录
+            int deletedCount = mediaFileMapper.deleteByDiaryId(diaryId);
+            log.info("日记 ID: {} 成功删除 {} 个媒体文件", diaryId, deletedCount);
+
+            ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
+        } catch (BusinessException e) {
+            throw new BusinessException(BusinessErrorMsgEnums.FILE_NOT_FOUND, e);
+        } catch (Exception e) {
+            throw new SystemException(SystemErrorMsgEnums.SYSTEM_ERROR, e);
+        }
+    }
+
+    /**
      * 删除指定 ID 的媒体文件，同时删除物理文件和对应的缩略图
      * 该方法会从事务中删除数据库记录，并清理服务器上的物理文件
      *
@@ -184,25 +225,10 @@ public class MediaFileService {
                 throw new BusinessException(BusinessErrorMsgEnums.FILE_NOT_FOUND);
             }
 
-            // 构建完整的物理文件路径
-            String fileName = file.getFilePath().substring(file.getFilePath().lastIndexOf('/') + 1);
-            File physicalFile = new File(uploadProperties.getUploadDir(), fileName);
-            if (physicalFile.exists()) {
-                boolean deleted = physicalFile.delete();
-                if (!deleted) {
-                    log.warn("物理文件删除失败：{}", file.getFilePath());
-                }
-            }
+            // 删除物理文件和缩略图
+            deletePhysicalFile(file);
 
-            String thumbnailFileName = uploadProperties.getThumbnailSuffix() + physicalFile.getName();
-            File thumbnailFile = new File(physicalFile.getParent(), thumbnailFileName);
-            if (thumbnailFile.exists()) {
-                boolean thumbDeleted = thumbnailFile.delete();
-                if (!thumbDeleted) {
-                    log.warn("缩略图文件删除失败：{}", thumbnailFile.getAbsolutePath());
-                }
-            }
-
+            // 删除数据库记录
             boolean success = mediaFileMapper.deleteById(id) > 0;
             if (success) {
                 return ResultBuilder.success(SuccessMsgEnums.DELETE_SUCCESS);
@@ -282,5 +308,37 @@ public class MediaFileService {
         }
         int lastDot = filename.lastIndexOf('.');
         return lastDot > 0 ? filename.substring(lastDot + 1) : "jpg";
+    }
+
+    /**
+     * 删除媒体文件的物理文件和缩略图
+     * 该方法会根据文件路径删除服务器上的实际文件，包括原文件和对应的缩略图
+     *
+     * @param file 待删除的媒体文件 POJO 对象，包含文件路径信息
+     */
+    private void deletePhysicalFile(MediaFilePojo file) {
+        try {
+            // 构建完整的物理文件路径
+            String fileName = file.getFilePath().substring(file.getFilePath().lastIndexOf('/') + 1);
+            File physicalFile = new File(uploadProperties.getUploadDir(), fileName);
+            if (physicalFile.exists()) {
+                boolean deleted = physicalFile.delete();
+                if (!deleted) {
+                    log.warn("物理文件删除失败：{}", file.getFilePath());
+                }
+            }
+
+            // 删除对应的缩略图
+            String thumbnailFileName = uploadProperties.getThumbnailSuffix() + physicalFile.getName();
+            File thumbnailFile = new File(physicalFile.getParent(), thumbnailFileName);
+            if (thumbnailFile.exists()) {
+                boolean thumbDeleted = thumbnailFile.delete();
+                if (!thumbDeleted) {
+                    log.warn("缩略图文件删除失败：{}", thumbnailFile.getAbsolutePath());
+                }
+            }
+        } catch (Exception e) {
+            log.error("删除物理文件失败：{}", file.getFilePath(), e);
+        }
     }
 }
