@@ -1,6 +1,5 @@
 package com.lyric.lyric.Service.tag.parsing;
 
-import com.lyric.lyric.DTO.diary.Diary;
 import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.diary.DiaryPojo;
@@ -52,7 +51,7 @@ public class TagParsingService {
      * @param diary    日记对象
      */
     @Async("aiAnalysisExecutor")
-    public void tagAnalysis(Diary diary) {
+    public void tagAnalysis(DiaryPojo diary) {
         try {
             // 调用AI进行分析
             AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent(), DateTimeUtils.format(diary.getDiaryDate()));
@@ -138,8 +137,8 @@ public class TagParsingService {
             Map<String, AITagJson.PersonInfo> personInfoMapMap = entityTag.getPerson();
             // 获取地点实体标签
             Map<String, AITagJson.LocationInfo> locationInfoMap = entityTag.getLocation();
-            // 获取父事件实体标签
-            Map<String, AITagJson.TogEventInfo> TogEventInfoMap = entityTag.getEvent();
+            // 获取活动实体标签
+            Map<String, AITagJson.ActivityInfo> ActivityInfoMap = entityTag.getActivity();
 
             // 转换为基础主题标签对象并插入数据库
             if (themes != null) {
@@ -176,7 +175,8 @@ public class TagParsingService {
                 log.info("---情绪标签处理结束---");
             }
 
-            Map<Integer, Integer> integerIntegerMap;
+            // personIdIndexMap: Key=人物 ID, Value=人物索引
+            Map<Integer, Integer> personIdIndexMap;
 
             // 转换为人物实体标签对象并插入数据库
             if (personInfoMapMap != null) {
@@ -184,29 +184,33 @@ public class TagParsingService {
                 log.info("---开始进行人物实体处理---");
 
                 // 调用人物去重处理器
-                integerIntegerMap = personsParsingService.personDeduplication(diaryId, personInfoMapMap);
+                personIdIndexMap = personsParsingService.personDeduplication(personInfoMapMap);
 
                 log.info("---人物实体标签处理结束---");
             } else {
-                integerIntegerMap = new HashMap<>();
+                personIdIndexMap = new HashMap<>();
             }
+
+            Map<Integer, Integer> locationIdIndexMap;
 
             // 转换为地点实体标签对象并插入数据库
             if (locationInfoMap != null) {
 
                 log.info("---开始进行地点实体处理---");
 
-                locationParsingService.locationDeduplication(diaryId, locationInfoMap);
+                locationIdIndexMap = locationParsingService.locationDeduplication(locationInfoMap);
 
                 log.info("---地点实体标签处理结束---");
+            } else {
+                locationIdIndexMap = new HashMap<>();
             }
 
             //转换为事件实体标签对象并插入数据库
-            if (TogEventInfoMap != null) {
+            if (ActivityInfoMap != null) {
 
                 log.info("---开始进行事件实体标签处理---");
 
-                eventParsingService.eventDeduplication(diaryId, TogEventInfoMap,integerIntegerMap);
+                eventParsingService.processActivities(diaryId, ActivityInfoMap, personIdIndexMap, locationIdIndexMap);
 
                 log.info("---事件实体标签处理结束---");
             }

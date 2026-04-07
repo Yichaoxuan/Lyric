@@ -25,14 +25,9 @@ public class WeatherPojo {
     private Integer id;
 
     /**
-     * 关联的日记ID
+     * 关联的地点ID
      */
-    private Integer diaryId;
-
-    /**
-     * 城市
-     */
-    private String city;
+    private Integer locationId;
 
     /**
      * 天气日期
@@ -61,14 +56,12 @@ public class WeatherPojo {
 
     /**
      * 创建一个 WeatherPojo 对象
-     * @param diaryId 关联的日记ID
-     * @param city  城市
+     * @param locationId 关联的日记ID
      * @param weatherDate 天气日期
      * @param weatherInformation 天气信息
      */
-    public WeatherPojo(Integer diaryId, String city, LocalDate weatherDate, GetWeatherService.WeatherInformation weatherInformation) {
-        this.diaryId = diaryId;
-        this.city = city;
+    public WeatherPojo(Integer locationId, LocalDate weatherDate, GetWeatherService.WeatherInformation weatherInformation) {
+        this.locationId = locationId;
         this.weatherDate = weatherDate;
         this.weatherCondition = weatherInformation.getWeatherCondition();
         this.tempMax = weatherInformation.getTempMax();

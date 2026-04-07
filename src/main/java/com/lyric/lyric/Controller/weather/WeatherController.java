@@ -1,6 +1,6 @@
 package com.lyric.lyric.Controller.weather;
 
-import com.lyric.lyric.DTO.weather.Weather;
+import com.lyric.lyric.POJO.weather.WeatherPojo;
 import com.lyric.lyric.Service.weather.WeatherService;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -27,24 +27,13 @@ public class WeatherController {
     }
 
     /**
-     * 创建天气记录
-     *
-     * @param weather 天气 DTO 对象
-     * @return 创建结果
-     */
-    @PostMapping("/create")
-    public Result<Void> createWeather(@RequestBody Weather weather) {
-        return weatherService.createWeather(weather);
-    }
-
-    /**
      * 根据 ID 查询天气
      *
      * @param id 天气 ID
      * @return 查询结果
      */
     @GetMapping("/queryById")
-    public Result<Weather> queryWeatherById(@RequestParam Integer id) {
+    public Result<WeatherPojo> queryWeatherById(@RequestParam Integer id) {
         return weatherService.getWeatherById(id);
     }
 
@@ -55,7 +44,7 @@ public class WeatherController {
      * @return 查询结果
      */
     @GetMapping("/queryByDiaryId")
-    public Result<Weather> queryWeatherByDiaryId(@RequestParam Integer diaryId) {
+    public Result<WeatherPojo> queryWeatherByDiaryId(@RequestParam Integer diaryId) {
         return weatherService.getWeatherByDiaryId(diaryId);
     }
 
@@ -66,7 +55,7 @@ public class WeatherController {
      * @return 查询结果
      */
     @GetMapping("/queryByCity")
-    public Result<List<Weather>> queryWeathersByCity(@RequestParam String city) {
+    public Result<List<WeatherPojo>> queryWeathersByCity(@RequestParam String city) {
         return weatherService.getWeathersByCity(city);
     }
 
@@ -77,7 +66,7 @@ public class WeatherController {
      * @return 查询结果
      */
     @GetMapping("/queryByDate")
-    public Result<List<Weather>> queryWeathersByDate(@RequestParam String weatherDate) {
+    public Result<List<WeatherPojo>> queryWeathersByDate(@RequestParam String weatherDate) {
         java.time.LocalDate date = java.time.LocalDate.parse(weatherDate);
         return weatherService.getWeathersByDate(date);
     }
@@ -89,7 +78,7 @@ public class WeatherController {
      * @return 查询结果
      */
     @GetMapping("/queryByCondition")
-    public Result<List<Weather>> queryWeathersByCondition(@RequestParam String weatherCondition) {
+    public Result<List<WeatherPojo>> queryWeathersByCondition(@RequestParam String weatherCondition) {
         return weatherService.getWeathersByCondition(weatherCondition);
     }
 
@@ -99,19 +88,8 @@ public class WeatherController {
      * @return 查询结果
      */
     @GetMapping("/queryAll")
-    public Result<List<Weather>> queryAllWeathers() {
+    public Result<List<WeatherPojo>> queryAllWeathers() {
         return weatherService.getAllWeathers();
-    }
-
-    /**
-     * 更新天气记录
-     *
-     * @param weather 天气 DTO 对象（必须包含 id）
-     * @return 更新结果
-     */
-    @PostMapping("/update")
-    public Result<Void> updateWeather(@RequestBody Weather weather) {
-        return weatherService.updateWeather(weather);
     }
 
     /**

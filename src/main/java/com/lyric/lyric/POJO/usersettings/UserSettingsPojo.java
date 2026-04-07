@@ -206,6 +206,12 @@ public class UserSettingsPojo {
         private String PlaceLabelDeduplicationRules;
 
         /**
+         * 事件标签去重规则
+         * 用于对事件标签进行去重
+         */
+        private String EventTagDeduplicationRules;
+
+        /**
          * 响应消息生成规则
          * 用户自定义的响应消息生成规则
          */

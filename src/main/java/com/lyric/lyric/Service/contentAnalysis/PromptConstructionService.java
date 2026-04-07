@@ -1,16 +1,19 @@
 package com.lyric.lyric.Service.contentAnalysis;
 
 import com.lyric.lyric.POJO.AI.AITagJson;
+import com.lyric.lyric.POJO.AI.EventDeduplicationData;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.message.MessageService;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
+import com.lyric.lyric.Utils.json.JsonConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 import static com.lyric.lyric.Utils.text.PlaceholderUtils.replacePlaceholder;
 
 /**
@@ -39,7 +42,7 @@ public class PromptConstructionService {
      *
      * @return 提示词
      */
-    public Prompt buildPrompt(String content, String diaryDate) {
+    public Prompt buildPrompt(String content) {
         // 构建用户提示词
         Message userMessage = new UserMessage(content);
         // 获取用户设置的分析规则，构建系统提示词
@@ -51,7 +54,6 @@ public class PromptConstructionService {
 
     /**
      * 人物标签去重提示词构建
-     * 构建人物标签去重的提示词
      * 
      * @param newPersonName    新人物名称
      * @param newPersonInfo    新人物信息
@@ -87,7 +89,6 @@ public class PromptConstructionService {
 
     /**
      * 地点标签去重提示词构建
-     * 构建地点标签去重的提示词
      * 
      * @param newLocationName    新地点名称
      * @param newLocationInfo    新地点信息
@@ -114,6 +115,30 @@ public class PromptConstructionService {
         // 获取用户设置的去重规则，构建系统提示词
         Message systemMessage = new SystemMessage(userSettingsService.getResponseMessageGenerationRules());
 
+        return new Prompt(List.of(userMessage, systemMessage));
+    }
+
+    /**
+     * 事件标签去重提示词构建
+     *
+     * @param eventDeduplicationData 事件去重数据
+     *
+     * @return 提示词
+     */
+    public Prompt buildEventDeduplicationPrompt(EventDeduplicationData eventDeduplicationData) {
+
+        // 将 EventDeduplicationData 转换为格式化的 JSON 字符串
+        String jsonData = JsonConversionUtils.toJson(eventDeduplicationData);
+        
+        // 格式化 JSON，使其具有良好的可读性
+        String formattedJson = JsonConversionUtils.formatJson(jsonData);
+
+        // 构建用户提示词
+        Message userMessage = new UserMessage(formattedJson);
+
+        // 获取用户设置的去重规则，构建系统提示词
+        Message systemMessage = new SystemMessage(userSettingsService.getEventDuplicationRules());
+        
         return new Prompt(List.of(userMessage, systemMessage));
     }
 

@@ -1,5 +1,6 @@
 package com.lyric.lyric.POJO.diary;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -25,18 +26,17 @@ public class DiaryPojo {
     /**
      * 日记标题
      */
-    private String title;
+    private String title = "";
 
     /**
      * 日记内容
      */
-    private String content;
-
+    private String content = "";
 
     /**
      * 总结描述
      */
-    private String summary;
+    private String summary = "";
 
     /**
      * 内容类型
@@ -56,7 +56,7 @@ public class DiaryPojo {
     /**
      * 是否为草稿 (0:否, 1:是)
      */
-    private Integer isDraft = 0;
+    private Integer isDraft = 1;
 
     /**
      * 是否已交由AI分析 (0:否, 1:是)
@@ -86,44 +86,25 @@ public class DiaryPojo {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-
     /**
-     * 有参构造方法（不包含自动生成的字段）
-     * @param id 主键ID
-     * @param title 日记标题
-     * @param content 日记内容
-     * @param summary 总结描述
-     * @param contentType 内容类型
+     * 有参构造方法
+     * 
+     * @param contentType   内容类型
      * @param contentFormat 编辑器格式
-     * @param isDeleted 是否删除
-     * @param isDraft 是否为草稿
-     * @param emotionalLevel 情感级别
-     * @param wordCount 字数统计
-     * @param writingDuration 写作时长（秒）
-     * @param diaryDate 日记日期
+     * @param diaryDate     日记日期
      */
-    public DiaryPojo(Integer id, String title, String content, String summary, ContentType contentType, ContentFormat contentFormat,
-                 Integer isDeleted, Integer isDraft,Integer isAnalyzed, Double emotionalLevel, Integer wordCount,
-                  Integer writingDuration, LocalDate diaryDate) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.summary = summary;
+    public DiaryPojo(ContentType contentType, ContentFormat contentFormat, LocalDate diaryDate) {
         this.contentType = contentType;
         this.contentFormat = contentFormat;
-        this.isDeleted = isDeleted;
-        this.isDraft = isDraft;
-        this.isAnalyzed = isAnalyzed;
-        this.emotionalLevel = emotionalLevel;
-        this.wordCount = wordCount;
-        this.writingDuration = writingDuration;
         this.diaryDate = diaryDate;
     }
 

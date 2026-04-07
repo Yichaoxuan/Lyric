@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * 提供获取和更新用户设置的功能
  *
  * @author Yichaoxun
- * @since 2026-03-19
+ * @since 2026-04-03
  */
 @Slf4j
 @Service
@@ -107,6 +107,13 @@ public class UserSettingsService {
      */
     public String getLocationTagGenerationRules() {
         return userSettingsConfig.getLatestRulesConfig().getPlaceLabelDeduplicationRules();
+    }
+
+    /**
+     * 获取最新事件去重规则
+     */
+    public String getEventDuplicationRules() {
+        return userSettingsConfig.getLatestRulesConfig().getEventTagDeduplicationRules();
     }
 
     /**

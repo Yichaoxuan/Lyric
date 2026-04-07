@@ -6,6 +6,8 @@ import com.lyric.lyric.Exception.BusinessException;
 import com.lyric.lyric.POJO.tag.BaseTagPojo;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
+import com.lyric.lyric.POJO.tag.entityTag.event.ActivityPojo;
+import com.lyric.lyric.POJO.tag.entityTag.event.EventPojo;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -468,82 +470,66 @@ public class TagService {
         return ResultBuilder.successWithData(SuccessMsgEnums.LOCATION_TAG_QUERY_SUCCESS, locations);
     }
 
-    // ==================== EventTag 相关方法 ====================
+    // ==================== Event 相关方法 ====================
 
     /**
-     * 创建父事件
-     * @param togEvent 父事件实体对象
+     * 创建事件
+     * @param event 事件实体对象
      * @return Result<Void> 创建结果
      */
-    public Result<Void> createTogEvent(com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo togEvent) {
-        log.info("创建父事件：name={}, startDate={}, endDate={}",
-                togEvent.getName(), togEvent.getStartDate(), togEvent.getEndDate());
+    public Result<Void> createEvent(EventPojo event) {
+        log.info("创建事件：name={}, startDate={}, endDate={}",
+                event.getName(), event.getStartDate(), event.getEndDate());
 
-        // 检查父事件名称是否为空
-        if (togEvent.getName() == null || togEvent.getName().trim().isEmpty()) {
+        // 检查事件名称是否为空
+        if (event.getName() == null || event.getName().trim().isEmpty()) {
             throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_NAME_EMPTY);
         }
 
-        eventTagService.createTogEvent(togEvent);
+        eventTagService.createEvent(event);
         return ResultBuilder.success(SuccessMsgEnums.TOG_EVENT_CREATE_SUCCESS);
     }
 
     /**
-     * 根据 ID 查询父事件
-     * @param id 父事件 ID
-     * @return Result<TogEventPojo> 包含父事件实体对象
+     * 根据 ID 查询事件
+     * @param id 事件 ID
+     * @return Result<EventPojo> 包含事件实体对象
      */
-    public Result<com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo> getTogEventById(Integer id) {
-        log.info("查询父事件：id={}", id);
-        com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo togEvent = eventTagService.getTogEventById(id);
+    public Result<EventPojo> getEventById(Integer id) {
+        log.info("查询事件：id={}", id);
+        EventPojo event = eventTagService.getEventById(id);
 
-        if (togEvent == null) {
+        if (event == null) {
             throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_NOT_FOUND);
         }
 
-        return ResultBuilder.successWithData(SuccessMsgEnums.TOG_EVENT_QUERY_SUCCESS, togEvent);
+        return ResultBuilder.successWithData(SuccessMsgEnums.TOG_EVENT_QUERY_SUCCESS, event);
     }
 
     /**
-     * 根据日记 ID 查询父事件
-     * @param diaryId 日记 ID
-     * @return Result<TogEventPojo> 包含父事件实体对象
+     * 查询所有事件
+     * @return Result<List<EventPojo>> 包含事件列表
      */
-    public Result<com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo> getTogEventByDiaryId(Integer diaryId) {
-        log.info("根据日记 ID 查询父事件：diaryId={}", diaryId);
-        com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo togEvent = eventTagService.getTogEventByDiaryId(diaryId);
-
-        if (togEvent == null) {
-            throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_NOT_FOUND);
-        }
-
-        return ResultBuilder.successWithData(SuccessMsgEnums.TOG_EVENT_QUERY_BY_DIARY_SUCCESS, togEvent);
+    public Result<List<EventPojo>> getAllEvents() {
+        log.info("查询所有事件");
+        List<EventPojo> events = eventTagService.getAllEvents();
+        return ResultBuilder.successWithData(SuccessMsgEnums.TOG_EVENT_QUERY_SUCCESS, events);
     }
 
     /**
-     * 查询所有父事件
-     * @return Result<List<TogEventPojo>> 包含父事件列表
-     */
-    public Result<java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo>> getAllTogEvents() {
-        log.info("查询所有父事件");
-        java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo> togEvents = eventTagService.getAllTogEvents();
-        return ResultBuilder.successWithData(SuccessMsgEnums.TOG_EVENT_QUERY_SUCCESS, togEvents);
-    }
-
-    /**
-     * 更新父事件
-     * @param togEvent 父事件实体对象（必须包含 id）
+     * 更新事件
+     * @param event 事件实体对象（必须包含 id）
      * @return Result<Void> 表示是否更新成功
      */
-    public Result<Void> updateTogEvent(com.lyric.lyric.POJO.tag.entityTag.event.TogEventPojo togEvent) {
-        log.info("更新父事件：id={}, name={}", togEvent.getId(), togEvent.getName());
+    public Result<Void> updateEvent(EventPojo event) {
+        log.info("更新事件：id={}, name={}", event.getId(), event.getName());
 
-        // 检查父事件 ID 是否存在
-        if (togEvent.getId() == null) {
+        // 检查事件 ID 是否存在
+        if (event.getId() == null) {
             throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_NOT_FOUND);
         }
 
-        boolean success = eventTagService.updateTogEvent(togEvent);
+        boolean success = eventTagService.updateEvent(event);
         if (!success) {
             throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_UPDATE_FAILED);
         }
@@ -552,14 +538,14 @@ public class TagService {
     }
 
     /**
-     * 删除父事件（级联删除所有子事件及关联表）
-     * @param id 父事件 ID
+     * 删除事件（级联删除所有活动及关联表）
+     * @param id 事件 ID
      * @return Result<Void> 表示是否删除成功
      */
-    public Result<Void> deleteTogEvent(Integer id) {
-        log.info("删除父事件：id={}", id);
+    public Result<Void> deleteEvent(Integer id) {
+        log.info("删除事件：id={}", id);
 
-        boolean success = eventTagService.deleteTogEvent(id);
+        boolean success = eventTagService.deleteEvent(id);
         if (!success) {
             throw new BusinessException(BusinessErrorMsgEnums.TOG_EVENT_DELETE_FAILED);
         }
@@ -567,80 +553,82 @@ public class TagService {
         return ResultBuilder.success(SuccessMsgEnums.TOG_EVENT_DELETE_SUCCESS);
     }
 
+    // ==================== Activity 相关方法 ====================
+
     /**
-     * 创建子事件
-     * @param subEvent 子事件实体对象
+     * 创建活动
+     * @param activity 活动实体对象
      * @return Result<Void> 创建结果
      */
-    public Result<Void> createSubEvent(com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo subEvent) {
-        log.info("创建子事件：name={}, togEventId={}, eventDate={}",
-                subEvent.getName(), subEvent.getTogEventId(), subEvent.getEventDate());
+    public Result<Void> createActivity(ActivityPojo activity) {
+        log.info("创建活动：name={}, eventId={}, activityDate={}",
+                activity.getName(), activity.getEventId(), activity.getActivityDate());
 
-        // 检查子事件名称是否为空
-        if (subEvent.getName() == null || subEvent.getName().trim().isEmpty()) {
+        // 检查活动名称是否为空
+        if (activity.getName() == null || activity.getName().trim().isEmpty()) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_NAME_EMPTY);
         }
 
-        // 检查父事件是否存在
-        if (subEvent.getTogEventId() == null) {
+        // 检查事件是否存在
+        if (activity.getEventId() == null) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_TOG_EVENT_NOT_FOUND);
         }
 
-        eventTagService.createSubEvent(subEvent);
+        eventTagService.createActivity(activity);
         return ResultBuilder.success(SuccessMsgEnums.SUB_EVENT_CREATE_SUCCESS);
     }
 
     /**
-     * 根据 ID 查询子事件
-     * @param id 子事件 ID
-     * @return Result<SubEventPojo> 包含子事件实体对象
+     * 根据 ID 查询活动
+     * @param id 活动 ID
+     * @return Result<ActivityPojo> 包含活动实体对象
      */
-    public Result<com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo> getSubEventById(Integer id) {
-        log.info("查询子事件：id={}", id);
-        com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo subEvent = eventTagService.getSubEventById(id);
+    public Result<ActivityPojo> getActivityById(Integer id) {
+        log.info("查询活动：id={}", id);
+        ActivityPojo activity = eventTagService.getActivityById(id);
 
-        if (subEvent == null) {
+        if (activity == null) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_NOT_FOUND);
         }
 
-        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_SUCCESS, subEvent);
+        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_SUCCESS, activity);
     }
 
     /**
-     * 根据父事件 ID 查询子事件
-     * @param togEventId 父事件 ID
-     * @return Result<List<SubEventPojo>> 包含子事件列表
+     * 根据事件 ID 查询活动
+     * @param eventId 事件 ID
+     * @return Result<List<ActivityPojo>> 包含活动列表
      */
-    public Result<java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo>> getSubEventsByTogEventId(Integer togEventId) {
-        log.info("根据父事件 ID 查询子事件：togEventId={}", togEventId);
-        java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo> subEvents = eventTagService.getSubEventsByTogEventId(togEventId);
-        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_BY_TOG_EVENT_SUCCESS, subEvents);
+    public Result<List<ActivityPojo>> getActivitiesByEventId(Integer eventId) {
+        log.info("根据事件 ID 查询活动：eventId={}", eventId);
+        List<ActivityPojo> activities = eventTagService.getActivitiesByEventId(eventId);
+        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_BY_TOG_EVENT_SUCCESS, activities);
     }
 
     /**
-     * 查询所有子事件
-     * @return Result<List<SubEventPojo>> 包含子事件列表
+     * 查询所有活动
+     * @return Result<List<ActivityPojo>> 包含活动列表
      */
-    public Result<java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo>> getAllSubEvents() {
-        log.info("查询所有子事件");
-        java.util.List<com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo> subEvents = eventTagService.getAllSubEvents();
-        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_SUCCESS, subEvents);
+    public Result<List<ActivityPojo>> getAllActivities() {
+        log.info("查询所有活动");
+        List<ActivityPojo> activities = eventTagService.getAllActivities();
+        return ResultBuilder.successWithData(SuccessMsgEnums.SUB_EVENT_QUERY_SUCCESS, activities);
     }
 
     /**
-     * 更新子事件
-     * @param subEvent 子事件实体对象（必须包含 id）
+     * 更新活动
+     * @param activity 活动实体对象（必须包含 id）
      * @return Result<Void> 表示是否更新成功
      */
-    public Result<Void> updateSubEvent(com.lyric.lyric.POJO.tag.entityTag.event.SubEventPojo subEvent) {
-        log.info("更新子事件：id={}, name={}", subEvent.getId(), subEvent.getName());
+    public Result<Void> updateActivity(ActivityPojo activity) {
+        log.info("更新活动：id={}, name={}", activity.getId(), activity.getName());
 
-        // 检查子事件 ID 是否存在
-        if (subEvent.getId() == null) {
+        // 检查活动 ID 是否存在
+        if (activity.getId() == null) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_NOT_FOUND);
         }
 
-        boolean success = eventTagService.updateSubEvent(subEvent);
+        boolean success = eventTagService.updateActivity(activity);
         if (!success) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_UPDATE_FAILED);
         }
@@ -649,14 +637,14 @@ public class TagService {
     }
 
     /**
-     * 删除子事件（级联删除关联表）
-     * @param id 子事件 ID
+     * 删除活动（级联删除关联的人物和地点关系）
+     * @param id 活动 ID
      * @return Result<Void> 表示是否删除成功
      */
-    public Result<Void> deleteSubEvent(Integer id) {
-        log.info("删除子事件：id={}", id);
+    public Result<Void> deleteActivity(Integer id) {
+        log.info("删除活动：id={}", id);
 
-        boolean success = eventTagService.deleteSubEvent(id);
+        boolean success = eventTagService.deleteActivity(id);
         if (!success) {
             throw new BusinessException(BusinessErrorMsgEnums.SUB_EVENT_DELETE_FAILED);
         }

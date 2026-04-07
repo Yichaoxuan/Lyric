@@ -1,9 +1,7 @@
 package com.lyric.lyric.Service.tag.parsing;
 
-import com.lyric.lyric.Mapper.relation.DiaryPersonMapper;
 import com.lyric.lyric.Mapper.tag.entity.PersonMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
-import com.lyric.lyric.POJO.relation.DiaryPersonPojo;
 import com.lyric.lyric.POJO.tag.entityTag.PersonPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
@@ -32,12 +30,10 @@ public class PersonsParsingService {
 
     private final PersonMapper personMapper;
     private final AIAnalysisService aiAnalysisService;
-    private final DiaryPersonMapper diaryPersonMapper;
 
-    public PersonsParsingService(PersonMapper personMapper, AIAnalysisService aiAnalysisService, DiaryPersonMapper diaryPersonMapper) {
+    public PersonsParsingService(PersonMapper personMapper, AIAnalysisService aiAnalysisService) {
         this.personMapper = personMapper;
         this.aiAnalysisService = aiAnalysisService;
-        this.diaryPersonMapper = diaryPersonMapper;
     }
 
     /**
@@ -55,17 +51,15 @@ public class PersonsParsingService {
      *     <li>根据匹配结果更新现有人物信息或添加新人物</li>
      * </ol>
      *
-     * @param diaryId 日记 ID，用于创建日记与人物的关联关系
      * @param newPersonInfoHashMap 包含新人物的名称和信息，键为人物名称，值为人物详细信息
      *                             （包括关系、性别、性格、提及类型、颜色代码、索引等）
      * @return 保存了新人物的在数据库中的主键 ID 与索引的 Map，键为数据库中的主键 ID，值为原始索引
      *         用于后续处理时保持人物顺序
      */
     @Transactional
-    public Map<Integer, Integer> personDeduplication(Integer diaryId,
-                                                     Map<String, AITagJson.PersonInfo> newPersonInfoHashMap) {
+    public Map<Integer, Integer> personDeduplication(Map<String, AITagJson.PersonInfo> newPersonInfoHashMap) {
 
-        Map<Integer, Integer> resultMap = new HashMap<>();
+        Map<Integer, Integer> personIdIndexMap = new HashMap<>();
 
         for (Map.Entry<String, AITagJson.PersonInfo> entry : newPersonInfoHashMap.entrySet()) {
             String newPersonName = entry.getKey();
@@ -86,7 +80,7 @@ public class PersonsParsingService {
 
                 if (genderCandidates.isEmpty()) {
                     // 新人物
-                    addNewPerson(resultMap, diaryId, newPersonName, newPersonInfo);
+                    addNewPerson(personIdIndexMap, newPersonName, newPersonInfo);
                     continue;
                 }
 
@@ -97,7 +91,7 @@ public class PersonsParsingService {
 
                 if (nameCandidates.isEmpty()) {
                     // 新人物
-                    addNewPerson(resultMap, diaryId, newPersonName, newPersonInfo);
+                    addNewPerson(personIdIndexMap, newPersonName, newPersonInfo);
                     continue;
                 }
 
@@ -108,16 +102,16 @@ public class PersonsParsingService {
                 logMatchingProcess(newPersonName, relationCandidates, "关系匹配");
 
                 // 处理匹配结果
-                handleMatchResult(resultMap, diaryId, newPersonName, newPersonInfo, relationCandidates);
+                handleMatchResult(personIdIndexMap, newPersonName, newPersonInfo, relationCandidates);
 
             } catch (Exception e) {
                 log.error("处理人物去重时发生异常，人物名称: {}", newPersonName, e);
                 // 异常情况下，按新人物处理，避免丢失数据
-                addNewPerson(resultMap, diaryId, newPersonName, newPersonInfo);
+                addNewPerson(personIdIndexMap, newPersonName, newPersonInfo);
             }
         }
 
-        return resultMap;
+        return personIdIndexMap;
     }
 
     /**
@@ -259,30 +253,27 @@ public class PersonsParsingService {
      * </ul>
      *
      * @param resultMap 结果映射表，用于存储人物 ID 与索引的对应关系
-     * @param diaryId 日记 ID，用于创建日记与人物的关联
      * @param newName 新人物名称
      * @param newInfo 新人物详细信息
      * @param candidates 经过三级匹配后的候选人物列表
      */
-    private void handleMatchResult(Map<Integer, Integer> resultMap, Integer diaryId,
-                                   String newName, AITagJson.PersonInfo newInfo,
-                                   List<PersonPojo> candidates) {
+    private void handleMatchResult(Map<Integer, Integer> resultMap, String newName, AITagJson.PersonInfo newInfo, List<PersonPojo> candidates) {
 
         if (candidates.isEmpty()) {
             log.info("无匹配人物，判定为新人物: {}", newName);
-            addNewPerson(resultMap, diaryId, newName, newInfo);
+            addNewPerson(resultMap, newName, newInfo);
             return;
         }
 
         if (candidates.size() == 1) {
             PersonPojo matchedPerson = candidates.getFirst();
             log.info("候选列表只剩下一人，判定为同一人，开始更新数据库: {}", matchedPerson.getName());
-            updateAndReturn(resultMap, diaryId, newName, newInfo, matchedPerson);
+            updateAndReturn(resultMap, newName, newInfo, matchedPerson);
             return;
         }
 
         // 多候选，使用AI匹配
-        handleAiMatching(resultMap, diaryId, newName, newInfo, candidates);
+        handleAiMatching(resultMap, newName, newInfo, candidates);
     }
 
     /**
@@ -312,14 +303,11 @@ public class PersonsParsingService {
      * </ul>
      *
      * @param resultMap 结果映射表，用于存储人物 ID 与索引的对应关系
-     * @param diaryId 日记 ID，用于创建日记与人物的关联
      * @param newName 新人物名称
      * @param newInfo 新人物详细信息
      * @param candidates 经过三级匹配后的候选人物列表（多人）
      */
-    private void handleAiMatching(Map<Integer, Integer> resultMap, Integer diaryId,
-                                  String newName, AITagJson.PersonInfo newInfo,
-                                  List<PersonPojo> candidates) {
+    private void handleAiMatching(Map<Integer, Integer> resultMap, String newName, AITagJson.PersonInfo newInfo, List<PersonPojo> candidates) {
 
         log.info("开始四级匹配：AI 姓名：{}", newName);
         Integer aiMatchIndex = aiAnalysisService.personTagDeduplicationAnalysis(
@@ -328,14 +316,14 @@ public class PersonsParsingService {
         if (aiMatchIndex == null || aiMatchIndex < 0 || aiMatchIndex >= candidates.size()) {
             log.warn("AI匹配失败或未启用，使用保守策略: 视为新人物");
             // 保守策略：视为新人物，避免错误合并
-            addNewPerson(resultMap, diaryId, newName, newInfo);
+            addNewPerson(resultMap, newName, newInfo);
             return;
         }
 
         // AI匹配成功
         PersonPojo matchedPerson = candidates.get(aiMatchIndex);
         log.info("AI匹配成功，匹配到人物: {}", matchedPerson.getName());
-        updateAndReturn(resultMap, diaryId, newName, newInfo, matchedPerson);
+        updateAndReturn(resultMap, newName, newInfo, matchedPerson);
     }
 
     /**
@@ -357,17 +345,15 @@ public class PersonsParsingService {
      * </ul>
      *
      * @param resultMap 结果映射表，键为数据库中的人物 ID，值为原始索引
-     * @param diaryId 日记 ID，用于创建日记与人物的关联
      * @param newName 新人物名称（可能成为现有人物的别名）
      * @param newInfo 新人物详细信息
      * @param existingPerson 已存在的人物对象，需要被更新
      */
-    private void updateAndReturn(Map<Integer, Integer> resultMap, Integer diaryId,
+    private void updateAndReturn(Map<Integer, Integer> resultMap,
                                  String newName, AITagJson.PersonInfo newInfo,
                                  PersonPojo existingPerson) {
 
         personUpdater(existingPerson, newName, newInfo);
-        createDiaryPersonRelation(diaryId, existingPerson.getId(), newInfo);
 
         int index = newInfo.getIndex() != null ? Integer.parseInt(newInfo.getIndex()) : 0;
         resultMap.put(existingPerson.getId(), index);
@@ -400,18 +386,15 @@ public class PersonsParsingService {
      * </ul>
      *
      * @param resultMap 结果映射表，用于存储新人物 ID 与索引的对应关系
-     * @param diaryId 日记 ID，用于创建日记与新人的关联
      * @param name 新人物名称
      * @param info 新人物详细信息
      */
-    private void addNewPerson(Map<Integer, Integer> resultMap, Integer diaryId,
+    private void addNewPerson(Map<Integer, Integer> resultMap,
                               String name, AITagJson.PersonInfo info) {
 
         log.info("判定为新人物，添加数据库: {}", name);
         PersonPojo person = new PersonPojo(name, info);
         personMapper.insert(person);
-
-        createDiaryPersonRelation(diaryId, person.getId(), info);
 
         int index = info.getIndex() != null ? Integer.parseInt(info.getIndex()) : 0;
         resultMap.put(person.getId(), index);
@@ -532,52 +515,6 @@ public class PersonsParsingService {
             values.add(newValue);
             setter.accept(listToString(values));
             log.debug("添加新{}: {}", fieldName, newValue);
-        }
-    }
-
-    /**
-     * 创建日记 - 人物关联关系
-     * 在日记和人物之间建立关联，记录人物在该日记中的提及类型
-     *
-     * <p>处理逻辑:</p>
-     * <ol>
-     *     <li>从人物信息中提取提及类型（MentionType）</li>
-     *     <li>检查关联是否已存在（通过 diaryId 和 personId 查询）</li>
-     *     <li>如果不存在，创建新的 DiaryPersonPojo 并插入数据库</li>
-     *     <li>如果已存在，跳过创建，避免重复记录</li>
-     * </ol>
-     *
-     * <p>提及类型说明:</p>
-     * <ul>
-     *     <li>ACTUAL（实际出现）：人物在日记中实际出现</li>
-     *     <li>MENTION（提及）：人物在日记中被提及但未实际出现</li>
-     *     <li>MEMORY（回忆）：人物在日记的回忆片段中出现</li>
-     * </ul>
-     *
-     * <p>异常处理:</p>
-     * <ul>
-     *     <li>使用 try-catch 包裹整个创建过程</li>
-     *     <li>如果创建失败，记录错误日志但不影响主流程</li>
-     *     <li>避免因关联关系创建失败而导致整个人物处理流程中断</li>
-     * </ul>
-     *
-     * @param diaryId 日记 ID
-     * @param personId 人物 ID
-     * @param personInfo 人物详细信息，用于获取提及类型
-     */
-    private void createDiaryPersonRelation(Integer diaryId, Integer personId,
-                                           AITagJson.PersonInfo personInfo) {
-
-        try {
-            DiaryPersonPojo.MentionType mentionType = personInfo.getMentionType();
-
-            if (diaryPersonMapper.selectByDiaryIdAndPersonId(diaryId, personId) == null) {
-                diaryPersonMapper.insert(new DiaryPersonPojo(diaryId, personId,
-                        mentionType));
-                log.debug("创建日记-人物关联: diaryId={}, personId={}", diaryId, personId);
-            }
-        } catch (Exception e) {
-            log.error("创建日记-人物关联失败，diaryId={}, personId={}", diaryId, personId, e);
         }
     }
 

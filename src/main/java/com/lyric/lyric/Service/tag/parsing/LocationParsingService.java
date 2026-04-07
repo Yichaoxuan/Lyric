@@ -3,10 +3,8 @@ package com.lyric.lyric.Service.tag.parsing;
 import ch.hsr.geohash.GeoHash;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lyric.lyric.Mapper.relation.DiaryLocationMapper;
 import com.lyric.lyric.Mapper.tag.entity.LocationMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
-import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
@@ -41,17 +39,14 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
 public class LocationParsingService {
 
     private final LocationMapper locationMapper;
-    private final DiaryLocationMapper diaryLocationMapper;
     private final AIAnalysisService aiAnalysisService;
     private final UserSettingsService userSettingsService;
     private final ObjectMapper objectMapper;
 
     public LocationParsingService(LocationMapper locationMapper,
-                                  DiaryLocationMapper diaryLocationMapper,
                                   AIAnalysisService aiAnalysisService,
                                   UserSettingsService userSettingsService) {
         this.locationMapper = locationMapper;
-        this.diaryLocationMapper = diaryLocationMapper;
         this.aiAnalysisService = aiAnalysisService;
         this.userSettingsService = userSettingsService;
         this.objectMapper = new ObjectMapper();
@@ -61,85 +56,97 @@ public class LocationParsingService {
     /**
      * 地点标签去重器
      * 通过多级匹配策略判断是否为同一地点，更新或插入数据库
-     * 匹配顺序：国家 -> 省份 -> 城市 -> 区县 -> 地点名称 -> AI匹配
+     * 匹配顺序：国家 -> 省份 -> 城市 -> 区县 -> 地点名称 -> AI 匹配
      *
-     * @param diaryId         日记id
      * @param locationInfoMap 新地点信息映射
+     * @return 地点 ID 与索引的映射关系，Key=地点 ID，Value=地点索引
      */
     @Transactional
-    public void locationDeduplication(Integer diaryId,
-                                      Map<String, AITagJson.LocationInfo> locationInfoMap) {
-
+    public Map<Integer, Integer> locationDeduplication(Map<String, AITagJson.LocationInfo> locationInfoMap) {
+            
+        // 用于存储地点 ID 与索引的映射关系
+        Map<Integer, Integer> locationIdIndexMap = new HashMap<>();
+    
         for (Map.Entry<String, AITagJson.LocationInfo> entry : locationInfoMap.entrySet()) {
             String newLocationName = entry.getKey();
             AITagJson.LocationInfo newLocationInfo = entry.getValue();
-
+    
             if (newLocationInfo == null) {
-                log.warn("地点信息为空，跳过处理: {}", newLocationName);
+                log.warn("地点信息为空，跳过处理：{}", newLocationName);
                 continue;
             }
-
+    
             logMatchingProcess(newLocationName, null, "开始处理");
             log.info("开始一级匹配：国家：{}", newLocationInfo.getCountry());
-
+    
             try {
                 // 1. 按国家筛选
                 List<LocationPojo> countryCandidates = findByCountry(newLocationInfo.getCountry());
                 logMatchingProcess(newLocationName, countryCandidates, "国家匹配");
-
+    
                 if (countryCandidates.isEmpty()) {
                     // 无匹配国家，直接创建新地点
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 2. 按省份匹配
                 log.info("开始二级匹配：省份：{}", newLocationInfo.getProvince());
                 List<LocationPojo> provinceCandidates = filterByField(
                         newLocationInfo.getProvince(), countryCandidates, LocationPojo::getProvince);
                 logMatchingProcess(newLocationName, provinceCandidates, "省份匹配");
-
+    
                 if (provinceCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 3. 按城市匹配
                 log.info("开始三级匹配：城市：{}", newLocationInfo.getCity());
                 List<LocationPojo> cityCandidates = filterByField(
                         newLocationInfo.getCity(), provinceCandidates, LocationPojo::getCity);
                 logMatchingProcess(newLocationName, cityCandidates, "城市匹配");
-
+    
                 if (cityCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 4. 按区县匹配
                 log.info("开始四级匹配：区县：{}", newLocationInfo.getDistrict());
                 List<LocationPojo> districtCandidates = filterByField(
                         newLocationInfo.getDistrict(), cityCandidates, LocationPojo::getDistrict);
                 logMatchingProcess(newLocationName, districtCandidates, "区县匹配");
-
+    
                 if (districtCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 5. 按地点名称精确匹配
                 log.info("开始五级匹配：地点名称：{}", newLocationName);
                 List<LocationPojo> nameCandidates = findExactMatch(newLocationName, districtCandidates);
                 logMatchingProcess(newLocationName, nameCandidates, "名称匹配");
-
+    
                 // 处理匹配结果
-                handleMatchResult(diaryId, newLocationName, newLocationInfo, nameCandidates);
-
+                Integer matchedLocationId = handleMatchResult(newLocationName, newLocationInfo, nameCandidates);
+                if (matchedLocationId != null) {
+                    locationIdIndexMap.put(matchedLocationId, getLocationIndex(locationInfoMap, newLocationName));
+                }
+    
             } catch (Exception e) {
-                log.error("处理地点去重时发生异常，地点名称: {}", newLocationName, e);
+                log.error("处理地点去重时发生异常，地点名称：{}", newLocationName, e);
                 // 异常情况下按新地点处理，避免丢失数据
-                addNewLocation(diaryId, newLocationName, newLocationInfo);
+                Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
             }
         }
+            
+        return locationIdIndexMap;
     }
 
     /**
@@ -183,104 +190,96 @@ public class LocationParsingService {
 
     /**
      * 处理名称匹配后的结果
+     * @return 匹配到的地点 ID，如果没有则返回 null
      */
-    private void handleMatchResult(Integer diaryId,
-                                   String newName,
-                                   AITagJson.LocationInfo newInfo,
-                                   List<LocationPojo> candidates) {
-
+    private Integer handleMatchResult(String newName, AITagJson.LocationInfo newInfo, List<LocationPojo> candidates) {
+    
         if (candidates.isEmpty()) {
-            log.info("无精确匹配地点，判定为新地点: {}", newName);
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.info("无精确匹配地点，判定为新地点：{}", newName);
+            return addNewLocation(newName, newInfo);
         }
-
+    
         if (candidates.size() == 1) {
             LocationPojo matchedLocation = candidates.getFirst();
             log.info("候选列表只剩下一处地点，判定为同一地点，开始更新数据库：{}", matchedLocation.getName());
-            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
-            return;
+            updateAndReturn(newName, newInfo, matchedLocation);
+            return matchedLocation.getId();
         }
-
-        // 多候选，使用AI匹配
-        handleAiMatching(diaryId, newName, newInfo, candidates);
+    
+        // 多候选，使用 AI 匹配
+        return handleAiMatching(newName, newInfo, candidates);
     }
 
     /**
-     * AI匹配处理
+     * AI 匹配处理
+     * @return 匹配到的地点 ID，如果没有则返回 null
      */
-    private void handleAiMatching(Integer diaryId,
-                                  String newName,
-                                  AITagJson.LocationInfo newInfo,
-                                  List<LocationPojo> candidates) {
+    private Integer handleAiMatching(String newName, AITagJson.LocationInfo newInfo, List<LocationPojo> candidates) {
 
         log.info("开始六级匹配：AI 地点名称：{}", newName);
         Integer aiMatchIndex = aiAnalysisService.locationTagDeduplicationAnalysis(
                 newName, newInfo, candidates);
 
-        // 根据原逻辑处理AI返回结果
+        // 根据原逻辑处理 AI 返回结果
         if (aiMatchIndex == null) {
-            log.warn("AI返回null，使用保守策略：视为新地点");
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.warn("AI 返回 null，使用保守策略：视为新地点");
+            return addNewLocation(newName, newInfo);
         }
 
         if (aiMatchIndex == -1) {
-            log.info("AI未启用，按原逻辑处理：将候选列表中的所有地点插入数据库");
+            log.info("AI 未启用，按原逻辑处理：将候选列表中的所有地点插入数据库");
             // 注意：原代码此处逻辑可能有问题，但为保持行为一致，保留原样
+            Integer lastLocationId = null;
             for (LocationPojo location : candidates) {
                 locationMapper.insert(location);
-                createDiaryLocationRelation(diaryId, location.getId(),
-                        DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
+                lastLocationId = location.getId();
             }
-            return;
+            return lastLocationId;
         }
 
         if (aiMatchIndex == 0) {
-            log.info("AI评定为新地点，添加数据库：{}", newName);
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.info("AI 评定为新地点，添加数据库：{}", newName);
+            return addNewLocation(newName, newInfo);
         }
 
-        // aiMatchIndex > 0 且小于candidates.size()
+        // aiMatchIndex > 0 且小于 candidates.size()
         if (aiMatchIndex > 0 && aiMatchIndex <= candidates.size()) {
-            LocationPojo matchedLocation = candidates.get(aiMatchIndex - 1); // 假设索引从1开始
-            log.info("AI匹配成功，匹配到地点: {}", matchedLocation.getName());
-            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
+            LocationPojo matchedLocation = candidates.get(aiMatchIndex - 1); // 假设索引从 1 开始
+            log.info("AI 匹配成功，匹配到地点：{}", matchedLocation.getName());
+            updateAndReturn(newName, newInfo, matchedLocation);
+            return matchedLocation.getId();
         } else {
-            log.warn("AI返回索引超出范围: {}，视为新地点", aiMatchIndex);
-            addNewLocation(diaryId, newName, newInfo);
+            log.warn("AI 返回索引超出范围：{}，视为新地点", aiMatchIndex);
+            return addNewLocation(newName, newInfo);
         }
     }
 
     /**
      * 更新已有地点信息并建立关联
      */
-    private void updateAndReturn(Integer diaryId,
-                                 String newName,
+    private void updateAndReturn(String newName,
                                  AITagJson.LocationInfo newInfo,
                                  LocationPojo existingLocation) {
 
         locationUpdater(existingLocation, newName, newInfo);
-        createDiaryLocationRelation(diaryId, existingLocation.getId(),
-                DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
     }
 
     /**
      * 添加新地点
+     * @return 新创建的地点 ID
      */
-    private void addNewLocation(Integer diaryId, String name, AITagJson.LocationInfo info) {
-
+    private Integer addNewLocation(String name, AITagJson.LocationInfo info) {
+    
         log.info("判定为新地点：{}", name);
         LocationPojo location = new LocationPojo(name, info);
-
-        log.info("更新经纬度与geohash: {}", name);
+    
+        log.info("更新经纬度与 geohash: {}", name);
         enrichLocationsWithCoordinates(location);
-
+    
         log.info("插入数据库：{}", name);
         locationMapper.insert(location);
-        createDiaryLocationRelation(diaryId, location.getId(),
-                DiaryLocationPojo.MentionType.valueOf(info.getMentionType().name()));
+            
+        return location.getId();
     }
 
     /**
@@ -560,24 +559,6 @@ public class LocationParsingService {
     }
 
     /**
-     * 创建日记-地点关联关系
-     */
-    private void createDiaryLocationRelation(Integer diaryId,
-                                             Integer locationId,
-                                             DiaryLocationPojo.MentionType mentionType) {
-        try {
-            if (diaryLocationMapper.selectByDiaryIdAndLocationId(diaryId, locationId) == null) {
-                DiaryLocationPojo relation = new DiaryLocationPojo(diaryId, locationId);
-                relation.setMentionType(mentionType);
-                diaryLocationMapper.insert(relation);
-                log.debug("创建日记-地点关联: diaryId={}, locationId={}", diaryId, locationId);
-            }
-        } catch (Exception e) {
-            log.error("创建日记-地点关联失败，diaryId={}, locationId={}", diaryId, locationId, e);
-        }
-    }
-
-    /**
      * 记录匹配过程日志
      */
     private void logMatchingProcess(String name, List<LocationPojo> candidates, String stage) {
@@ -588,6 +569,23 @@ public class LocationParsingService {
                     : "无";
             log.debug("{} - {}: 候选人数量={}, 列表=[{}]", name, stage, count, names);
         }
+    }
+
+    /**
+     * 获取地点在原始 Map 中的索引（从 1 开始）
+     * @param locationInfoMap 地点信息 Map
+     * @param locationName 地点名称
+     * @return 地点索引（从 1 开始）
+     */
+    private Integer getLocationIndex(Map<String, AITagJson.LocationInfo> locationInfoMap, String locationName) {
+        int index = 1;
+        for (String name : locationInfoMap.keySet()) {
+            if (name.equals(locationName)) {
+                return index;
+            }
+            index++;
+        }
+        return index;
     }
 
     /**

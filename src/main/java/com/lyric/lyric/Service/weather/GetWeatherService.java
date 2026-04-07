@@ -2,9 +2,11 @@ package com.lyric.lyric.Service.weather;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.Mapper.environment.WeatherMapper;
-import com.lyric.lyric.Mapper.tag.entity.EventMapper;
+import com.lyric.lyric.Mapper.relation.ActivityLocationMapper;
+import com.lyric.lyric.Mapper.tag.entity.ActivityMapper;
+import com.lyric.lyric.Mapper.tag.entity.LocationMapper;
+import com.lyric.lyric.POJO.tag.entityTag.event.ActivityPojo;
 import com.lyric.lyric.POJO.weather.WeatherPojo;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
@@ -25,6 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -69,69 +72,195 @@ public class GetWeatherService {
 
     // ==================== 成员变量 ====================
 
-    private final DiaryMapper diaryMapper;
     private final WeatherMapper weatherMapper;
     private final UserSettingsService userSettingsService;
-    private final EventMapper eventMapper;
+    private final ActivityMapper activityMapper;
+    private final LocationMapper locationMapper;
+    private final ActivityLocationMapper activityLocationMapper;
 
     /** JSON 对象映射器，用于解析 API 返回的 JSON 数据 */
     private final ObjectMapper objectMapper;
 
-    public GetWeatherService(DiaryMapper diaryMapper, WeatherMapper weatherMapper, UserSettingsService userSettingsService,
-                             EventMapper eventMapper, ObjectMapper objectMapper) {
-        this.diaryMapper = diaryMapper;
+    public GetWeatherService(WeatherMapper weatherMapper, UserSettingsService userSettingsService,
+                             ActivityMapper activityMapper, LocationMapper locationMapper,
+                             ActivityLocationMapper activityLocationMapper, ObjectMapper objectMapper) {
         this.weatherMapper = weatherMapper;
         this.userSettingsService = userSettingsService;
         this.objectMapper = objectMapper;
-        this.eventMapper = eventMapper;
+        this.activityMapper = activityMapper;
+        this.locationMapper = locationMapper;
+        this.activityLocationMapper = activityLocationMapper;
     }
 
     /**
      * 处理日记天气：获取天气信息并保存到数据库
-     * 主入口方法，处理未关联天气的日记，获取并保存天气数据
+     * 主入口方法，直接获取前一天的活动，根据活动关联的地点获取天气
      */
     public void processWeatherForDiary() {
-        // 步骤 1: 获取未关联天气信息的日记
-        List<DiaryWeatherPending> diaryDiaries = diaryMapper.selectDiariesWithoutWeather();
+        // 步骤 1: 获取前一天的日期
+        String yesterday = DateTimeUtils.format(LocalDate.now().minusDays(1), "yyyy-MM-dd");
+        log.info("开始处理前一天的活动天气，日期：{}", yesterday);
+
+        // 步骤 2: 查询前一天的所有活动
+        List<ActivityPojo> activities = activityMapper.selectByDate(yesterday);
 
         // 判断列表是否为空
-        if (diaryDiaries.isEmpty()) {
-            log.info("没有待处理的日记，跳过天气处理");
+        if (activities == null || activities.isEmpty()) {
+            log.info("前一天没有活动，跳过天气处理");
             return;
         }
 
-        for (DiaryWeatherPending diary : diaryDiaries) {
+        log.info("找到 {} 个活动，开始处理天气", activities.size());
 
-            // 从 diary 对象中提取属性
-            Integer diaryId = diary.getDiaryId();
-            String city = diary.getCity();
-            LocalDateTime date = eventMapper.selectMinSubEventDateByDiaryId(diary.getDiaryId()); // 日记日期（包含时间，但实际只有日期部分）
-            double latitude = diary.getLatitude();
-            double longitude = diary.getLongitude();
-
-            // 步骤 2: 验证实体类的有效性
-            if (diaryId == null || !StringUtils.hasText(city) || date == null) {
-                log.error("参数无效，日记 ID: {}, 城市：{}, 日期：{}", diaryId, city, date);
-                continue; // 跳过当前日记，继续处理下一个
-            }
-
-            // 步骤 3: 根据经纬度获取 LocationId
-            String locationId = getLocationId(formatToTwoDecimalPlaces(longitude), formatToTwoDecimalPlaces(latitude));
-            if (locationId == null) {
-                log.error("获取 LocationId 失败，无法查询天气，日记 ID: {}, 经纬度：{},{}", diaryId, longitude, latitude);
-                continue;
-            }
-
-            // 步骤 4: 使用 LocationId 查询天气信息
-            WeatherInformation weatherInfo = getWeather(locationId, date);
-            if (weatherInfo == null) {
-                log.error("获取天气信息失败，日记 ID: {}, LocationId: {}", diaryId, locationId);
-                continue;
-            }
-
-            // 步骤 5: 保存天气信息到数据库
-            saveWeatherToDatabase(diaryId, city, date, weatherInfo);
+        // 步骤 3: 遍历每个活动，获取其关联的地点和天气
+        for (ActivityPojo activity : activities) {
+            processActivityWeather(activity);
         }
+    }
+
+    /**
+     * 处理单个活动的天气信息
+     *
+     * @param activity 活动对象
+     */
+    private void processActivityWeather(ActivityPojo activity) {
+        Integer activityId = activity.getId();
+
+        // 步骤 1: 确定活动的日期时间
+        LocalDateTime activityDateTime = determineActivityDateTime(activity);
+        if (activityDateTime == null) {
+            log.warn("无法确定活动时间，跳过：activityId={}, name={}", activityId, activity.getName());
+            return;
+        }
+
+        // 步骤 2: 查询该活动关联的所有地点
+        List<com.lyric.lyric.POJO.relation.ActivityLocationPojo> locationRelations =
+            activityLocationMapper.selectByActivityId(activityId);
+        if (locationRelations == null || locationRelations.isEmpty()) {
+            log.debug("活动未关联任何地点，跳过：activityId={}, name={}", activityId, activity.getName());
+            return;
+        }
+
+        log.info("活动 {} 关联了 {} 个地点，开始获取天气", activity.getName(), locationRelations.size());
+
+        // 步骤 3: 遍历每个地点，获取天气信息
+        for (com.lyric.lyric.POJO.relation.ActivityLocationPojo relation : locationRelations) {
+            processLocationWeather(relation.getLocationId(), activityDateTime, activity.getName());
+        }
+    }
+
+    /**
+     * 确定活动的日期时间
+     * 根据以下规则推断：
+     * 1. 如果 activityDate 时间部分不是 00:00:00，直接使用该时间
+     * 2. 如果 activityDate 时间部分是 00:00:00 且 timePeriod 为 EARLY_MORNING，则使用 00:00:00
+     * 3. 如果 activityDate 时间部分是 00:00:00 且 timePeriod 不为 EARLY_MORNING，则根据 timePeriod 推算
+     *
+     * @param activity 活动对象
+     * @return 活动的日期时间，若无法确定则返回 null
+     */
+    private LocalDateTime determineActivityDateTime(ActivityPojo activity) {
+        LocalDateTime activityDate = activity.getActivityDate();
+        ActivityPojo.TimePeriod timePeriod = activity.getTimePeriod();
+
+        // 情况 1: 如果没有日期信息，无法确定时间
+        if (activityDate == null) {
+            log.warn("活动缺少日期信息：activityId={}", activity.getId());
+            return null;
+        }
+
+        // 检查时间部分是否为 00:00:00（占位符）
+        boolean isMidnightPlaceholder = activityDate.toLocalTime().equals(java.time.LocalTime.MIDNIGHT);
+
+        if (!isMidnightPlaceholder) {
+            // 规则 1: 时间部分不是 00:00:00，直接使用
+            log.debug("使用活动的精确时间：activityId={}, time={}", activity.getId(), activityDate);
+            return activityDate;
+        }
+
+        // 时间部分是 00:00:00，需要根据 timePeriod 判断
+        if (timePeriod == null) {
+            log.warn("活动时间为占位符但缺少时间段信息：activityId={}", activity.getId());
+            return null;
+        }
+
+        if (timePeriod == ActivityPojo.TimePeriod.EARLY_MORNING) {
+            // 规则 2: timePeriod 为 EARLY_MORNING，00:00:00 是真实时间
+            log.debug("活动时间为凌晨零点：activityId={}", activity.getId());
+            return activityDate;
+        } else {
+            // 规则 3: timePeriod 不为 EARLY_MORNING，00:00:00 是占位符，根据时间段推算
+            LocalDate baseDate = activityDate.toLocalDate();
+            LocalDateTime inferredTime = baseDate.atTime(getTimeFromPeriod(timePeriod));
+            log.debug("根据时间段推算活动时间：activityId={}, timePeriod={}, inferredTime={}",
+                activity.getId(), timePeriod, inferredTime);
+            return inferredTime;
+        }
+    }
+
+    /**
+     * 根据时间段获取具体时间
+     *
+     * @param timePeriod 时间段枚举
+     * @return 对应的时间（小时:分钟）
+     */
+    private LocalTime getTimeFromPeriod(ActivityPojo.TimePeriod timePeriod) {
+        return switch (timePeriod) {
+            case EARLY_MORNING -> LocalTime.of(23, 0); // 深夜 23:00
+            case MORNING -> LocalTime.of(9, 0);  // 上午 9:00
+            case NOON -> LocalTime.of(12, 0); // 中午 12:00
+            case AFTERNOON -> LocalTime.of(15, 0); // 下午 15:00
+            case EVENING -> LocalTime.of(19, 0); // 晚上 19:00
+        };
+    }
+
+    /**
+     * 处理单个地点的天气信息
+     *
+     * @param locationId 地点ID
+     * @param activityDateTime 活动日期时间
+     * @param activityName 活动名称（用于日志）
+     */
+    private void processLocationWeather(Integer locationId, LocalDateTime activityDateTime, String activityName) {
+        // 步骤 1: 查询地点详情
+        com.lyric.lyric.POJO.tag.entityTag.LocationPojo location = locationMapper.selectById(locationId);
+        if (location == null) {
+            log.warn("地点不存在，跳过：locationId={}", locationId);
+            return;
+        }
+
+        // 步骤 2: 验证地点经纬度
+        if (location.getLongitude() == null || location.getLatitude() == null) {
+            log.warn("地点缺少经纬度信息，跳过：locationId={}, name={}", locationId, location.getName());
+            return;
+        }
+
+        String city = location.getCity();
+        if (!StringUtils.hasText(city)) {
+            log.warn("地点缺少城市信息，跳过：locationId={}, name={}", locationId, location.getName());
+            return;
+        }
+
+        // 步骤 3: 根据经纬度获取 LocationId
+        String heWeatherLocationId = getLocationId(
+            formatToTwoDecimalPlaces(location.getLongitude()),
+            formatToTwoDecimalPlaces(location.getLatitude())
+        );
+        if (heWeatherLocationId == null) {
+            log.error("获取和风天气 LocationId 失败，locationId={}, 经纬度：{},{}",
+                locationId, location.getLongitude(), location.getLatitude());
+            return;
+        }
+
+        // 步骤 4: 使用 LocationId 查询天气信息
+        WeatherInformation weatherInfo = getWeather(heWeatherLocationId, activityDateTime);
+        if (weatherInfo == null) {
+            log.error("获取天气信息失败，locationId={}, activity={}", locationId, activityName);
+            return;
+        }
+
+        // 步骤 5: 保存天气信息到数据库
+        saveWeatherToDatabase(locationId, city, activityDateTime, weatherInfo);
     }
 
     /**
@@ -188,21 +317,20 @@ public class GetWeatherService {
     /**
      * 保存天气信息到数据库
      *
-     * @param diaryId     日记 ID，用于关联天气信息到具体日记
+     * @param locationId   地点 ID，用于关联天气信息到具体地点
      * @param city        城市名称，用于显示和日志记录
      * @param date        日记日期，用于记录天气对应的日期
      * @param weatherInfo 天气信息对象，包含温度、天气状况等详细数据
      */
-    private void saveWeatherToDatabase(Integer diaryId, String city, LocalDateTime date,
-                                       WeatherInformation weatherInfo) {
+    private void saveWeatherToDatabase(Integer locationId, String city, LocalDateTime date, WeatherInformation weatherInfo) {
         // 将 LocalDateTime 转换为 LocalDate，适配数据库字段类型
         LocalDate localDate = DateTimeUtils.toLocalDate(date);
         // 创建 WeatherPojo 对象，封装天气数据
-        WeatherPojo weatherPojo = new WeatherPojo(diaryId, city, localDate, weatherInfo);
+        WeatherPojo weatherPojo = new WeatherPojo(locationId, localDate, weatherInfo);
         // 调用 Mapper 将天气信息插入数据库
         weatherMapper.insert(weatherPojo);
         // 记录成功日志，便于后续追踪
-        log.info("天气信息保存成功，日记 ID: {}, 城市：{}, 日期：{}", diaryId, city, date);
+        log.info("天气信息保存成功，日记 ID: {}, 城市：{}, 日期：{}", locationId, city, date);
     }
 
     /**

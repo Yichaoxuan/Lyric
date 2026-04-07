@@ -103,6 +103,7 @@ public class UserSettingsConfig {
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
         pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
         pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
+        pojoRules.setEventTagDeduplicationRules(rules.getEventTagDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
         // 设置 API 配置
@@ -150,6 +151,7 @@ public class UserSettingsConfig {
         rules.setTagAnalysisRules(userSettingsPojo.getRules().getTagAnalysisRules());
         rules.setCharacterTagDeduplicationRules(userSettingsPojo.getRules().getCharacterTagDeduplicationRules());
         rules.setPlaceLabelDeduplicationRules(userSettingsPojo.getRules().getPlaceLabelDeduplicationRules());
+        rules.setEventTagDeduplicationRules(userSettingsPojo.getRules().getEventTagDeduplicationRules());
         rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
 
         // 更新功能配置
@@ -230,6 +232,7 @@ public class UserSettingsConfig {
         rulesMap.put("tag-analysis-rules", rules.getTagAnalysisRules());
         rulesMap.put("character-tag-deduplication-rules", rules.getCharacterTagDeduplicationRules());
         rulesMap.put("place-label-deduplication-rules", rules.getPlaceLabelDeduplicationRules());
+        rulesMap.put("event-tag-deduplication-rules", rules.getEventTagDeduplicationRules());
         rulesMap.put("response-message-generation-rules", rules.getResponseMessageGenerationRules());
         userSettings.put("rules", rulesMap);
 
@@ -310,6 +313,7 @@ public class UserSettingsConfig {
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
         pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
         pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
+        pojoRules.setEventTagDeduplicationRules(rules.getEventTagDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
         return pojoRules;
     }
@@ -474,6 +478,12 @@ public class UserSettingsConfig {
          * 用于对地点标签进行去重
          */
         private String placeLabelDeduplicationRules;
+
+        /**
+         * 事件标签去重规则
+         * 用于对事件标签进行去重
+         */
+        private String eventTagDeduplicationRules;
 
         /**
          * 响应消息生成规则
