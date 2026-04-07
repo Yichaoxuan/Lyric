@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * 提供获取和更新用户设置的功能
  *
  * @author Yichaoxun
- * @since 2026-03-19
+ * @since 2026-04-03
  */
 @Slf4j
 @Service
@@ -110,6 +110,13 @@ public class UserSettingsService {
     }
 
     /**
+     * 获取最新事件去重规则
+     */
+    public String getEventDuplicationRules() {
+        return userSettingsConfig.getLatestRulesConfig().getEventTagDeduplicationRules();
+    }
+
+    /**
      * 获取最新响应消息生成规则
      */
     public String getResponseMessageGenerationRules() {
@@ -181,12 +188,15 @@ public class UserSettingsService {
             log.info("  AI大模型 API密钥已设置: {}",
                 userSettingsConfig.getApi().getAiLLMApiKey() != null &&
                 !userSettingsConfig.getApi().getAiLLMApiKey().isEmpty());
-            log.info("  百度NLP API密钥已设置: {}",
-                userSettingsConfig.getApi().getBaiduNlpApiKey() != null && 
-                !userSettingsConfig.getApi().getBaiduNlpApiKey().isEmpty());
-            log.info("  百度地图API密钥已设置: {}",
-                userSettingsConfig.getApi().getBaiduMapApiHost() != null &&
-                !userSettingsConfig.getApi().getBaiduMapApiHost().isEmpty());
+            log.info("  高德地图Web API密钥已设置: {}",
+                userSettingsConfig.getApi().getMapWebServiceKey()!= null &&
+                !userSettingsConfig.getApi().getMapWebServiceKey().isEmpty());
+            log.info("  高德地图Web JS密钥已设置: {}",
+                userSettingsConfig.getApi().getMapWebJSKey() != null &&
+                !userSettingsConfig.getApi().getMapWebJSKey().isEmpty());
+            log.info("  高德地图安全密钥已设置: {}",
+                userSettingsConfig.getApi().getMapSecurityCode() != null &&
+                !userSettingsConfig.getApi().getMapSecurityCode().isEmpty());
             
             log.info("=== 验证完成 ===");
         } catch (Exception e) {

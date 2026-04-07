@@ -1,12 +1,9 @@
 package com.lyric.lyric.Service.tag.parsing;
 
 import ch.hsr.geohash.GeoHash;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lyric.lyric.Mapper.relation.DiaryLocationMapper;
 import com.lyric.lyric.Mapper.tag.entity.LocationMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
-import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
 import com.lyric.lyric.POJO.tag.entityTag.LocationPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
 import com.lyric.lyric.Service.userSettings.UserSettingsService;
@@ -14,10 +11,8 @@ import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,17 +36,14 @@ import static com.lyric.lyric.Utils.stringProcessing.stringUtils.stringToList;
 public class LocationParsingService {
 
     private final LocationMapper locationMapper;
-    private final DiaryLocationMapper diaryLocationMapper;
     private final AIAnalysisService aiAnalysisService;
     private final UserSettingsService userSettingsService;
     private final ObjectMapper objectMapper;
 
     public LocationParsingService(LocationMapper locationMapper,
-                                  DiaryLocationMapper diaryLocationMapper,
                                   AIAnalysisService aiAnalysisService,
                                   UserSettingsService userSettingsService) {
         this.locationMapper = locationMapper;
-        this.diaryLocationMapper = diaryLocationMapper;
         this.aiAnalysisService = aiAnalysisService;
         this.userSettingsService = userSettingsService;
         this.objectMapper = new ObjectMapper();
@@ -61,85 +53,97 @@ public class LocationParsingService {
     /**
      * 地点标签去重器
      * 通过多级匹配策略判断是否为同一地点，更新或插入数据库
-     * 匹配顺序：国家 -> 省份 -> 城市 -> 区县 -> 地点名称 -> AI匹配
+     * 匹配顺序：国家 -> 省份 -> 城市 -> 区县 -> 地点名称 -> AI 匹配
      *
-     * @param diaryId         日记id
      * @param locationInfoMap 新地点信息映射
+     * @return 地点 ID 与索引的映射关系，Key=地点 ID，Value=地点索引
      */
     @Transactional
-    public void locationDeduplication(Integer diaryId,
-                                      Map<String, AITagJson.LocationInfo> locationInfoMap) {
-
+    public Map<Integer, Integer> locationDeduplication(Map<String, AITagJson.LocationInfo> locationInfoMap) {
+            
+        // 用于存储地点 ID 与索引的映射关系
+        Map<Integer, Integer> locationIdIndexMap = new HashMap<>();
+    
         for (Map.Entry<String, AITagJson.LocationInfo> entry : locationInfoMap.entrySet()) {
             String newLocationName = entry.getKey();
             AITagJson.LocationInfo newLocationInfo = entry.getValue();
-
+    
             if (newLocationInfo == null) {
-                log.warn("地点信息为空，跳过处理: {}", newLocationName);
+                log.warn("地点信息为空，跳过处理：{}", newLocationName);
                 continue;
             }
-
+    
             logMatchingProcess(newLocationName, null, "开始处理");
             log.info("开始一级匹配：国家：{}", newLocationInfo.getCountry());
-
+    
             try {
                 // 1. 按国家筛选
                 List<LocationPojo> countryCandidates = findByCountry(newLocationInfo.getCountry());
                 logMatchingProcess(newLocationName, countryCandidates, "国家匹配");
-
+    
                 if (countryCandidates.isEmpty()) {
                     // 无匹配国家，直接创建新地点
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 2. 按省份匹配
                 log.info("开始二级匹配：省份：{}", newLocationInfo.getProvince());
                 List<LocationPojo> provinceCandidates = filterByField(
                         newLocationInfo.getProvince(), countryCandidates, LocationPojo::getProvince);
                 logMatchingProcess(newLocationName, provinceCandidates, "省份匹配");
-
+    
                 if (provinceCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 3. 按城市匹配
                 log.info("开始三级匹配：城市：{}", newLocationInfo.getCity());
                 List<LocationPojo> cityCandidates = filterByField(
                         newLocationInfo.getCity(), provinceCandidates, LocationPojo::getCity);
                 logMatchingProcess(newLocationName, cityCandidates, "城市匹配");
-
+    
                 if (cityCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 4. 按区县匹配
                 log.info("开始四级匹配：区县：{}", newLocationInfo.getDistrict());
                 List<LocationPojo> districtCandidates = filterByField(
                         newLocationInfo.getDistrict(), cityCandidates, LocationPojo::getDistrict);
                 logMatchingProcess(newLocationName, districtCandidates, "区县匹配");
-
+    
                 if (districtCandidates.isEmpty()) {
-                    addNewLocation(diaryId, newLocationName, newLocationInfo);
+                    Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                    locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
                     continue;
                 }
-
+    
                 // 5. 按地点名称精确匹配
                 log.info("开始五级匹配：地点名称：{}", newLocationName);
                 List<LocationPojo> nameCandidates = findExactMatch(newLocationName, districtCandidates);
                 logMatchingProcess(newLocationName, nameCandidates, "名称匹配");
-
+    
                 // 处理匹配结果
-                handleMatchResult(diaryId, newLocationName, newLocationInfo, nameCandidates);
-
+                Integer matchedLocationId = handleMatchResult(newLocationName, newLocationInfo, nameCandidates);
+                if (matchedLocationId != null) {
+                    locationIdIndexMap.put(matchedLocationId, getLocationIndex(locationInfoMap, newLocationName));
+                }
+    
             } catch (Exception e) {
-                log.error("处理地点去重时发生异常，地点名称: {}", newLocationName, e);
+                log.error("处理地点去重时发生异常，地点名称：{}", newLocationName, e);
                 // 异常情况下按新地点处理，避免丢失数据
-                addNewLocation(diaryId, newLocationName, newLocationInfo);
+                Integer locationId = addNewLocation(newLocationName, newLocationInfo);
+                locationIdIndexMap.put(locationId, getLocationIndex(locationInfoMap, newLocationName));
             }
         }
+            
+        return locationIdIndexMap;
     }
 
     /**
@@ -147,6 +151,7 @@ public class LocationParsingService {
      */
     private List<LocationPojo> findByCountry(String country) {
         if (country == null) {
+            // 无国家信息，返回空列表
             return Collections.emptyList();
         }
         List<LocationPojo> result = locationMapper.selectByCountry(country);
@@ -183,104 +188,95 @@ public class LocationParsingService {
 
     /**
      * 处理名称匹配后的结果
+     * @return 匹配到的地点 ID，如果没有则返回 null
      */
-    private void handleMatchResult(Integer diaryId,
-                                   String newName,
-                                   AITagJson.LocationInfo newInfo,
-                                   List<LocationPojo> candidates) {
-
+    private Integer handleMatchResult(String newName, AITagJson.LocationInfo newInfo, List<LocationPojo> candidates) {
+    
         if (candidates.isEmpty()) {
-            log.info("无精确匹配地点，判定为新地点: {}", newName);
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.info("无精确匹配地点，判定为新地点：{}", newName);
+            return addNewLocation(newName, newInfo);
         }
-
+    
         if (candidates.size() == 1) {
             LocationPojo matchedLocation = candidates.getFirst();
             log.info("候选列表只剩下一处地点，判定为同一地点，开始更新数据库：{}", matchedLocation.getName());
-            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
-            return;
+            updateAndReturn(newName, newInfo, matchedLocation);
+            return matchedLocation.getId();
         }
-
-        // 多候选，使用AI匹配
-        handleAiMatching(diaryId, newName, newInfo, candidates);
+    
+        // 多候选，使用 AI 匹配
+        return handleAiMatching(newName, newInfo, candidates);
     }
 
     /**
-     * AI匹配处理
+     * AI 匹配处理
+     * @return 匹配到的地点 ID，如果没有则返回 null
      */
-    private void handleAiMatching(Integer diaryId,
-                                  String newName,
-                                  AITagJson.LocationInfo newInfo,
-                                  List<LocationPojo> candidates) {
+    private Integer handleAiMatching(String newName, AITagJson.LocationInfo newInfo, List<LocationPojo> candidates) {
 
         log.info("开始六级匹配：AI 地点名称：{}", newName);
         Integer aiMatchIndex = aiAnalysisService.locationTagDeduplicationAnalysis(
                 newName, newInfo, candidates);
 
-        // 根据原逻辑处理AI返回结果
+        // 根据原逻辑处理 AI 返回结果
         if (aiMatchIndex == null) {
-            log.warn("AI返回null，使用保守策略：视为新地点");
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.warn("AI 返回 null，使用保守策略：视为新地点");
+            return addNewLocation(newName, newInfo);
         }
 
         if (aiMatchIndex == -1) {
-            log.info("AI未启用，按原逻辑处理：将候选列表中的所有地点插入数据库");
-            // 注意：原代码此处逻辑可能有问题，但为保持行为一致，保留原样
+            log.info("AI 未启用，按原逻辑处理：将候选列表中的所有地点插入数据库");
+            Integer lastLocationId = null;
             for (LocationPojo location : candidates) {
                 locationMapper.insert(location);
-                createDiaryLocationRelation(diaryId, location.getId(),
-                        DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
+                lastLocationId = location.getId();
             }
-            return;
+            return lastLocationId;
         }
 
         if (aiMatchIndex == 0) {
-            log.info("AI评定为新地点，添加数据库：{}", newName);
-            addNewLocation(diaryId, newName, newInfo);
-            return;
+            log.info("AI 评定为新地点，添加数据库：{}", newName);
+            return addNewLocation(newName, newInfo);
         }
 
-        // aiMatchIndex > 0 且小于candidates.size()
+        // aiMatchIndex > 0 且小于 candidates.size()
         if (aiMatchIndex > 0 && aiMatchIndex <= candidates.size()) {
-            LocationPojo matchedLocation = candidates.get(aiMatchIndex - 1); // 假设索引从1开始
-            log.info("AI匹配成功，匹配到地点: {}", matchedLocation.getName());
-            updateAndReturn(diaryId, newName, newInfo, matchedLocation);
+            LocationPojo matchedLocation = candidates.get(aiMatchIndex - 1); // 假设索引从 1 开始
+            log.info("AI 匹配成功，匹配到地点：{}", matchedLocation.getName());
+            updateAndReturn(newName, newInfo, matchedLocation);
+            return matchedLocation.getId();
         } else {
-            log.warn("AI返回索引超出范围: {}，视为新地点", aiMatchIndex);
-            addNewLocation(diaryId, newName, newInfo);
+            log.warn("AI 返回索引超出范围：{}，视为新地点", aiMatchIndex);
+            return addNewLocation(newName, newInfo);
         }
     }
 
     /**
      * 更新已有地点信息并建立关联
      */
-    private void updateAndReturn(Integer diaryId,
-                                 String newName,
+    private void updateAndReturn(String newName,
                                  AITagJson.LocationInfo newInfo,
                                  LocationPojo existingLocation) {
 
         locationUpdater(existingLocation, newName, newInfo);
-        createDiaryLocationRelation(diaryId, existingLocation.getId(),
-                DiaryLocationPojo.MentionType.valueOf(newInfo.getMentionType().name()));
     }
 
     /**
      * 添加新地点
+     * @return 新创建的地点 ID
      */
-    private void addNewLocation(Integer diaryId, String name, AITagJson.LocationInfo info) {
-
+    private Integer addNewLocation(String name, AITagJson.LocationInfo info) {
+    
         log.info("判定为新地点：{}", name);
         LocationPojo location = new LocationPojo(name, info);
-
-        log.info("更新经纬度与geohash: {}", name);
+    
+        log.info("更新经纬度与 geohash: {}", name);
         enrichLocationsWithCoordinates(location);
-
+    
         log.info("插入数据库：{}", name);
         locationMapper.insert(location);
-        createDiaryLocationRelation(diaryId, location.getId(),
-                DiaryLocationPojo.MentionType.valueOf(info.getMentionType().name()));
+            
+        return location.getId();
     }
 
     /**
@@ -294,27 +290,27 @@ public class LocationParsingService {
         }
 
         try {
-            // 1. 构建完整地址字符串（按国家/省/市/县/名称顺序组合）
+            // 构建完整地址字符串（按国家/省/市/县/名称顺序组合）
             Map<String, String> addressResult = buildFullAddress(location);
             String fullAddress = addressResult.get("address");
-            
+
             if (fullAddress == null || fullAddress.trim().isEmpty()) {
                 log.warn("地点 [{}] 的地址信息不完整，跳过", location.getName());
                 return;
             }
 
-            // 2. 调用百度地图 API 获取经纬度
-            GeoPoint geoPoint = geocodeAddress(addressResult);
+            // 调用地图 API 获取经纬度
+            GeoPoint geoPoint = gaoDeGeocodeAddress(addressResult);
             if (geoPoint == null) {
                 log.warn("地点 [{}] 地理编码失败，地址：{}", location.getName(), addressResult.get("address"));
                 return;
             }
 
-            // 3. 计算 geohash（精度取 6 位，约 ±0.6km，可根据需要调整）
+            // 计算 geohash（精度取 6 位，约 ±0.6km，可根据需要调整）
             String geohash = GeoHash.geoHashStringWithCharacterPrecision(
                     geoPoint.latitude(), geoPoint.longitude(), 6);
 
-            // 4. 更新实体对象
+            // 更新实体对象
             location.setLongitude(geoPoint.longitude());
             location.setLatitude(geoPoint.latitude());
             location.setGeoHash(geohash);
@@ -349,8 +345,10 @@ public class LocationParsingService {
         if (location.getDistrict() != null && !location.getDistrict().trim().isEmpty()) {
             parts.add(location.getDistrict().trim());
         }
-        if (location.getName() != null && !location.getName().trim().isEmpty()) {
-            parts.add(location.getName().trim());
+        if (location.getSpecificity()) {
+            if (location.getName() != null && !location.getName().trim().isEmpty()) {
+                parts.add(location.getName().trim());
+            }
         }
         
         // 构建返回结果，确保 city 不为 null（使用空字符串代替）
@@ -361,118 +359,197 @@ public class LocationParsingService {
     }
 
     /**
-     * 调用百度地图 API 获取经纬度
-     * 通过百度地图地理编码服务，将地址信息转换为精确的经纬度坐标
+     * 调用高德地图 API 获取经纬度
+     * 通过高德地图地理编码服务，将地址信息转换为精确的经纬度坐标
      *
-     * <p>处理流程:</p>
-     * <ol>
-     *     <li>从用户配置中获取百度地图 API 密钥和主机地址</li>
-     *     <li>对地址进行 URL 编码</li>
-     *     <li>构建完整的请求 URL</li>
-     *     <li>使用 HttpClient 发送 GET 请求</li>
-     *     <li>解析返回的 JSON 响应，提取候选地点列表</li>
-     *     <li>获取最佳匹配结果的经纬度坐标</li>
-     * </ol>
-     *
-     * <p>注意事项:</p>
-     * <ul>
-     *     <li>使用 fullAddress.remove("city") 会修改原 Map 对象，移除 city 键值对</li>
-     *     <li>只返回第一个候选地点（最佳匹配）的坐标</li>
-     *     <li>如果 API 调用失败或无匹配结果，返回 null</li>
-     * </ul>
-     *
-     * @param fullAddress 包含地址信息的映射，必须包含以下键：
-     *                    - "address": 完整的地址字符串（必填）
+     * @param fullAddress 完整地址字符串，包含国家、省、市、区县和地点名称
      *                    - "city": 城市名称（用于辅助定位，会被移除）
+     *                    - "address": 完整的地址字符串（必填）
      * @return GeoPoint 对象，包含经度（longitude）和纬度（latitude）
      *         如果 API 调用失败、解析错误或无匹配结果，则返回 null
      */
-    private GeoPoint geocodeAddress(Map<String, String> fullAddress) {
-        // 从用户配置中获取百度地图 API 密钥和主机地址
-        String baiduMapApiKey = userSettingsService.getLatestApiConfig().getBaiduMapApiKey();
-        String baiduMapApiHost = userSettingsService.getLatestApiConfig().getBaiduMapApiHost();
-        
+    private GeoPoint gaoDeGeocodeAddress(Map<String, String> fullAddress) {
+        // 从用户配置中获取高德地图 API 密钥和主机地址
+        String MapApiKey = userSettingsService.getLatestApiConfig().getMapWebServiceKey();
+
         // 获取地址和城市信息
         String address = fullAddress.get("address");
-        String city = fullAddress.remove("city"); // 注意：remove 操作会修改原 Map 对象
+        String city = fullAddress.get("city");
 
         // 对地址进行 URL 编码
         String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8);
-        
+
         // 构建完整的请求 URL
-        String url = baiduMapApiHost
-                + "/geocoding/v3/"
-                + "?address=" + encodedAddress
-                + "&ak=" + baiduMapApiKey
-                + "&ret_coordtype=" + "gcj02ll"
-                + "&output=json";
+        String url = "https://restapi.amap.com" +
+                "/v3/geocode" +
+                "/geo?key=" + MapApiKey +
+                "&address=" + encodedAddress;
 
         // 如果有城市信息，添加到请求中
         if (city != null && !city.trim().isEmpty()) {
             url += "&city=" + URLEncoder.encode(city, StandardCharsets.UTF_8);
         }
-        
+
         // 创建 HttpGet 请求
         HttpGet httpGet = new HttpGet(url);
-        
+
         try (CloseableHttpClient httpClient = HttpClients.createSystem()) {
             // 执行 HTTP 请求
-            try (ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
+            try (CloseableHttpResponse response = (CloseableHttpResponse) httpClient.executeOpen(null, httpGet, null)) {
                 // 检查 HTTP 状态码
                 int statusCode = response.getCode();
                 if (statusCode < 200 || statusCode >= 300) {
-                    log.error("百度地图 API 返回错误状态码：{}, 地址：{}", statusCode, address);
-                    return null;
-                }
-                
-                // 获取响应结果
-                HttpEntity entity = response.getEntity();
-                if (entity == null) {
-                    log.error("百度地图 API 返回空响应，地址：{}", address);
+                    log.error("高德地图 API 返回错误状态码：{}, 地址：{}", statusCode, address);
                     return null;
                 }
 
                 // 获取响应内容
-                String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-                
+                String result = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
+
                 // 解析 JSON 响应
-                JsonNode root = objectMapper.readTree(result);
-                
+                com.fasterxml.jackson.databind.JsonNode root = objectMapper.readTree(result);
+
                 // 检查 API 调用是否成功
-                JsonNode statusNode = root.path("status");
-                if (!statusNode.isInt() || statusNode.asInt() != 0) {
-                    String message = root.path("message").asText("未知错误");
-                    log.error("百度地图 API 调用失败，状态码：{}, 消息：{}, 地址：{}", 
-                            statusNode.asText("未知"), message, address);
+                String status = root.path("status").asText();
+                if (!"1".equals(status)) {
+                    String message = root.path("info").asText("未知错误");
+                    log.error("高德地图 API 调用失败，状态：{}, 消息：{}, 地址：{}",
+                            status, message, address);
                     return null;
                 }
-                
-                // 提取结果中的位置信息
-                JsonNode resultNode = root.path("result");
-                if (resultNode.isMissingNode() || resultNode.isNull()) {
-                    log.debug("百度地图 API 返回结果为空，地址：{}", address);
+
+                // 提取 geocodes 数组
+                com.fasterxml.jackson.databind.JsonNode geocodesNode = root.path("geocodes");
+                if (geocodesNode.isMissingNode() || geocodesNode.isNull() || !geocodesNode.isArray() || geocodesNode.isEmpty()) {
+                    log.debug("高德地图 API 返回结果为空，地址：{}", address);
                     return null;
                 }
-                
-                JsonNode locationNode = resultNode.path("location");
-                if (locationNode.isMissingNode() || locationNode.isNull()) {
-                    log.debug("百度地图 API 返回结果中没有位置信息，地址：{}", address);
+
+                // 获取第一个匹配结果
+                com.fasterxml.jackson.databind.JsonNode firstGeocode = geocodesNode.get(0);
+                String locationStr = firstGeocode.path("location").asText();
+
+                if (locationStr.isEmpty()) {
+                    log.debug("高德地图 API 返回结果中没有位置信息，地址：{}", address);
                     return null;
                 }
-                
-                // 提取经度和纬度（百度坐标系）
-                double lon = locationNode.path("lng").asDouble();
-                double lat = locationNode.path("lat").asDouble();
-                
-                log.info("百度地图地理编码成功，地址：{}, 坐标：({}, {})", address, lat, lon);
-                
+
+                // 解析经纬度字符串，格式为 "经度,纬度"
+                String[] coords = locationStr.split(",");
+                if (coords.length != 2) {
+                    log.error("高德地图 API 返回的位置格式不正确：{}, 地址：{}", locationStr, address);
+                    return null;
+                }
+
+                double lon = Double.parseDouble(coords[0]);
+                double lat = Double.parseDouble(coords[1]);
+
+                log.info("高德地图地理编码成功，地址：{}, 坐标：({}, {})", address, lat, lon);
+
                 return new GeoPoint(lon, lat);
             }
         } catch (Exception e) {
-            log.error("调用百度地图 API 失败，地址：{}", fullAddress.get("address"), e);
+            log.error("调用高德地图 API 失败，地址：{}", fullAddress.get("address"), e);
             return null;
         }
     }
+
+//    /**
+//     * 调用百度地图 API 获取经纬度
+//     * 通过百度地图地理编码服务，将地址信息转换为精确的经纬度坐标
+//
+//     * @param fullAddress 包含地址信息的映射，必须包含以下键：
+//     *                    - "address": 完整的地址字符串（必填）
+//     *                    - "city": 城市名称（用于辅助定位，会被移除）
+//     * @return GeoPoint 对象，包含经度（longitude）和纬度（latitude）
+//     *         如果 API 调用失败、解析错误或无匹配结果，则返回 null
+//     */
+//    private GeoPoint baiDuGeocodeAddress(Map<String, String> fullAddress) {
+//        // 从用户配置中获取百度地图 API 密钥和主机地址
+//        String baiduMapApiKey = userSettingsService.getLatestApiConfig().getBaiduMapApiKey();
+//        String baiduMapApiHost = userSettingsService.getLatestApiConfig().getBaiduMapApiHost();
+//
+//        // 获取地址和城市信息
+//        String address = fullAddress.get("address");
+//        String city = fullAddress.remove("city"); // 注意：remove 操作会修改原 Map 对象
+//
+//        // 对地址进行 URL 编码
+//        String encodedAddress = URLEncoder.encode(address, StandardCharsets.UTF_8);
+//
+//        // 构建完整的请求 URL
+//        String url = baiduMapApiHost
+//                + "/geocoding/v3/"
+//                + "?address=" + encodedAddress
+//                + "&ak=" + baiduMapApiKey
+//                + "&ret_coordtype=" + "gcj02ll"
+//                + "&output=json";
+//
+//        // 如果有城市信息，添加到请求中
+//        if (city != null && !city.trim().isEmpty()) {
+//            url += "&city=" + URLEncoder.encode(city, StandardCharsets.UTF_8);
+//        }
+//
+//        // 创建 HttpGet 请求
+//        HttpGet httpGet = new HttpGet(url);
+//
+//        try (CloseableHttpClient httpClient = HttpClients.createSystem()) {
+//            // 执行 HTTP 请求
+//            try (ClassicHttpResponse response = httpClient.executeOpen(null, httpGet, null)) {
+//                // 检查 HTTP 状态码
+//                int statusCode = response.getCode();
+//                if (statusCode < 200 || statusCode >= 300) {
+//                    log.error("百度地图 API 返回错误状态码：{}, 地址：{}", statusCode, address);
+//                    return null;
+//                }
+//
+//                // 获取响应结果
+//                HttpEntity entity = response.getEntity();
+//                if (entity == null) {
+//                    log.error("百度地图 API 返回空响应，地址：{}", address);
+//                    return null;
+//                }
+//
+//                // 获取响应内容
+//                String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+//
+//                // 解析 JSON 响应
+//                JsonNode root = objectMapper.readTree(result);
+//
+//                // 检查 API 调用是否成功
+//                JsonNode statusNode = root.path("status");
+//                if (!statusNode.isInt() || statusNode.asInt() != 0) {
+//                    String message = root.path("message").asText("未知错误");
+//                    log.error("百度地图 API 调用失败，状态码：{}, 消息：{}, 地址：{}",
+//                            statusNode.asText("未知"), message, address);
+//                    return null;
+//                }
+//
+//                // 提取结果中的位置信息
+//                JsonNode resultNode = root.path("result");
+//                if (resultNode.isMissingNode() || resultNode.isNull()) {
+//                    log.debug("百度地图 API 返回结果为空，地址：{}", address);
+//                    return null;
+//                }
+//
+//                JsonNode locationNode = resultNode.path("location");
+//                if (locationNode.isMissingNode() || locationNode.isNull()) {
+//                    log.debug("百度地图 API 返回结果中没有位置信息，地址：{}", address);
+//                    return null;
+//                }
+//
+//                // 提取经度和纬度（百度坐标系）
+//                double lon = locationNode.path("lng").asDouble();
+//                double lat = locationNode.path("lat").asDouble();
+//
+//                log.info("百度地图地理编码成功，地址：{}, 坐标：({}, {})", address, lat, lon);
+//
+//                return new GeoPoint(lon, lat);
+//            }
+//        } catch (Exception e) {
+//            log.error("调用百度地图 API 失败，地址：{}", fullAddress.get("address"), e);
+//            return null;
+//        }
+//    }
 
     /**
      * 更新地点信息
@@ -560,24 +637,6 @@ public class LocationParsingService {
     }
 
     /**
-     * 创建日记-地点关联关系
-     */
-    private void createDiaryLocationRelation(Integer diaryId,
-                                             Integer locationId,
-                                             DiaryLocationPojo.MentionType mentionType) {
-        try {
-            if (diaryLocationMapper.selectByDiaryIdAndLocationId(diaryId, locationId) == null) {
-                DiaryLocationPojo relation = new DiaryLocationPojo(diaryId, locationId);
-                relation.setMentionType(mentionType);
-                diaryLocationMapper.insert(relation);
-                log.debug("创建日记-地点关联: diaryId={}, locationId={}", diaryId, locationId);
-            }
-        } catch (Exception e) {
-            log.error("创建日记-地点关联失败，diaryId={}, locationId={}", diaryId, locationId, e);
-        }
-    }
-
-    /**
      * 记录匹配过程日志
      */
     private void logMatchingProcess(String name, List<LocationPojo> candidates, String stage) {
@@ -588,6 +647,23 @@ public class LocationParsingService {
                     : "无";
             log.debug("{} - {}: 候选人数量={}, 列表=[{}]", name, stage, count, names);
         }
+    }
+
+    /**
+     * 获取地点在原始 Map 中的索引（从 1 开始）
+     * @param locationInfoMap 地点信息 Map
+     * @param locationName 地点名称
+     * @return 地点索引（从 1 开始）
+     */
+    private Integer getLocationIndex(Map<String, AITagJson.LocationInfo> locationInfoMap, String locationName) {
+        int index = 1;
+        for (String name : locationInfoMap.keySet()) {
+            if (name.equals(locationName)) {
+                return index;
+            }
+            index++;
+        }
+        return index;
     }
 
     /**

@@ -1,11 +1,7 @@
 package com.lyric.lyric.POJO.AI; // 请根据您的项目结构调整包路径
 
-import com.fasterxml.jackson.annotation.*;
-import com.lyric.lyric.POJO.relation.DiaryLocationPojo;
-import com.lyric.lyric.POJO.relation.DiaryPersonPojo;
 import lombok.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +36,15 @@ public class AITagJson {
     }
 
     /**
+     * 提及类型枚举，对应活动关联中的 mention_type
+     */
+    public enum MentionType {
+        ACTUAL,   // 实际出现/到达
+        MENTION,  // 提及
+        MEMORY    // 回忆
+    }
+
+    /**
      * 标签集合内部类
      */
     @Getter
@@ -53,7 +58,7 @@ public class AITagJson {
         private Tag tag;
 
         /**
-         * 实体标签（人物、地点、事件）
+         * 实体标签（人物、地点、活动）
          */
         private EntityTag entityTag;
 
@@ -184,18 +189,18 @@ public class AITagJson {
         private Map<String, LocationInfo> location;
 
         /**
-         * 事件实体映射
-         * Key: 事件名称 (如 "毕业典礼")
-         * Value: 该事件的详细信息
+         * 活动实体映射
+         * Key: 活动名称 (如 "参观兵马俑")
+         * Value: 该活动的详细信息
          */
-        private Map<String, TogEventInfo> event;
+        private Map<String, ActivityInfo> activity;
 
         @Override
         public String toString() {
             return "{" +
                     "人物实体映射：" + person + "\n" +
                     "地点实体映射：" + location + "\n" +
-                    "事件实体映射：" + event + "\n" +
+                    "活动实体映射：" + activity + "\n" +
                     "}" + "\n";
         }
     }
@@ -227,7 +232,7 @@ public class AITagJson {
         /**
          * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
          */
-        private DiaryPersonPojo.MentionType mentionType;
+        private MentionType mentionType;
 
         /**
          * 颜色代码
@@ -235,7 +240,7 @@ public class AITagJson {
         private String color;
 
         /**
-         * 人物索引
+         * 人物索引（在日记或事件中的顺序）
          */
         private String index;
 
@@ -288,7 +293,7 @@ public class AITagJson {
         /**
          * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
          */
-        private DiaryLocationPojo.MentionType mentionType;
+        private MentionType mentionType;
 
         /**
          * 颜色代码
@@ -300,6 +305,13 @@ public class AITagJson {
          */
         private String index;
 
+        /**
+         * 地点明确性标识
+         * "0" 表示具有明确指代性（如天安门、大兴机场、廊坊师范学院等）
+         * "1" 表示不具有明确指代性（如廊坊师范学院食堂、校医务室、学校西门烧烤摊等）
+         */
+        private String specificity;
+
         @Override
         public String toString() {
             return "{" +
@@ -310,119 +322,50 @@ public class AITagJson {
                     ", 所在国家:'" + country + "\n" +
                     ", 类型:'" + mentionType + "\n" +
                     ", 颜色代码:'" + color + "\n" +
+                    ", 明确性:'" + specificity + "\n" +
                     "}" + "\n";
         }
     }
 
     /**
-     * 父事件信息内部类
-     * 对应JSON中 event 对象下每个键对应的值
-     * 使用 @JsonAnyGetter 和 @JsonAnySetter 将子事件展开到父事件对象的顶层
+     * 活动信息内部类（对应 activity 表）
+     * 注意：活动本身不包含事件归属，由后端根据业务规则归类
      */
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TogEventInfo {
+    public static class ActivityInfo {
 
         /**
-         * 整个事件开始的日期
-         */
-        private String startDate;
-
-        /**
-         * 整个事件结束的日期
-         */
-        private String endDate;
-
-        /**
-         * 整个事件的描述
-         */
-        private String description;
-
-        /**
-         * 颜色代码
-         */
-        private String color;
-
-        /**
-         * 存储子事件的映射，键为子事件名称，值为子事件详情
-         * 使用 @JsonIgnore 避免将其作为普通属性序列化
-         */
-        @JsonIgnore
-        private Map<String, SubEventInfo> subEvents = new HashMap<>();
-
-        /**
-         * 将子事件映射展开到父事件对象的顶层属性
-         */
-        @JsonAnyGetter
-        public Map<String, SubEventInfo> getSubEvents() {
-            return subEvents;
-        }
-
-        /**
-         * 反序列化时将未知属性（即子事件名称）放入 subEvents 映射
-         */
-        @JsonAnySetter
-        public void setSubEvent(String name, SubEventInfo value) {
-            subEvents.put(name, value);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{");
-            sb.append("整个事件开始的日期:'").append(startDate).append("\n");
-            sb.append(", 整个事件结束的日期:'").append(endDate).append("\n");
-            sb.append(", 整个事件的描述:'").append(description).append("\n");
-            sb.append(", 颜色代码:'").append(color).append("\n");
-            sb.append(", 子事件信息:{\n");
-
-            if (subEvents != null && !subEvents.isEmpty()) {
-                for (Map.Entry<String, SubEventInfo> entry : subEvents.entrySet()) {
-                    sb.append("  ").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
-                }
-            } else {
-                sb.append("  无\n");
-            }
-
-            sb.append("}\n");
-            sb.append("}");
-            return sb.toString();
-        }
-    }
-
-    /**
-     * 子事件信息内部类
-     */
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubEventInfo {
-        /**
-         * 事件发生地点及其到达顺序映射
-         * Key: 地点索引
-         * Value: 地点名称
-         */
-        private Map<String, String> location;
-
-        /**
-         * 事件发生日期 (格式: YYYY-MM-DD HH-MM-SS)
+         * 活动发生日期
          */
         private String date;
 
         /**
-         * 事件描述
+         * 时间段
+         */
+        private String timePeriod;
+
+        /**
+         * 活动描述
          */
         private String description;
 
+
         /**
-         * 参与事件的人物及其角色映射
-         * Key: 关联人物索引
-         * Value: 在事件中的角色
+         * 活动发生地点映射
+         * Key: 地点名称 (如 "北京故宫")
+         * Value: 该地点的详细信息
          */
-        private Map<String, String> persons;
+        private Map<String, LocationMention> locations;
+
+        /**
+         * 参与活动人物映射
+         * Key: 人物名称 (如 "张三")
+         * Value: 该人物的详细信息
+         */
+        private Map<String, PersonRole> persons;
 
         /**
          * 颜色代码
@@ -432,12 +375,48 @@ public class AITagJson {
         @Override
         public String toString() {
             return "{" +
-                    "事件发生地点及其到达顺序映射:'" + location + "\n" +
-                    ", 事件发生日期:'" + date + "\n" +
-                    ", 事件描述:'" + description + "\n" +
-                    ", 参与事件的人物及其角色映射:'" + persons + "\n" +
+                    "活动发生日期:'" + date + "\n" +
+                    ", 时间段:'" + timePeriod + "\n" +
+                    ", 活动描述:'" + description + "\n" +
+                    ", 活动发生地点映射:'" + locations + "\n" +
+                    ", 参与活动的人物映射:'" + persons + "\n" +
                     ", 颜色代码:'" + color + "\n" +
                     "}" + "\n";
+        }
+
+        /**
+         * 活动发生地点映射内部类
+         */
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class LocationMention {
+
+            /**
+             * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
+             */
+            private MentionType mentionType;
+        }
+
+        /**
+         * 活动参与人物映射内部类
+         */
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class PersonRole {
+
+            /**
+             * 角色
+             */
+            private String role;
+
+            /**
+             * 类型：ACTUAL(实际出现)、MENTION(提及)、MEMORY(回忆)
+             */
+            private MentionType mentionType;
         }
     }
 }

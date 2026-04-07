@@ -1,6 +1,5 @@
 package com.lyric.lyric.Service.tag.parsing;
 
-import com.lyric.lyric.DTO.diary.Diary;
 import com.lyric.lyric.Mapper.diary.DiaryMapper;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.POJO.diary.DiaryPojo;
@@ -36,50 +35,56 @@ public class TagParsingService {
 
     private final BaseTagParsingService baseTagParsingService;
 
-    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper, PersonsParsingService personsParsingService,
-                             LocationParsingService locationParsingService, EventParsingService eventParsingService, BaseTagParsingService baseTagParsingService) {
+    public TagParsingService(AIAnalysisService aiAnalysisService, DiaryMapper diaryMapper,
+            PersonsParsingService personsParsingService,
+            LocationParsingService locationParsingService, EventParsingService eventParsingService,
+            BaseTagParsingService baseTagParsingService) {
         this.aiAnalysisService = aiAnalysisService;
         this.diaryMapper = diaryMapper;
         this.personsParsingService = personsParsingService;
         this.locationParsingService = locationParsingService;
         this.eventParsingService = eventParsingService;
         this.baseTagParsingService = baseTagParsingService;
-     }
+    }
 
     /**
      * 调用AI进行分析
      *
-     * @param diary    日记对象
+     * @param diary 日记对象
      */
     @Async("aiAnalysisExecutor")
-    public void tagAnalysis(Diary diary) {
+    public void tagAnalysis(DiaryPojo diary) {
+        log.info("🚀 [异步] 开始AI分析日记，ID: {}，标题: {}，线程: {}",
+                diary.getId(), diary.getTitle(), Thread.currentThread().getName());
+        long startTime = System.currentTimeMillis();
         try {
-            // 调用AI进行分析
-            AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent(), DateTimeUtils.format(diary.getDiaryDate()));
-
-            // 验证结果是否为空
+            AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent(),
+                    DateTimeUtils.format(diary.getDiaryDate()));
             if (aiTag != null) {
                 processAITag(diary.getId(), aiTag);
+                long duration = System.currentTimeMillis() - startTime;
+                log.info("✅ [异步] AI分析完成，ID: {}，耗时: {}ms", diary.getId(), duration);
             } else {
-               log.info("标签分析结果为空，可能是功能未开启");
+                log.info("标签分析结果为空，可能是功能未开启");
             }
         } catch (Exception e) {
-            log.error("处理AI标签,分析结果时发生异常", e);
+            log.error("❌ [异步] AI分析异常，ID: {}", diary.getId(), e);
         }
     }
 
     /**
      * 处理AI标签分析结果
+     * 
      * @param diaryId 日记ID
-     * @param aiTag AI分析结果
+     * @param aiTag   AI分析结果
      */
     public void processAITag(Integer diaryId, AITagJson aiTag) {
         try {
 
-            //获取日记
+            // 获取日记
             DiaryPojo diary = diaryMapper.selectById(diaryId);
 
-            //判断是否获取到日记
+            // 判断是否获取到日记
             if (diary == null) {
                 log.warn("未找到该日记,日记Id为：{}", diaryId);
                 // 等待一段时间后重试，以解决并发问题
@@ -99,25 +104,16 @@ public class TagParsingService {
 
             log.info("开始处理AI标签分析结果,日记Id为：{}", diaryId);
 
-            //获取总结描述
             String summary = aiTag.getSummary();
-
-            //更新总结描述
             diary.setSummary(summary);
+            log.info("总结描述为：{}", summary);
 
-            //更新日记
-            diaryMapper.update(diary);
-
-            log.info("总结描述为：{}" , summary);
-
-            // 获取标签集合
             AITagJson.Labels labels = aiTag.getLabels();
             if (labels == null) {
                 log.warn("标签集合为空");
                 return;
             }
 
-            // 获取基础标签
             AITagJson.Tag tag = labels.getTag();
             if (tag == null) {
                 log.warn("基础标签为空");
@@ -127,7 +123,6 @@ public class TagParsingService {
             List<AITagJson.ThemeTag> themes = tag.getThemes();
             List<AITagJson.MoodTag> moods = tag.getMoods();
 
-            //获取实体标签
             AITagJson.EntityTag entityTag = labels.getEntityTag();
             if (entityTag == null) {
                 log.warn("实体标签为空");
@@ -138,8 +133,8 @@ public class TagParsingService {
             Map<String, AITagJson.PersonInfo> personInfoMapMap = entityTag.getPerson();
             // 获取地点实体标签
             Map<String, AITagJson.LocationInfo> locationInfoMap = entityTag.getLocation();
-            // 获取父事件实体标签
-            Map<String, AITagJson.TogEventInfo> TogEventInfoMap = entityTag.getEvent();
+            // 获取活动实体标签
+            Map<String, AITagJson.ActivityInfo> ActivityInfoMap = entityTag.getActivity();
 
             // 转换为基础主题标签对象并插入数据库
             if (themes != null) {
@@ -174,9 +169,22 @@ public class TagParsingService {
                 }
 
                 log.info("---情绪标签处理结束---");
+                if (moods != null && !moods.isEmpty()) {
+                    try {
+                        String levelStr = moods.getFirst().getLevel();
+                        if (levelStr != null && !levelStr.isEmpty()) {
+                            double emotionalLevel = Double.parseDouble(levelStr);
+                            diary.setEmotionalLevel(emotionalLevel);
+                            log.info("设置情绪等级: {}", emotionalLevel);
+                        }
+                    } catch (NumberFormatException e) {
+                        log.warn("解析情绪等级失败: {}", e.getMessage());
+                    }
+                }
             }
 
-            Map<Integer, Integer> integerIntegerMap;
+            // personIdIndexMap: Key=人物 ID, Value=人物索引
+            Map<Integer, Integer> personIdIndexMap;
 
             // 转换为人物实体标签对象并插入数据库
             if (personInfoMapMap != null) {
@@ -184,36 +192,41 @@ public class TagParsingService {
                 log.info("---开始进行人物实体处理---");
 
                 // 调用人物去重处理器
-                integerIntegerMap = personsParsingService.personDeduplication(diaryId, personInfoMapMap);
+                personIdIndexMap = personsParsingService.personDeduplication(personInfoMapMap);
 
                 log.info("---人物实体标签处理结束---");
             } else {
-                integerIntegerMap = new HashMap<>();
+                personIdIndexMap = new HashMap<>();
             }
+
+            Map<Integer, Integer> locationIdIndexMap;
 
             // 转换为地点实体标签对象并插入数据库
             if (locationInfoMap != null) {
 
                 log.info("---开始进行地点实体处理---");
 
-                locationParsingService.locationDeduplication(diaryId, locationInfoMap);
+                locationIdIndexMap = locationParsingService.locationDeduplication(locationInfoMap);
 
                 log.info("---地点实体标签处理结束---");
+            } else {
+                locationIdIndexMap = new HashMap<>();
             }
 
-            //转换为事件实体标签对象并插入数据库
-            if (TogEventInfoMap != null) {
+            // 转换为事件实体标签对象并插入数据库
+            if (ActivityInfoMap != null) {
 
                 log.info("---开始进行事件实体标签处理---");
 
-                eventParsingService.eventDeduplication(diaryId, TogEventInfoMap,integerIntegerMap);
+                eventParsingService.processActivities(diaryId, ActivityInfoMap, personIdIndexMap, locationIdIndexMap);
 
                 log.info("---事件实体标签处理结束---");
             }
 
-            // 将该日记标记为已分析
-            diaryMapper.updateIsAnalyzed(diaryId, 1);
+            diaryMapper.update(diary);
+            log.info("更新日记信息完成（summary + emotionalLevel），ID: {}", diaryId);
 
+            diaryMapper.updateIsAnalyzed(diaryId, 1);
             log.info("标签分析处理完成");
         } catch (Exception e) {
             log.error("处理 AI 标签时发生异常", e);
@@ -233,7 +246,7 @@ public class TagParsingService {
         }
 
         log.info("开始批量 AI 标签分析，日记数量：{}", diaryIds.size());
-        
+
         int successCount = 0;
         int failCount = 0;
         int skipCount = 0;
@@ -255,7 +268,8 @@ public class TagParsingService {
                 }
 
                 // 调用 AI 进行分析
-                AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent(), DateTimeUtils.format(diary.getDiaryDate()));
+                AITagJson aiTag = aiAnalysisService.tagAnalysis(diary.getContent(),
+                        DateTimeUtils.format(diary.getDiaryDate()));
 
                 // 验证结果是否为空
                 if (aiTag != null) {
@@ -272,7 +286,7 @@ public class TagParsingService {
             }
         }
 
-        log.info("批量 AI 标签分析完成，总数：{}, 成功：{}, 失败：{}, 跳过：{}", 
+        log.info("批量 AI 标签分析完成，总数：{}, 成功：{}, 失败：{}, 跳过：{}",
                 diaryIds.size(), successCount, failCount, skipCount);
     }
 }

@@ -612,13 +612,11 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - AI大模型 API密钥", value.getAiLLMApiKey());
-            logConfigStatus(logger, "  - 百度NLP API Key", value.getBaiduNlpApiKey());
-            logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
-            logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
-            logConfigStatus(logger, "  - 百度地图API密钥", value.getBaiduMapApiHost());
+            logConfigStatus(logger, "  - 高德地图 API密钥", value.getMapWebServiceKey());
+            logConfigStatus(logger, "  - 高德地图 JS密钥", value.getMapWebJSKey());
+            logConfigStatus(logger, "  - 高德地图 安全码", value.getMapSecurityCode());
             logConfigStatus(logger, "  - QWeather API密钥", value.getWeatherApiKey());
             logConfigStatus(logger, "  - QWeather API主机地址", value.getWeatherApiHost());
-            logConfigStatus(logger, "  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
 
@@ -635,13 +633,11 @@ public class ConfigLoggerUtil {
         } else {
             logger.info("{}:", configName);
             logConfigStatus(logger, "  - AI大模型 API密钥", value.getAiLLMApiKey());
-            logConfigStatus(logger, "  - 百度NLP API Key", value.getBaiduNlpApiKey());
-            logConfigStatus(logger, "  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
-            logConfigStatus(logger, "  - HanLP API密钥", value.getHanlpApiKey());
-            logConfigStatus(logger, "  - 百度地图API密钥", value.getBaiduMapApiHost());
+            logConfigStatus(logger, "  - 高德地图 API密钥", value.getMapWebServiceKey());
+            logConfigStatus(logger, "  - 高德地图 JS密钥", value.getMapWebJSKey());
+            logConfigStatus(logger, "  - 高德地图 安全码", value.getMapSecurityCode());
             logConfigStatus(logger, "  - QWeather API密钥", value.getWeatherApiKey());
             logConfigStatus(logger, "  - QWeather API主机地址", value.getWeatherApiHost());
-            logConfigStatus(logger, "  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
 
@@ -657,13 +653,11 @@ public class ConfigLoggerUtil {
         } else {
             log.info("{}:", configName);
             logConfigStatus("  - AI大模型 API密钥", value.getAiLLMApiKey());
-            logConfigStatus("  - 百度NLP API Key", value.getBaiduNlpApiKey());
-            logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
-            logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());
-            logConfigStatus("  - 百度地图API密钥", value.getBaiduMapApiHost());
+            logConfigStatus("  - 高德地图 API密钥", value.getMapWebServiceKey());
+            logConfigStatus("  - 高德地图 JS密钥", value.getMapWebJSKey());
+            logConfigStatus( "  - 高德地图 安全码", value.getMapSecurityCode());
             logConfigStatus("  - QWeather API密钥", value.getWeatherApiKey());
             logConfigStatus("  - QWeather API主机地址", value.getWeatherApiHost());
-            logConfigStatus("  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
 
@@ -679,13 +673,11 @@ public class ConfigLoggerUtil {
         } else {
             log.info("{}:", configName);
             logConfigStatus("  - AI大模型 API密钥", value.getAiLLMApiKey());
-            logConfigStatus("  - 百度NLP API Key", value.getBaiduNlpApiKey());
-            logConfigStatus("  - 百度NLP Secret Key", value.getBaiduNlpSecretKey());
-            logConfigStatus("  - HanLP API密钥", value.getHanlpApiKey());
-            logConfigStatus("  - 百度地图API密钥", value.getBaiduMapApiHost());
+            logConfigStatus("  - 高德地图 API密钥", value.getMapWebServiceKey());
+            logConfigStatus("  - 高德地图 JS密钥", value.getMapWebJSKey());
+            logConfigStatus("  - 高德地图 安全码", value.getMapSecurityCode());
             logConfigStatus("  - QWeather API密钥", value.getWeatherApiKey());
             logConfigStatus("  - QWeather API主机地址", value.getWeatherApiHost());
-            logConfigStatus("  - Emoji API密钥", value.getEmojiApiKey());
         }
     }
 

@@ -32,18 +32,18 @@ public class BaseTagService {
 
     /**
      * 创建新标签
+     *
      * @param baseTagPojo 标签实体对象
-     * @return 创建后的标签 ID（数据库自增主键）
      */
-    public Integer createTag(BaseTagPojo baseTagPojo) {
+    public void createTag(BaseTagPojo baseTagPojo) {
         log.info("创建新标签：name={}, tagType={}", baseTagPojo.getName(), baseTagPojo.getTagType());
         tagMapper.insert(baseTagPojo);
         log.info("标签创建成功，ID={}", baseTagPojo.getId());
-        return baseTagPojo.getId();
     }
 
     /**
      * 根据 ID 查询标签
+     * 
      * @param id 标签 ID
      * @return 标签实体对象，若不存在则返回 null
      */
@@ -58,6 +58,7 @@ public class BaseTagService {
 
     /**
      * 根据日记 ID 查询对应的标签列表
+     * 
      * @param diaryId 日记 ID
      * @return 标签实体列表，若日记没有关联标签则返回空列表
      */
@@ -88,13 +89,13 @@ public class BaseTagService {
             }
         }
 
-        log.info("根据日记 ID 查询到 {} 个标签：diaryId={}", tags.size(), diaryId);
+//        log.info("根据日记 ID 查询到 {} 个标签：diaryId={}", tags.size(), diaryId);
         return tags;
     }
 
-
     /**
      * 查询所有标签
+     * 
      * @return 标签列表
      */
     public List<BaseTagPojo> getAllTags() {
@@ -104,6 +105,7 @@ public class BaseTagService {
 
     /**
      * 根据标签类型查询标签
+     * 
      * @param tagType 标签类型（THEME 或 MOOD）
      * @return 标签列表
      */
@@ -114,6 +116,7 @@ public class BaseTagService {
 
     /**
      * 更新标签信息
+     * 
      * @param baseTagPojo 标签实体对象（必须包含 id）
      * @return 是否更新成功
      */
@@ -132,20 +135,21 @@ public class BaseTagService {
     /**
      * 删除标签（级联删除关联表）
      * 先删除 diary_tag 关联表中的相关记录，再删除标签本身
+     * 
      * @param id 标签 ID
      * @return 是否删除成功
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteTag(Integer id) {
         log.info("删除标签：id={}", id);
-        
+
         // 检查标签是否存在
         BaseTagPojo tag = tagMapper.selectById(id);
         if (tag == null) {
             log.error("标签不存在，无法删除：id={}", id);
             return false;
         }
-        
+
         // 级联删除：先删除 diary_tag 关联表中的记录
         try {
             List<com.lyric.lyric.POJO.relation.DiaryTagPojo> relations = diaryTagMapper.selectByTagId(id);
@@ -156,7 +160,7 @@ public class BaseTagService {
                 }
                 log.info("已删除 {} 条标签关联记录", relations.size());
             }
-            
+
             // 删除标签本身
             int rows = tagMapper.deleteById(id);
             if (rows > 0) {
@@ -174,6 +178,7 @@ public class BaseTagService {
 
     /**
      * 增加标签使用次数
+     * 
      * @param id 标签 ID
      * @return 是否更新成功
      */
@@ -183,13 +188,13 @@ public class BaseTagService {
             log.error("标签不存在，无法增加使用次数：id={}", id);
             return false;
         }
-        
+
         Integer currentCount = tag.getUsageCount();
         tag.setUsageCount(currentCount + 1);
-        
-        log.debug("增加标签使用次数：id={}, oldCount={}, newCount={}", 
-                  id, currentCount, tag.getUsageCount());
-        
+
+        log.debug("增加标签使用次数：id={}, oldCount={}, newCount={}",
+                id, currentCount, tag.getUsageCount());
+
         return updateTag(tag);
     }
 }

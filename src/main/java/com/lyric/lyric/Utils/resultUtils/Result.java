@@ -36,10 +36,7 @@ public class Result<T> {
      * @return Result对象
      */
     public static Result<Void> success(String code, String message) {
-        Result<Void> result = new Result<>();
-        result.setCode(code);
-        result.setMessage(message);
-        return result;
+        return error(code, message);
     }
     
     /**

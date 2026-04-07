@@ -1,3 +1,4 @@
+# Spring 配置
 spring:
   #应用名称
   application:
@@ -9,15 +10,15 @@ spring:
       api-key: sk-c2336cbabb9f427ca296d5e6ec68a450
       base-url: https://dashscope.aliyuncs.com/compatible-mode
       chat:
-          options:
-              model: qwen3.5-plus-2026-02-15
+        options:
+          model: qwen3.5-flash-2026-02-23
 
   #    deepseek:
-#      api-key: ${user-settings.api.deepseek_api_key}
-#      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-#      chat:
-#        options:
-#          model: deepseek-v3.2
+  #      api-key: ${user-settings.api.deepseek_api_key}
+  #      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  #      chat:
+  #        options:
+  #          model: deepseek-v3.2
 
   # 配置使用SQLite数据库
   datasource:
@@ -29,7 +30,7 @@ spring:
     multipart:
       max-file-size: 20480MB
       max-request-size: 102400MB
-      
+  
   # 配置额外的配置文件
   config:
     import: classpath:user-settings.yml

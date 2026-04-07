@@ -70,20 +70,6 @@ public interface DiaryMapper {
         List<DiaryPojo> selectTrashedDiaries();
 
         /**
-         * 查询所有日记中没有天气数据的日记
-         * 
-         * @return 日记列表
-         */
-        @Select("SELECT d.id AS diaryId, l.latitude, l.longitude, l.city " +
-                        "FROM diary d " +
-                        "LEFT JOIN weather w ON d.id = w.diary_id " +
-                        "LEFT JOIN (SELECT diary_id, MIN(location_id) AS location_id " +
-                        "FROM diary_location GROUP BY diary_id) first_loc ON d.id = first_loc.diary_id " +
-                        "LEFT JOIN location l ON first_loc.location_id = l.id " +
-                        "WHERE w.id IS NULL AND first_loc.diary_id IS NOT NULL")
-        List<GetWeatherService.DiaryWeatherPending> selectDiariesWithoutWeather();
-
-        /**
          * 更新日记
          * 
          * @param diary 日记实体
@@ -171,4 +157,10 @@ public interface DiaryMapper {
          */
         @Select("SELECT * FROM diary WHERE diary_date = #{date} AND is_draft = 0 AND is_deleted = 0")
         List<com.lyric.lyric.POJO.diary.DiaryPojo> selectByDate(String date);
+
+        @Select("SELECT * FROM diary WHERE (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%')) AND is_draft = 0 AND is_deleted = 0 ORDER BY diary_date DESC")
+        List<com.lyric.lyric.POJO.diary.DiaryPojo> searchByKeyword(String keyword);
+
+        @Select("SELECT COUNT(*) FROM diary WHERE is_analyzed = 0 AND is_draft = 0 AND is_deleted = 0")
+        Integer countUnanalyzedDiaries();
 }

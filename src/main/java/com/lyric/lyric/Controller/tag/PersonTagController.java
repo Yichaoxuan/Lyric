@@ -71,6 +71,17 @@ public class PersonTagController {
     }
 
     /**
+     * 根据活动 ID 查询人物标签列表
+     *
+     * @param activityId 活动 ID
+     * @return 查询结果
+     */
+    @GetMapping("/queryByActivityId")
+    public Result<List<PersonPojo>> queryPersonTagsByActivityId(@RequestParam Integer activityId) {
+        return tagService.getPersonTagsByActivityId(activityId);
+    }
+
+    /**
      * 查询所有人物标签
      *
      * @return 查询结果

@@ -1,5 +1,6 @@
 package com.lyric.lyric.POJO.tag.entityTag;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lyric.lyric.POJO.AI.AITagJson;
 import com.lyric.lyric.Utils.dateTime.DateTimeUtils;
 import lombok.*;
@@ -73,6 +74,14 @@ public class LocationPojo {
     private String country;
 
     /**
+     * 地点明确性标识
+     * "0" 表示具有明确指代性（如天安门、大兴机场、廊坊师范学院等）
+     * "1" 表示不具有明确指代性（如廊坊师范学院食堂、校医务室、学校西门烧烤摊等）
+     */
+    @JsonIgnore
+    private Boolean specificity = null;
+
+    /**
      * 地理哈希 (用于附近地点查询优化)
      */
     private String geoHash;
@@ -113,6 +122,7 @@ public class LocationPojo {
         this.city = locationInfo.getCity();
         this.province = locationInfo.getProvince();
         this.country = locationInfo.getCountry();
+        this.specificity = Integer.parseInt(locationInfo.getSpecificity()) == 0;
         this.geoHash = null;
         this.firstAppearance = DateTimeUtils.now();
         this.lastAppearance = firstAppearance;

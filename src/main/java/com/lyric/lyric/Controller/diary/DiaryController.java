@@ -1,10 +1,11 @@
 package com.lyric.lyric.Controller.diary;
 
-import com.lyric.lyric.DTO.diary.Diary;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import com.lyric.lyric.Service.diary.DiaryService;
 import com.lyric.lyric.Utils.resultUtils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ import java.util.List;
  *
  * @author Yichaoxuan
  * @since 2026-3-18
- * @lastModified 2026-03-24
  */
 @Slf4j
 @RestController
@@ -34,7 +34,7 @@ public class DiaryController {
      * @return 创建结果
      */
     @PostMapping("/saveDiary")
-    public Result<Void> saveDiary(@RequestBody Diary diary) {
+    public Result<Void> saveDiary(@RequestBody DiaryPojo diary) {
         return diaryService.saveDiary(diary);
     }
 
@@ -48,8 +48,8 @@ public class DiaryController {
      */
     @PostMapping("/createDraft")
     public Result<Integer> createDraft(
-            @RequestParam(value = "contentType", required = false) Diary.ContentType contentType,
-            @RequestParam(value = "contentFormat", required = false) Diary.ContentFormat contentFormat) {
+            @RequestParam(value = "contentType", required = false) DiaryPojo.ContentType contentType,
+            @RequestParam(value = "contentFormat", required = false) DiaryPojo.ContentFormat contentFormat) {
         return diaryService.createDraft(contentType, contentFormat);
     }
 
@@ -61,7 +61,7 @@ public class DiaryController {
      * @return 更新结果
      */
     @PostMapping("/updateDiaryFromDraft")
-    public Result<Void> updateDiaryFromDraft(@RequestBody Diary diary) {
+    public Result<Void> updateDiaryFromDraft(@RequestBody DiaryPojo diary) {
         return diaryService.updateDiaryFromDraft(diary);
     }
 
@@ -73,7 +73,7 @@ public class DiaryController {
      * @return 更新结果
      */
     @PostMapping("/updateDraft")
-    public Result<Void> updateDraft(@RequestBody Diary diary) {
+    public Result<Void> updateDraft(@RequestBody DiaryPojo diary) {
         return diaryService.updateDraft(diary);
     }
 
@@ -139,7 +139,7 @@ public class DiaryController {
      * @return 修改结果
      */
     @PostMapping("/modifyDiary")
-    public Result<Void> modifyDiary(@RequestBody Diary diary) {
+    public Result<Void> modifyDiary(@RequestBody DiaryPojo diary) {
         return diaryService.modifyDiary(diary);
     }
 
@@ -150,7 +150,7 @@ public class DiaryController {
      * @return 查询结果
      */
     @GetMapping("/queryDiary")
-    public Result<Diary> queryDiary(@RequestParam Integer diaryId) {
+    public Result<DiaryPojo> queryDiary(@RequestParam Integer diaryId) {
         return diaryService.queryDiary(diaryId);
     }
 
@@ -160,7 +160,7 @@ public class DiaryController {
      * @return 查询结果
      */
     @GetMapping("/queryAllDiary")
-    public Result<List<Diary>> queryAllDiary() {
+    public Result<List<DiaryPojo>> queryAllDiary() {
         return diaryService.getAllDiaryList();
     }
 
@@ -170,7 +170,7 @@ public class DiaryController {
      * @return 查询结果
      */
     @GetMapping("/queryNonDraftDiaries")
-    public Result<List<Diary>> queryNonDraftDiaries() {
+    public Result<List<DiaryPojo>> queryNonDraftDiaries() {
         return diaryService.getNonDraftDiaries();
     }
 
@@ -180,7 +180,7 @@ public class DiaryController {
      * @return 查询结果
      */
     @GetMapping("/queryDrafts")
-    public Result<List<Diary>> queryDrafts() {
+    public Result<List<DiaryPojo>> queryDrafts() {
         return diaryService.getDrafts();
     }
 
@@ -190,7 +190,7 @@ public class DiaryController {
      * @return 查询结果
      */
     @GetMapping("/queryTrashedDiaries")
-    public Result<List<Diary>> queryTrashedDiaries() {
+    public Result<List<DiaryPojo>> queryTrashedDiaries() {
         return diaryService.getTrashedDiaries();
     }
 
@@ -201,7 +201,7 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByTagId")
-    public Result<List<Diary>> queryDiariesByTagId(@RequestParam Integer tagId) {
+    public Result<List<DiaryPojo>> queryDiariesByTagId(@RequestParam Integer tagId) {
         return diaryService.getDiariesByTagId(tagId);
     }
 
@@ -212,8 +212,19 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByPersonId")
-    public Result<List<Diary>> queryDiariesByPersonId(@RequestParam Integer personId) {
+    public Result<List<DiaryPojo>> queryDiariesByPersonId(@RequestParam Integer personId) {
         return diaryService.getDiariesByPersonId(personId);
+    }
+
+    /**
+     * 根据人物 ID 查询该人物参与的事件列表
+     *
+     * @param personId 人物 ID
+     * @return 事件列表（包含活动及角色信息）
+     */
+    @GetMapping("/queryPersonEvents")
+    public Result<List<java.util.Map<String, Object>>> queryPersonEvents(@RequestParam Integer personId) {
+        return diaryService.getPersonEvents(personId);
     }
 
     /**
@@ -223,7 +234,7 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByLocationId")
-    public Result<List<Diary>> queryDiariesByLocationId(@RequestParam Integer locationId) {
+    public Result<List<DiaryPojo>> queryDiariesByLocationId(@RequestParam Integer locationId) {
         return diaryService.getDiariesByLocationId(locationId);
     }
 
@@ -234,8 +245,19 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByEventId")
-    public Result<List<Diary>> queryDiariesByEventId(@RequestParam Integer eventId) {
+    public Result<List<DiaryPojo>> queryDiariesByEventId(@RequestParam Integer eventId) {
         return diaryService.getDiariesByEventId(eventId);
+    }
+
+    /**
+     * 根据活动 ID 查询日记列表
+     *
+     * @param activityId 活动 ID
+     * @return 日记列表
+     */
+    @GetMapping("/queryDiariesByActivityId")
+    public Result<List<DiaryPojo>> queryDiariesByActivityId(@RequestParam Integer activityId) {
+        return diaryService.getDiariesByActivityId(activityId);
     }
 
     /**
@@ -246,7 +268,7 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByMonth")
-    public Result<List<Diary>> queryDiariesByMonth(
+    public Result<List<DiaryPojo>> queryDiariesByMonth(
             @RequestParam Integer year,
             @RequestParam Integer month) {
         return diaryService.getDiariesByMonth(year, month);
@@ -280,7 +302,48 @@ public class DiaryController {
      * @return 日记列表
      */
     @GetMapping("/queryDiariesByDate")
-    public Result<List<Diary>> queryDiariesByDate(@RequestParam String date) {
+    public Result<List<DiaryPojo>> queryDiariesByDate(@RequestParam String date) {
         return diaryService.getDiariesByDate(date);
+    }
+
+    /**
+     * 批量导入Markdown文件
+     *
+     * @param files Markdown文件数组
+     * @return 导入结果
+     */
+    @PostMapping("/batchImportMarkdown")
+    public Result<Void> batchImportMarkdown(@RequestParam("files") MultipartFile[] files) {
+        return diaryService.batchImportMarkdown(files);
+    }
+
+    @GetMapping("/search")
+    public Result<List<DiaryPojo>> searchDiaries(@RequestParam String keyword) {
+        return diaryService.searchDiaries(keyword);
+    }
+
+    @GetMapping("/searchByBaseTag")
+    public Result<List<DiaryPojo>> searchDiariesByBaseTag(@RequestParam String keyword) {
+        return diaryService.searchDiariesByBaseTag(keyword);
+    }
+
+    @GetMapping("/searchByPerson")
+    public Result<List<DiaryPojo>> searchDiariesByPerson(@RequestParam String keyword) {
+        return diaryService.searchDiariesByPerson(keyword);
+    }
+
+    @GetMapping("/searchByLocation")
+    public Result<List<DiaryPojo>> searchDiariesByLocation(@RequestParam String keyword) {
+        return diaryService.searchDiariesByLocation(keyword);
+    }
+
+    @GetMapping("/searchByEvent")
+    public Result<List<DiaryPojo>> searchDiariesByEvent(@RequestParam String keyword) {
+        return diaryService.searchDiariesByEvent(keyword);
+    }
+
+    @GetMapping("/getUnanalyzedCount")
+    public Result<Integer> getUnanalyzedCount() {
+        return diaryService.getUnanalyzedCount();
     }
 }

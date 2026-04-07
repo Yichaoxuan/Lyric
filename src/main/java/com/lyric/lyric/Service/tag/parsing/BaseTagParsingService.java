@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 标签处理服务类
- * 提供基础标签处理的相关方法
+ * 基础标签处理服务类
  *
  * @author Yichaoxuan
  * @since 2025-12-12

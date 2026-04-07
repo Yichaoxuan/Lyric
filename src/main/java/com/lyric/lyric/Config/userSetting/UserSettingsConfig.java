@@ -103,19 +103,16 @@ public class UserSettingsConfig {
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
         pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
         pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
+        pojoRules.setEventTagDeduplicationRules(rules.getEventTagDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
 
         // 设置 API 配置
         pojoApi.setAiLLMApiKey(api.getAiLLMApiKey());
-        pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
-        pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
-        pojoApi.setHanlpApiKey(api.getHanlpApiKey());
-        pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
-        pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
-        pojoApi.setBaiduMapFrontendKey(api.getBaiduMapFrontendKey());
+        pojoApi.setMapWebServiceKey(api.getMapWebServiceKey());
+        pojoApi.setMapWebJSKey(api.getMapWebJSKey());
+        pojoApi.setMapSecurityCode(api.getMapSecurityCode());
         pojoApi.setWeatherApiKey(api.getWeatherApiKey());
         pojoApi.setWeatherApiHost(api.getWeatherApiHost());
-        pojoApi.setEmojiApiKey(api.getEmojiApiKey());
 
         // 将内部类实例设置到UserSettingsPojo中
         userSettingsPojo.setFeatures(pojoFeatures);
@@ -150,6 +147,7 @@ public class UserSettingsConfig {
         rules.setTagAnalysisRules(userSettingsPojo.getRules().getTagAnalysisRules());
         rules.setCharacterTagDeduplicationRules(userSettingsPojo.getRules().getCharacterTagDeduplicationRules());
         rules.setPlaceLabelDeduplicationRules(userSettingsPojo.getRules().getPlaceLabelDeduplicationRules());
+        rules.setEventTagDeduplicationRules(userSettingsPojo.getRules().getEventTagDeduplicationRules());
         rules.setResponseMessageGenerationRules(userSettingsPojo.getRules().getResponseMessageGenerationRules());
 
         // 更新功能配置
@@ -166,15 +164,10 @@ public class UserSettingsConfig {
 
         // 更新 API 配置
         api.setAiLLMApiKey(userSettingsPojo.getApi().getAiLLMApiKey());
-        api.setBaiduNlpApiKey(userSettingsPojo.getApi().getBaiduNlpApiKey());
-        api.setBaiduNlpSecretKey(userSettingsPojo.getApi().getBaiduNlpSecretKey());
-        api.setHanlpApiKey(userSettingsPojo.getApi().getHanlpApiKey());
-        api.setBaiduMapApiKey(userSettingsPojo.getApi().getBaiduMapApiKey());
-        api.setBaiduMapApiHost(userSettingsPojo.getApi().getBaiduMapApiHost());
-        api.setBaiduMapFrontendKey(userSettingsPojo.getApi().getBaiduMapFrontendKey());
+        api.setMapWebJSKey(userSettingsPojo.getApi().getMapWebJSKey());
+        api.setMapSecurityCode(userSettingsPojo.getApi().getMapSecurityCode());
         api.setWeatherApiKey(userSettingsPojo.getApi().getWeatherApiKey());
         api.setWeatherApiHost(userSettingsPojo.getApi().getWeatherApiHost());
-        api.setEmojiApiKey(userSettingsPojo.getApi().getEmojiApiKey());
 
         log.info("完成用户设置配置更新");
 
@@ -230,21 +223,18 @@ public class UserSettingsConfig {
         rulesMap.put("tag-analysis-rules", rules.getTagAnalysisRules());
         rulesMap.put("character-tag-deduplication-rules", rules.getCharacterTagDeduplicationRules());
         rulesMap.put("place-label-deduplication-rules", rules.getPlaceLabelDeduplicationRules());
+        rulesMap.put("event-tag-deduplication-rules", rules.getEventTagDeduplicationRules());
         rulesMap.put("response-message-generation-rules", rules.getResponseMessageGenerationRules());
         userSettings.put("rules", rulesMap);
 
         // 添加 API 配置
         Map<String, Object> apiMap = new HashMap<>();
         apiMap.put("ai-llm-api-key", api.getAiLLMApiKey());
-        apiMap.put("baidu-nlp-api-key", api.getBaiduNlpApiKey());
-        apiMap.put("baidu-nlp-secret-key", api.getBaiduNlpSecretKey());
-        apiMap.put("hanlp-api-key", api.getHanlpApiKey());
-        apiMap.put("baidu-map-api-key", api.getBaiduMapApiKey());
-        apiMap.put("baidu-map-api-host", api.getBaiduMapApiHost());
-        apiMap.put("baidu-map-frontend-key", api.getBaiduMapFrontendKey());
+        apiMap.put("map-web-service-key", api.getMapWebServiceKey());
+        apiMap.put("map-web-js-key", api.getMapWebJSKey());
+        apiMap.put("map-security-code", api.getMapSecurityCode());
         apiMap.put("weather-api-key", api.getWeatherApiKey());
         apiMap.put("weather-api-host", api.getWeatherApiHost());
-        apiMap.put("emoji-api-key", api.getEmojiApiKey());
         userSettings.put("api", apiMap);
 
         yamlData.put("user-settings", userSettings);
@@ -310,6 +300,7 @@ public class UserSettingsConfig {
         pojoRules.setTagAnalysisRules(rules.getTagAnalysisRules());
         pojoRules.setCharacterTagDeduplicationRules(rules.getCharacterTagDeduplicationRules());
         pojoRules.setPlaceLabelDeduplicationRules(rules.getPlaceLabelDeduplicationRules());
+        pojoRules.setEventTagDeduplicationRules(rules.getEventTagDeduplicationRules());
         pojoRules.setResponseMessageGenerationRules(rules.getResponseMessageGenerationRules());
         return pojoRules;
     }
@@ -322,14 +313,11 @@ public class UserSettingsConfig {
     public UserSettingsPojo.Api getLatestApiConfig() {
         UserSettingsPojo.Api pojoApi = new UserSettingsPojo.Api();
         pojoApi.setAiLLMApiKey(api.getAiLLMApiKey());
-        pojoApi.setBaiduNlpApiKey(api.getBaiduNlpApiKey());
-        pojoApi.setBaiduNlpSecretKey(api.getBaiduNlpSecretKey());
-        pojoApi.setHanlpApiKey(api.getHanlpApiKey());
-        pojoApi.setBaiduMapApiKey(api.getBaiduMapApiKey());
-        pojoApi.setBaiduMapApiHost(api.getBaiduMapApiHost());
+        pojoApi.setMapWebServiceKey(api.getMapWebServiceKey());
+        pojoApi.setMapWebJSKey(api.getMapWebJSKey());
+        pojoApi.setMapSecurityCode(api.getMapSecurityCode());
         pojoApi.setWeatherApiKey(api.getWeatherApiKey());
         pojoApi.setWeatherApiHost(api.getWeatherApiHost());
-        pojoApi.setEmojiApiKey(api.getEmojiApiKey());
         return pojoApi;
     }
 
@@ -476,6 +464,12 @@ public class UserSettingsConfig {
         private String placeLabelDeduplicationRules;
 
         /**
+         * 事件标签去重规则
+         * 用于对事件标签进行去重
+         */
+        private String eventTagDeduplicationRules;
+
+        /**
          * 响应消息生成规则
          * 用户自定义的响应消息生成规则
          */
@@ -496,40 +490,22 @@ public class UserSettingsConfig {
         private String aiLLMApiKey;
 
         /**
-         * 百度NLP API Key
-         * 用于访问百度自然语言处理服务的API Key
+         * 高德地图web服务key
+         * 用于访问高德地图服务的Key
          */
-        private String baiduNlpApiKey;
+        private String mapWebServiceKey;
 
         /**
-         * 百度NLP Secret Key
-         * 用于访问百度自然语言处理服务的Secret Key
+         * 高德地图webJs Key
+         * 用于访问高德地图服务的Key
          */
-        private String baiduNlpSecretKey;
+        private String mapWebJSKey;
 
         /**
-         * HanLP API密钥
-         * 用于访问HanLP自然语言处理服务的API密钥
+         * 高德地图安全码
+         * 用于高德地图服务鉴权的安全码
          */
-        private String hanlpApiKey;
-
-        /**
-         * 百度地图API密钥
-         * 用于访问百度地图服务的API密钥
-         */
-        private String baiduMapApiKey;
-
-        /**
-         * 百度地图API主机地址
-         * 用于访问百度地图服务的API主机地址
-         */
-        private String baiduMapApiHost;
-
-        /**
-         * 百度地图前端渲染密钥
-         * 用于 Web 端地图展示的 AK
-         */
-        private String baiduMapFrontendKey;
+        private String mapSecurityCode;
 
         /**
          * QWeather API 密钥
@@ -542,11 +518,5 @@ public class UserSettingsConfig {
          * QWeather天气服务的API主机地址
          */
         private String weatherApiHost;
-
-        /**
-         * Emoji API密钥
-         * 用于访问Emoji服务的API密钥
-         */
-        private String emojiApiKey;
     }
 }

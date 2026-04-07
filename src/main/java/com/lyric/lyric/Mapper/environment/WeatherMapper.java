@@ -3,6 +3,8 @@ package com.lyric.lyric.Mapper.environment;
 import com.lyric.lyric.POJO.weather.WeatherPojo;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,8 +22,8 @@ public interface WeatherMapper {
      * @param weather 天气实体
      * @return 影响的行数
      */
-    @Insert("INSERT INTO weather(diary_id, city, weather_date, weather_condition, temp_max, temp_min, weather_icon) " +
-            "VALUES(#{diaryId}, #{city}, #{weatherDate}, #{weatherCondition}, #{tempMax}, #{tempMin}, #{weatherIcon})")
+    @Insert("INSERT INTO weather(location_id, weather_date, weather_condition, temp, temp_max, temp_min, weather_icon) " +
+            "VALUES(#{locationId}, #{weatherDate}, #{weatherCondition}, #{temp}, #{tempMax}, #{tempMin}, #{weatherIcon})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(WeatherPojo weather);
     
@@ -34,20 +36,12 @@ public interface WeatherMapper {
     WeatherPojo selectById(Integer id);
     
     /**
-     * 根据日记ID查询天气
-     * @param diaryId 日记ID
+     * 根据地点ID查询天气
+     * @param locationId 地点ID
      * @return 天气实体
      */
-    @Select("SELECT * FROM weather WHERE diary_id = #{diaryId}")
-    WeatherPojo selectByDiaryId(Integer diaryId);
-    
-    /**
-     * 根据城市查询天气记录
-     * @param city 城市名称
-     * @return 天气列表
-     */
-    @Select("SELECT * FROM weather WHERE city = #{city}")
-    List<WeatherPojo> selectByCity(String city);
+    @Select("SELECT * FROM weather WHERE location_id = #{locationId}")
+    List<WeatherPojo> selectByDiaryId(Integer locationId);
     
     /**
      * 根据天气日期查询天气记录
@@ -55,7 +49,16 @@ public interface WeatherMapper {
      * @return 天气列表
      */
     @Select("SELECT * FROM weather WHERE weather_date = #{weatherDate}")
-    List<WeatherPojo> selectByWeatherDate(java.time.LocalDate weatherDate);
+    List<WeatherPojo> selectByWeatherDate(LocalDate weatherDate);
+
+    /**
+     * 根据天气日期和地点ID查询天气记录
+     * @param locationId 地点ID
+     * @param weatherDate 天气日期
+     * @return 天气实体
+     */
+    @Select("SELECT * FROM weather WHERE location_id = #{locationId} AND weather_date = #{weatherDate}")
+    WeatherPojo selectByDiaryIdAndWeatherDate(Integer locationId, LocalDateTime weatherDate);
     
     /**
      * 根据天气状况查询天气记录
@@ -77,8 +80,8 @@ public interface WeatherMapper {
      * @param weather 天气实体
      * @return 影响的行数
      */
-    @Update("UPDATE weather SET diary_id=#{diaryId}, city=#{city}, weather_date=#{weatherDate}, " +
-            "weather_condition=#{weatherCondition}, temp_max=#{tempMax}, temp_min=#{tempMin}, weather_icon=#{weatherIcon} WHERE id=#{id}")
+    @Update("UPDATE weather SET location_id=#{locationId}, weather_date=#{weatherDate}, " +
+            "weather_condition=#{weatherCondition},temp=#{temp}, temp_max=#{tempMax}, temp_min=#{tempMin}, weather_icon=#{weatherIcon} WHERE id=#{id}")
     int update(WeatherPojo weather);
     
     /**
@@ -90,10 +93,11 @@ public interface WeatherMapper {
     int deleteById(Integer id);
     
     /**
-     * 根据日记ID删除天气记录
-     * @param diaryId 日记ID
-     * @return 影响的行数
+     * 根据地点ID和日期删除天气记录
+     *
+     * @param locationId  地点ID
+     * @param weatherDate 天气日期
      */
-    @Delete("DELETE FROM weather WHERE diary_id = #{diaryId}")
-    int deleteByDiaryId(Integer diaryId);
+    @Delete("DELETE FROM weather WHERE location_id = #{locationId} AND weather_date = #{weatherDate}")
+    void deleteByLocationIdAndWeatherDate(Integer locationId, LocalDateTime weatherDate);
 }

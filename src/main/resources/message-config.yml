@@ -153,6 +153,18 @@ response-message:
     analysis_started:
       code: "200"
       message: "AI分析已启动"
+    start_the_analysis:
+      code: "200"
+      message: "开始分析"
+    diary_save_with_ai_analysis:
+      code: "200"
+      message: "日记保存成功，正在进行AI分析..."
+    batch_import_success:
+      code: "200"
+      message: "批量导入成功，正在进行AI分析..."
+    ai_analysis_completed:
+      code: "200"
+      message: "AI分析已完成！"
   system-error:
     system_error:
       code: "500"

@@ -1,6 +1,6 @@
 package com.lyric.lyric.Utils.wordCount;
 
-import com.lyric.lyric.DTO.diary.Diary;
+import com.lyric.lyric.POJO.diary.DiaryPojo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
  * 字数统计工具类
  * 提供对不同格式内容的字数统计功能，包括纯文本、富文本和Markdown格式
  *
- * @author Lyric
- * @since 2025-11-21
+ * @author Yichaoxuan
+ * @since 2026-04-03
  */
 public class WordCountUtils {
 
@@ -69,7 +69,7 @@ public class WordCountUtils {
      * @param format 内容格式枚举，支持RICH_TEXT、MARKDOWN等格式
      * @return 字数统计结果
      */
-    public static int calculateWordCount(String content, Diary.ContentFormat format) {
+    public static int calculateWordCount(String content, DiaryPojo.ContentFormat format) {
 
         // 判断内容是否为空
         if(content ==  null || content.trim().isEmpty()) return 0;

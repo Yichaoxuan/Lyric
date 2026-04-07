@@ -10,6 +10,8 @@ import com.lyric.lyric.Exception.BusinessException;
 import com.lyric.lyric.Exception.SystemException;
 import com.lyric.lyric.POJO.message.MessageConfigPojo;
 import com.lyric.lyric.Service.contentAnalysis.AIAnalysisService;
+import com.lyric.lyric.Utils.json.JsonConversionUtils;
+import com.lyric.lyric.Utils.resultUtils.Result;
 import com.lyric.lyric.Utils.resultUtils.ResultBuilder;
 import com.lyric.lyric.Utils.stringProcessing.EnumUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -44,42 +46,30 @@ public class MessageService {
      * 更新响应消息配置并保存到数据库
      * @param responseStyleInstructions 响应消息的角色设定
      */
-    public com.lyric.lyric.Utils.resultUtils.Result<Void> updateMessageConfigAndSaveToFile(String responseStyleInstructions) {
-
-        //判断新响应消息配置命令是否为空
+    public Result<Void> updateMessageConfigAndSaveToFile(String responseStyleInstructions) {
+        log.info("收到角色配置应用请求，正在处理中...");
         if (responseStyleInstructions == null || responseStyleInstructions.isEmpty()) {
             log.info("新响应消息配置命令为空，更新操作取消");
             return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
         }
-
-        //拼接新响应消息配置命令与旧响应消息配置
-        responseStyleInstructions = responseStyleInstructions + "\n" + com.lyric.lyric.Utils.json.JsonConversionUtils.toJson(getLatestMessageConfig());
-
+        responseStyleInstructions = responseStyleInstructions + "\n" + JsonConversionUtils.toJson(getLatestMessageConfig());
         System.out.println(responseStyleInstructions);
-
         try {
-            log.info("开始更新响应消息配置并保存到数据库");
-        
-            //调用 AI 模型更新响应消息配置
+            log.info("正在调用AI模型更新响应消息配置...");
             MessageConfigPojo messageConfigPojo = aiAnalysisService.generateResponseMessage(responseStyleInstructions);
-        
-            // 检查 AI 返回的配置是否为 null
             if (messageConfigPojo == null) {
                 log.error("AI 生成的消息配置为空，可能是 AI 返回的结果不是有效的 JSON 格式");
                 return ResultBuilder.error(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT);
             }
-        
-            // 更新配置并保存到数据库
             msgConfig.updateConfigAndSaveToDatabase(messageConfigPojo);
-        
-            // 重新初始化枚举
             reinitializeEnums();
-        
-            log.info("响应消息配置更新并保存到数据库完成");
-        
+            log.info("角色配置已成功应用并保存到数据库");
             return ResultBuilder.success(SuccessMsgEnums.MESSAGE_CONFIG_SUCCESS);
         } catch (IllegalArgumentException e) {
             log.error("配置参数无效：{}", e.getMessage());
+            throw new BusinessException(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT, e);
+        } catch (Exception e) {
+            log.error("应用角色配置时发生异常：{}", e.getMessage(), e);
             throw new BusinessException(BusinessErrorMsgEnums.RESPONSE_MESSAGE_COMMAND_NOT_INPUT, e);
         }
     }

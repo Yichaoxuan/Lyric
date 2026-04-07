@@ -70,7 +70,16 @@ public class LocationTagController {
         return tagService.getLocationTagsByDiaryId(diaryId);
     }
 
-
+    /**
+     * 根据活动ID 查询地点标签列表
+     *
+     * @param activityId 活动ID
+     * @return 查询结果
+     */
+    @GetMapping("/queryByActivityId")
+    public Result<List<LocationPojo>> queryLocationTagsByActivityId(@RequestParam Integer activityId) {
+        return tagService.getLocationTagsByActivityId(activityId);
+    }
 
     /**
      * 查询所有地点标签

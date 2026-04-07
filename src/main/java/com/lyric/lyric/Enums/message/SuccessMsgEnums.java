@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 public enum SuccessMsgEnums {
 
-    //日记模块相关
+    // 日记模块相关
     SAVE_SUCCESS("保存成功"),
     DELETE_SUCCESS("删除成功"),
     MODIFY_SUCCESS("修改成功"),
@@ -71,13 +71,16 @@ public enum SuccessMsgEnums {
     WEATHER_UPDATE_SUCCESS("天气记录更新成功"),
     WEATHER_DELETE_SUCCESS("天气记录删除成功"),
 
-
-    //用户设置
+    // 通用设置
     SETTING_SUCCESS("设置成功"),
+    START_THE_ANALYSIS("开始分析"),
     MESSAGE_CONFIG_SUCCESS("响应消息更新成功"),
+    ANALYSIS_STARTED("AI 分析已启动"),
 
-    // AI 分析
-    ANALYSIS_STARTED("AI 分析已启动");
+    // AI分析与导入相关
+    DIARY_SAVE_WITH_AI_ANALYSIS("日记保存成功，正在进行AI分析..."),
+    BATCH_IMPORT_SUCCESS("批量导入成功，正在进行AI分析..."),
+    AI_ANALYSIS_COMPLETED("AI分析已完成！");
 
     /**
      * 成功消息名称
@@ -98,6 +101,7 @@ public enum SuccessMsgEnums {
 
     /**
      * 成功消息枚举构造函数
+     * 
      * @param name 成功名字
      */
     SuccessMsgEnums(String name) {

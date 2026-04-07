@@ -206,6 +206,12 @@ public class UserSettingsPojo {
         private String PlaceLabelDeduplicationRules;
 
         /**
+         * 事件标签去重规则
+         * 用于对事件标签进行去重
+         */
+        private String EventTagDeduplicationRules;
+
+        /**
          * 响应消息生成规则
          * 用户自定义的响应消息生成规则
          */
@@ -226,40 +232,22 @@ public class UserSettingsPojo {
         private String aiLLMApiKey;
 
         /**
-         * 百度NLP API Key
-         * 用于访问百度自然语言处理服务的API Key
+         * 高德地图web服务key
+         * 用于访问高德地图服务的Key
          */
-        private String baiduNlpApiKey;
+        private String mapWebServiceKey;
 
         /**
-         * 百度NLP Secret Key
-         * 用于访问百度自然语言处理服务的Secret Key
+         * 高德地图webJs Key
+         * 用于访问高德地图服务的Key
          */
-        private String baiduNlpSecretKey;
+        private String mapWebJSKey;
 
         /**
-         * HanLP API密钥
-         * 用于访问HanLP自然语言处理服务的API密钥
+         * 高德地图安全码
+         * 用于高德地图服务鉴权的安全码
          */
-        private String hanlpApiKey;
-
-        /**
-         * 百度地图API密钥
-         * 用于访问百度地图服务的API密钥
-         */
-        private String baiduMapApiKey;
-
-        /**
-         * 百度地图前端渲染密钥
-         * 用于访问百度地图前端渲染服务的API密钥
-         */
-        private String baiduMapFrontendKey;
-
-        /**
-         * 百度地图API主机地址
-         * 用于访问百度地图服务的API主机地址
-         */
-        private String baiduMapApiHost;
+        private String mapSecurityCode;
 
         /**
          * QWeather API密钥
@@ -272,12 +260,6 @@ public class UserSettingsPojo {
          * QWeather天气服务的API主机地址
          */
         private String weatherApiHost;
-
-        /**
-         * Emoji API密钥
-         * 用于访问Emoji服务的API密钥
-         */
-        private String emojiApiKey;
     }
 
 }
