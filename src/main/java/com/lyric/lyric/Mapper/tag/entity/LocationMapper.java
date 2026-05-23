@@ -53,32 +53,32 @@ public interface LocationMapper {
         @Select("SELECT * FROM location WHERE alias = #{alias}")
         List<LocationPojo> selectByAlias(String alias);
 
-        /**
-         * 根据经度查询地点
-         *
-         * @param longitude 经度
-         * @return 地点列表
-         */
-        @Select("SELECT * FROM location WHERE longitude = #{longitude}")
-        List<LocationPojo> selectByLongitude(Double longitude);
+//        /**
+//         * 根据经度查询地点
+//         *
+//         * @param longitude 经度
+//         * @return 地点列表
+//         */
+//        @Select("SELECT * FROM location WHERE longitude = #{longitude}")
+//        List<LocationPojo> selectByLongitude(Double longitude);
 
-        /**
-         * 根据纬度查询地点
-         *
-         * @param latitude 纬度
-         * @return 地点列表
-         */
-        @Select("SELECT * FROM location WHERE latitude = #{latitude}")
-        List<LocationPojo> selectByLatitude(Double latitude);
+//        /**
+//         * 根据纬度查询地点
+//         *
+//         * @param latitude 纬度
+//         * @return 地点列表
+//         */
+//        @Select("SELECT * FROM location WHERE latitude = #{latitude}")
+//        List<LocationPojo> selectByLatitude(Double latitude);
 
-        /**
-         * 根据区县查询地点
-         *
-         * @param district 区县
-         * @return 地点列表
-         */
-        @Select("SELECT * FROM location WHERE district = #{district}")
-        List<LocationPojo> selectByDistrict(String district);
+//        /**
+//         * 根据区县查询地点
+//         *
+//         * @param district 区县
+//         * @return 地点列表
+//         */
+//        @Select("SELECT * FROM location WHERE district = #{district}")
+//        List<LocationPojo> selectByDistrict(String district);
 
         /**
          * 根据城市查询地点
@@ -106,6 +106,19 @@ public interface LocationMapper {
          */
         @Select("SELECT * FROM location WHERE country = #{country}")
         List<LocationPojo> selectByCountry(String country);
+
+//        /**
+//         * 根据国家，省份，城市，区县查询地点
+//         *
+//         * @param country 国家
+//         * @param province 省份
+//         * @param city 城市
+//         * @param district 区县
+//         * @return 地点列表
+//         */
+//        @Select("SELECT * FROM location WHERE country = #{country} AND province = #{province} AND city = #{city} AND district = #{district} AND name = #{city}")
+//        List<LocationPojo> selectByCountryProvinceCityDistrict(String country, String province, String city,
+//                        String district);
 
         /**
          * 查询所有地点
